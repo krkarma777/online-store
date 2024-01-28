@@ -1,0 +1,39 @@
+
+<style>
+    .navbar {
+        position: fixed; /* 추가: 고정 위치 설정 */
+        width: 100%; /* 추가: 화면 전체 너비로 설정 */
+        z-index: 2; /* 추가: 에디터보다 위에 나타나도록 설정 */
+        top: 0; /* 수정: 브라우저 상단에 고정 */
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" th:fragment="content">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">로고</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <form class="d-flex w-100" >
+                    <input class="form-control me-2 searchInput" type="search" placeholder="검색" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">검색</button>
+                </form>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="login">로그인</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">마이페이지</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">회원가입</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
