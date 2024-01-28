@@ -1,20 +1,18 @@
-package com.bulkpurchase.service;
+package com.bulkpurchase.web.service;
 
 import com.bulkpurchase.domain.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.bulkpurchase.domain.model.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.bulkpurchase.domain.model.User;
 
 @Service
-public class UserService {
+@AllArgsConstructor
+public class UserRegisterService{
 
     private final UserRepository userRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public User registerUser(User newUser) {
@@ -28,8 +26,11 @@ public class UserService {
             throw new IllegalStateException("이미 사용중인 사용자명입니다.");
         }
 
+        // 비밀번호 해시 처리
+        String hashedPassword = passwordEncoder.encode(newUser.getPassword());
+        newUser.setPassword(hashedPassword);
+
         // 사용자 저장
         return userRepository.save(newUser);
     }
-
 }

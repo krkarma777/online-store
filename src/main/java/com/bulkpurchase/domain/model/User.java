@@ -32,4 +32,9 @@ public class User {
     @Column(name = "createdate")
     @Temporal(TemporalType.DATE)
     private Date createDate;
+
+    @PrePersist
+    protected void onCreate() {
+        createDate = new Date();
+    }
 }
