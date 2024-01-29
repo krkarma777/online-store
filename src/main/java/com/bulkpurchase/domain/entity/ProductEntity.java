@@ -1,13 +1,16 @@
-package com.bulkpurchase.domain.model;
+package com.bulkpurchase.domain.entity;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Products")
-@Data
-public class Product {
+@Getter
+@Setter
+public class ProductEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productID;

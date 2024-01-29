@@ -1,23 +1,26 @@
-package com.bulkpurchase.domain.model;
+package com.bulkpurchase.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "OrderDetails")
-@Data
-public class OrderDetail {
+@Getter
+@Setter
+public class OrderDetailEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderDetailID;
 
     @ManyToOne
     @JoinColumn(name = "OrderID", nullable = false)
-    private Order order;
+    private OrderEntity orderEntity;
 
     @ManyToOne
     @JoinColumn(name = "ProductID", nullable = false)
-    private Product product;
+    private ProductEntity productEntity;
 
     @Column(nullable = false)
     private Integer quantity;

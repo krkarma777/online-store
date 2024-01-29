@@ -1,21 +1,24 @@
-package com.bulkpurchase.domain.model;
+package com.bulkpurchase.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "Payments")
-@Data
-public class Payment {
+@Getter
+@Setter
+public class PaymentEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentID;
 
     @ManyToOne
     @JoinColumn(name = "OrderID", nullable = false)
-    private Order order;
+    private OrderEntity orderEntity;
 
     @Column
     @Temporal(TemporalType.DATE)

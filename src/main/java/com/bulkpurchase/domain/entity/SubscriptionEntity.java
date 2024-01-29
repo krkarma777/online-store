@@ -1,21 +1,24 @@
-package com.bulkpurchase.domain.model;
+package com.bulkpurchase.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "Subscriptions")
-@Data
-public class Subscription {
+@Getter
+@Setter
+public class SubscriptionEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long subscriptionID;
 
     @ManyToOne
     @JoinColumn(name = "UserID", nullable = false)
-    private User user;
+    private UserEntity userEntity;
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)

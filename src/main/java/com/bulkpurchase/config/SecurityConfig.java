@@ -18,9 +18,9 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .requestMatchers("/register", "/login", "/").permitAll()
-                                .requestMatchers("/my/**").hasAnyRole("USER", "ADMIN")
-                                .requestMatchers("/ADMIN").hasRole("ADMIN")
+                                .requestMatchers("/register", "/registerProc", "/login", "/", "/loginProc").permitAll()
+                                .requestMatchers("/my/**").hasAnyRole("판매자", "관리자")
+                                .requestMatchers("/ADMIN").hasRole("관리자")
                         .anyRequest().authenticated()
                 );
 
@@ -37,8 +37,5 @@ public class SecurityConfig {
 
         return httpSecurity.build();
     }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 }

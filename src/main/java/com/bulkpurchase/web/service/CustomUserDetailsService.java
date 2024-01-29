@@ -1,5 +1,7 @@
 package com.bulkpurchase.web.service;
 
+import com.bulkpurchase.domain.entity.UserEntity;
+import com.bulkpurchase.domain.service.LoginService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,16 +15,16 @@ import java.util.Collections;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserLoginService userLoginService;
+    private final LoginService loginService;
 
     @Autowired
-    public CustomUserDetailsService(UserLoginService userLoginService) {
-        this.userLoginService = userLoginService;
+    public CustomUserDetailsService(LoginService loginService) {
+        this.loginService = loginService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        com.bulkpurchase.domain.model.User user = userLoginService.loginUser(username, null);
+        UserEntity user = loginService.loginUser(username, null);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }

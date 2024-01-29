@@ -12,7 +12,7 @@
         <div class="col-md-6">
             <h2 class="text-center mt-4">회원가입</h2>
             <!-- Thymeleaf action url 업데이트 -->
-            <form th:action="@{/register}" method="post" class="mt-4" th:object="${user}">
+            <form th:action="@{/registerProc}" method="post" class="mt-4" th:object="${userEntity}">
                 <div class="mb-3">
                     <label for="username" class="form-label">이름</label>
                     <input type="text" class="form-control" id="username" name="username" th:field="*{username}" required>
@@ -27,10 +27,10 @@
                 </div>
                 <div class="mb-3">
                     <label for="userType" class="form-label">사용자 유형</label>
-                    <select class="form-select" id="userType" name="userType" th:field="*{userType}">
-                        <option value="자영업자">자영업자</option>
-                        <option value="판매자">판매자</option>
-                        <option value="관리자">관리자</option>
+                    <select class="form-select" id="userType" name="userType" th:field="*{role}">
+                        <option value="ROLE_자영업자">자영업자</option>
+                        <option value="ROLE_판매자">판매자</option>
+                        <option value="ROLE_관리자">관리자</option>
                     </select>
                 </div>
                 <div class="mb-3">
