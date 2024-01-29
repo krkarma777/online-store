@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "OrderDetails")
+@Table(name = "Order_Details")
 @Getter
 @Setter
 public class OrderDetailEntity {
@@ -14,7 +14,7 @@ public class OrderDetailEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderDetailID;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OrderID", nullable = false)
     private OrderEntity orderEntity;
 

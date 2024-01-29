@@ -36,33 +36,20 @@ public class UserEntity {
     @Column(name = "usergrade", length = 20)
     private String userGrade;
 
-    @Column(name = "createdate")
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date createDate;
-
     @PrePersist
     protected void onCreate() {
         createDate = new Date();
     }
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "createdate")
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date createDate;
+
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "user_sales_regions", joinColumns = @JoinColumn(name = "userid"))
     @Column(name = "region")
     @Enumerated(EnumType.STRING)
     private Set<SalesRegion> salesRegions = new HashSet<>();
 
-    @Override
-    public String toString() {
-        return "UserEntity{" +
-                "userID=" + userID +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
-                ", userGrade='" + userGrade + '\'' +
-                ", createDate=" + createDate +
-                ", salesRegions=" + salesRegions +
-                '}';
-    }
 }
