@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>상품 목록</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+
+<div class="container mt-4">
+    <h2>상품 목록</h2>
+
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>상품명</th>
+            <th>설명</th>
+            <th>가격</th>
+            <th>재고</th>
+            <th>이미지 URL</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.productID}"></td>
+            <td th:text="${product.productName}"></td>
+            <td th:text="${product.description}"></td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.stock}"></td>
+            <td th:text="${product.imageURL}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

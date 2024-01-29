@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>상품 등록</title>
+    <!-- 부트스트랩 CSS 추가 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+
+<div class="container my-4">
+    <h2>상품 등록</h2>
+    <form th:action="@{/productAdd}" th:object="${product}" method="post" class="row g-3">
+        <div class="col-md-6">
+            <label for="productName" class="form-label">상품명</label>
+            <input type="text" class="form-control" th:field="*{productName}" id="productName" placeholder="상품명">
+        </div>
+        <div class="col-md-6">
+            <label for="price" class="form-label">가격</label>
+            <input type="number" class="form-control" th:field="*{price}" id="price" placeholder="가격">
+        </div>
+        <div class="col-12">
+            <label for="description" class="form-label">상품 설명</label>
+            <textarea class="form-control" th:field="*{description}" id="description" placeholder="상품 설명" rows="3"></textarea>
+        </div>
+        <div class="col-md-6">
+            <label for="stock" class="form-label">재고</label>
+            <input type="number" class="form-control" th:field="*{stock}" id="stock" placeholder="재고">
+        </div>
+        <div class="col-md-6">
+            <label for="imageURL" class="form-label">이미지 URL</label>
+            <input type="text" class="form-control" th:field="*{imageURL}" id="imageURL" placeholder="이미지 URL">
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">상품 등록</button>
+        </div>
+    </form>
+</div>
+
+<!-- 부트스트랩 JS 및 의존성 스크립트 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
