@@ -18,14 +18,14 @@ public class LoginService {
 
     @Transactional
     public UserEntity loginUser(String username, String password) {
-        Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
+        UserEntity optionalUser = userRepository.findByUsername(username);
 
-        if (optionalUser.isPresent()) {
+/*        if (optionalUser.isPresent()) {
             UserEntity user = optionalUser.get();
             if (passwordEncoder.matches(password, user.getPassword())) {
                 return user; // 로그인 성공
             }
-        }
+        }*/
         return null; // 로그인 실패
     }
 

@@ -8,7 +8,7 @@
     }
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" th:fragment="content">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" th:fragment="content" th:with="isAuthenticated=${#authorization.expression('isAuthenticated()')}">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">로고</a>
 
@@ -24,14 +24,20 @@
                 </form>
             </ul>
             <ul class="navbar-nav">
-                <li class="nav-item">
+                <!-- 로그인 상태가 아닐 경우에만 로그인 링크를 보여줌 -->
+                <li class="nav-item" th:if="${!isAuthenticated}">
                     <a class="nav-link" href="login">로그인</a>
                 </li>
-                <li class="nav-item">
+
+                <!-- 로그인 상태일 경우에만 로그아웃 링크를 보여줌 -->
+                <li class="nav-item" th:if="${isAuthenticated}">
+                    <a class="nav-link" href="logout">로그아웃</a>
+                </li>
+                <li class="nav-item" th:if="${isAuthenticated}">
                     <a class="nav-link" href="#">마이페이지</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">회원가입</a>
+                    <a class="nav-link" href="register">회원가입</a>
                 </li>
             </ul>
         </div>

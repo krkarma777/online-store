@@ -1,6 +1,8 @@
 package com.bulkpurchase.web.service;
 
+import com.bulkpurchase.domain.dto.CustomUserDetails;
 import com.bulkpurchase.domain.entity.UserEntity;
+import com.bulkpurchase.domain.repository.UserRepository;
 import com.bulkpurchase.domain.service.LoginService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.User;
@@ -11,24 +13,23 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final LoginService loginService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    public CustomUserDetailsService(LoginService loginService) {
-        this.loginService = loginService;
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = loginService.loginUser(username, null);
+        UserEntity user = userRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
-
-        return new User(user.getUsername(), user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        return new CustomUserDetails(user);
     }
 }

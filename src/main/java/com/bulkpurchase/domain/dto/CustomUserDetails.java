@@ -1,11 +1,13 @@
 package com.bulkpurchase.domain.dto;
 
 import com.bulkpurchase.domain.entity.UserEntity;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 
 public class CustomUserDetails implements UserDetails {
 
