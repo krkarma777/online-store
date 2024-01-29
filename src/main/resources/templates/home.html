@@ -3,30 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Main Page</title>
-    <!-- Bootstrap JS (optional) -->
-    <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-            integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
-            crossorigin="anonymous">
-
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- jQuery -->
-    <script
-            src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
 </head>
 <body>
-
 <div th:replace="~{common/navBar :: content}"></div>
 
 <div class="container mt-4">
-    <h1>Welcome to MyApp!</h1>
-    <p>This is a simple main page using Thymeleaf and Bootstrap.</p>
+    <h1 class="text-center">Welcome to MyApp!</h1>
+    <p class="text-center">This is a simple main page using Thymeleaf and Bootstrap.</p>
+    <p class="text-center" th:text="'Today is: ' + ${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"></p>
 
-    <!-- Example of Thymeleaf usage -->
-    <p th:text="'Today is: ' + ${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"></p>
+    <!-- Buttons for navigation -->
+    <div class="d-flex justify-content-center mt-4">
+        <a href="/productAdd" class="btn btn-primary m-2">상품 등록</a>
+        <a href="/products" class="btn btn-success m-2">상품 목록</a>
+    </div>
 </div>
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
