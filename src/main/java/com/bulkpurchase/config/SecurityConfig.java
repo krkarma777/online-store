@@ -21,6 +21,7 @@ public class SecurityConfig {
                         (authorize) -> authorize
                                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 정적 리소스 허용
                                 .requestMatchers("/register", "/registerProc", "/login", "/loginProc", "/").permitAll()
+                                .requestMatchers("/mypage","/mypage/update" , "/mypage/edit").authenticated()
                                 .requestMatchers("/my/**", "/productAdd").hasAnyRole("판매자", "관리자")
                                 .requestMatchers("/admin").hasRole("관리자")
                                 .requestMatchers("/*").permitAll()

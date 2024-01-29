@@ -21,6 +21,7 @@
             <th>가격</th>
             <th>재고</th>
             <th>이미지 URL</th>
+            <th>판매자</th>
         </tr>
         </thead>
         <tbody>
@@ -31,6 +32,7 @@
             <td th:text="${product.price}"></td>
             <td th:text="${product.stock}"></td>
             <td th:text="${product.imageURL}"></td>
+            <td th:text="${product.userEntity.username}"></td>
         </tr>
         </tbody>
     </table>

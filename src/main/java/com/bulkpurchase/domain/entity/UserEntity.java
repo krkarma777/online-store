@@ -1,11 +1,14 @@
 package com.bulkpurchase.domain.entity;
 
-import com.bulkpurchase.domain.enums.UserRole;
+import com.bulkpurchase.domain.enums.SalesRegion;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "Users")
@@ -35,12 +38,19 @@ public class UserEntity {
 
     @Column(name = "createdate")
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createDate;
 
     @PrePersist
     protected void onCreate() {
         createDate = new Date();
     }
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_sales_regions", joinColumns = @JoinColumn(name = "userid"))
+    @Column(name = "region")
+    @Enumerated(EnumType.STRING)
+    private Set<SalesRegion> salesRegions = new HashSet<>();
 
     @Override
     public String toString() {
@@ -52,6 +62,7 @@ public class UserEntity {
                 ", role='" + role + '\'' +
                 ", userGrade='" + userGrade + '\'' +
                 ", createDate=" + createDate +
+                ", salesRegions=" + salesRegions +
                 '}';
     }
 }

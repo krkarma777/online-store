@@ -1,5 +1,7 @@
 package com.bulkpurchase.web.controller.product;
 
+import com.bulkpurchase.domain.entity.UserEntity;
+import com.bulkpurchase.domain.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,6 +10,7 @@ import org.springframework.ui.Model;
 import com.bulkpurchase.domain.entity.ProductEntity;
 import com.bulkpurchase.domain.service.ProductService;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -15,10 +18,12 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final UserService userService;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, UserService userService) {
         this.productService = productService;
+        this.userService = userService;
     }
 
     @GetMapping("/productAdd")
@@ -28,7 +33,12 @@ public class ProductController {
     }
 
     @PostMapping("/productAdd")
-    public String registerProduct(@ModelAttribute ProductEntity product) {
+    public String registerProduct(@ModelAttribute ProductEntity product, Principal principal) {
+        if (principal != null) {
+            UserEntity currentUser = userService.findByUsername(principal.getName());
+            product.setUserEntity(currentUser);
+        }
+
         productService.saveProduct(product);
         return "redirect:/products";
     }

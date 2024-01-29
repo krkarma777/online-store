@@ -22,12 +22,16 @@ public class ProductEntity {
     private String description;
 
     @Column(nullable = false)
-    private Double price;
+    private Long price;
 
     @Column
     private Integer stock;
 
     @Column(length = 200)
     private String imageURL;
+
+    @ManyToOne
+    @JoinColumn(name = "UserID")
+    private UserEntity userEntity;
 }
 
