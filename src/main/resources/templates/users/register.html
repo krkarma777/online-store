@@ -14,7 +14,7 @@
         <div class="col-md-6">
             <h2 class="text-center mt-4">회원가입</h2>
             <!-- Thymeleaf action url 업데이트 -->
-            <form th:action="@{/registerProc}" method="post" class="mt-4" th:object="${userEntity}">
+            <form th:action="@{/registerProc}" method="post" class="mt-4" th:object="${user}">
                 <div class="mb-3">
                     <label for="username" class="form-label">이름</label>
                     <input type="text" class="form-control" id="username" name="username" th:field="*{username}" required>

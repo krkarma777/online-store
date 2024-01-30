@@ -33,7 +33,7 @@
             <td th:text="${product.price}"></td>
             <td th:text="${product.stock}"></td>
             <td th:text="${product.imageURL}"></td>
-            <td th:text="${product.userEntity.username}"></td>
+            <td th:text="${product.user.username}"></td>
             <td th:each="region : ${product.salesRegions}" th:text="${region}"></td>
         </tr>
         </tbody>

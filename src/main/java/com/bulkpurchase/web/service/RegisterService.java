@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.service;
 
-import com.bulkpurchase.domain.entity.UserEntity;
+import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +20,7 @@ public class RegisterService {
     }
 
     @Transactional
-    public UserEntity registerProcess(UserEntity newUser) {
+    public User registerProcess(User newUser) {
         if (userRepository.existsByUsername(newUser.getUsername())) {
             throw new IllegalStateException("이미 사용중인 사용자명입니다.");
         }

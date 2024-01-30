@@ -8,7 +8,7 @@ import lombok.Setter;
 @Table(name = "Order_Details")
 @Getter
 @Setter
-public class OrderDetailEntity {
+public class OrderDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,11 +16,11 @@ public class OrderDetailEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OrderID", nullable = false)
-    private OrderEntity orderEntity;
+    private Order order;
 
     @ManyToOne
     @JoinColumn(name = "ProductID", nullable = false)
-    private ProductEntity productEntity;
+    private Product product;
 
     @Column(nullable = false)
     private Integer quantity;

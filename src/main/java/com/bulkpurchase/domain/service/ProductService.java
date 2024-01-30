@@ -2,10 +2,11 @@ package com.bulkpurchase.domain.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.bulkpurchase.domain.entity.ProductEntity;
+import com.bulkpurchase.domain.entity.Product;
 import com.bulkpurchase.domain.repository.ProductRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -17,11 +18,15 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ProductEntity saveProduct(ProductEntity product) {
+    public Product saveProduct(Product product) {
         return productRepository.save(product);
     }
 
-    public List<ProductEntity> findAllProducts() {
+    public List<Product> findAllProducts() {
         return productRepository.findAll();
+    }
+
+    public Optional<Product> findById(Long productId) {
+        return productRepository.findById(productId);
     }
 }

@@ -21,77 +21,69 @@
 
 <div class="container my-4">
     <h2 th:text="#{page.addProduct}">상품 등록</h2>
-    <form th:action="@{/productAdd}" th:object="${product}" method="post" class="row g-3">
+    <form th:action="@{/product/add}" th:object="${product}" method="post" class="row g-3">
 
-        <div th:if="${errors?.containsKey('globalError')}">
-            <p class="field-error" th:text="${errors['globalError']}">전체 오류 메시지</p>
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
+                글로벌 오류 메시지
+            </p>
         </div>
 
         <div class="col-md-6">
             <label for="productName" class="form-label" th:text="#{label.product.name}">상품명</label>
-            <input type="text" class="form-control" th:field="*{productName}"
-                   th:class="${errors?.containsKey('productName')} ? 'form-control field-error' : 'form-control'"
-                   id="productName" placeholder="상품명">
+            <input type="text" th:field="*{productName}"
+                   th:errorclass="field-error" class="form-control" id="productName" placeholder="상품명을 입력하세요">
         </div>
-        <div class="field-error" th:if="${errors?.containsKey('productName')}"
-             th:text="${errors['productName']}">
+        <div class="field-error" th:errors="*{productName}">
             상품명 오류
         </div>
 
         <div class="col-md-6">
             <label for="price" class="form-label" th:text="#{label.product.price}">가격</label>
-            <input type="number" class="form-control" th:field="*{price}"
-                   th:class="${errors?.containsKey('price')} ? 'form-control field-error' : 'form-control'"
-                   id="price" placeholder="가격">
+            <input type="number" th:field="*{price}"
+                   th:errorclass="field-error" class="form-control" id="price" placeholder="가격을 입력하세요">
         </div>
-        <div class="field-error" th:if="${errors?.containsKey('price')}"
-             th:text="${errors['price']}">
-            상품명 오류
+        <div class="field-error" th:errors="*{price}">
+            가격 오류
         </div>
 
         <div class="col-12">
             <label for="description" class="form-label" th:text="#{label.product.description}">상품 설명</label>
             <textarea class="form-control" th:field="*{description}"
-                      th:class="${errors?.containsKey('description')} ? 'form-control field-error' : 'form-control'"
+                      th:errorclass="field-error"
                       id="description" placeholder="상품 설명"
                       rows="3"></textarea>
         </div>
-        <div class="field-error" th:if="${errors?.containsKey('description')}"
-             th:text="${errors['description']}">
-            상품명 오류
+        <div class="field-error" th:errors="*{description}">
+            description 오류
         </div>
 
         <div class="col-md-6">
             <label for="stock" class="form-label" th:text="#{label.product.stock}">재고</label>
-            <input type="number" class="form-control" th:field="*{stock}"
-                   th:class="${errors?.containsKey('stock')} ? 'form-control field-error' : 'form-control'"
-                   id="stock" placeholder="재고">
+            <input type="number" th:field="*{stock}"
+                   th:errorclass="field-error" class="form-control" id="stock" placeholder="재고를 입력하세요">
         </div>
-        <div class="field-error" th:if="${errors?.containsKey('stock')}"
-             th:text="${errors['stock']}">
-            상품명 오류
+        <div class="field-error" th:errors="*{stock}">
+            stock 오류
         </div>
-
+<!--
         <div class="col-md-6">
             <label for="imageURL" class="form-label" th:text="#{label.product.imageURL}">이미지 URL</label>
             <input type="text" class="form-control" th:field="*{imageURL}" id="imageURL" placeholder="이미지 URL">
-        </div>
+        </div>-->
 
         <div class="col-md-6">
             <label for="salesRegions" class="form-label" th:text="#{label.product.region}">판매 지역</label>
-            <select multiple="multiple" class="form-control" id="salesRegions" th:field="*{salesRegions}"
-                    th:class="${errors?.containsKey('salesRegions')} ? 'form-control field-error' : 'form-control'"
-            >
+            <select multiple="multiple" class="form-control" id="salesRegions" th:field="*{salesRegions}">
                 <option th:each="region : ${allSalesRegions}" th:value="${region}" th:text="${region}"></option>
             </select>
         </div>
-        <div class="field-error" th:if="${errors?.containsKey('salesRegions')}"
-             th:text="${errors['salesRegions']}">
-            상품명 오류
+        <div class="field-error" th:errors="*{salesRegions}">
+            salesRegions 오류
         </div>
 
         <!-- 판매자 ID를 숨김 필드로 추가 -->
-        <input type="hidden" th:field="*{userEntity.userID}"/>
+        <input type="hidden" th:field="*{user.userID}"/>
 
         <div class="col-12">
             <button type="submit" class="btn btn-primary" th:text="#{page.addProduct}">상품 등록</button>

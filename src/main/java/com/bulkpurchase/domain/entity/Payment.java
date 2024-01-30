@@ -10,7 +10,7 @@ import java.util.Date;
 @Table(name = "Payments")
 @Getter
 @Setter
-public class PaymentEntity {
+public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +18,7 @@ public class PaymentEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OrderID", nullable = false)
-    private OrderEntity orderEntity;
+    private Order order;
 
     @Column
     @Temporal(TemporalType.TIMESTAMP)

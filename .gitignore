@@ -138,8 +138,8 @@ fabric.properties
 hs_err_pid*
 replay_pid*
 
-### Example userEntity template template
-### Example userEntity template
+### Example user template template
+### Example user template
 
 # IntelliJ project files
 out

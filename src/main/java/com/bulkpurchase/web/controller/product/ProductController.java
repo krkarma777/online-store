@@ -1,22 +1,23 @@
 package com.bulkpurchase.web.controller.product;
 
-import com.bulkpurchase.domain.entity.UserEntity;
+import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import com.bulkpurchase.domain.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import com.bulkpurchase.domain.entity.ProductEntity;
+import com.bulkpurchase.domain.entity.Product;
 import com.bulkpurchase.domain.service.ProductService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @Slf4j
@@ -31,63 +32,79 @@ public class ProductController {
         this.userService = userService;
     }
 
-    @GetMapping("/productAdd")
+    @GetMapping("/product/add")
     public String showRegistrationForm(Model model) {
-        model.addAttribute("product", new ProductEntity());
+        model.addAttribute("product", new Product());
         List<SalesRegion> list = Arrays.asList(SalesRegion.values());
         model.addAttribute("allSalesRegions", list);
         return "product/productAdd";
     }
 
-    @PostMapping("/productAdd")
-    public String registerProduct(@ModelAttribute ProductEntity product, Principal principal, Model model) {
+    @PostMapping("/product/add")
+    public String addProduct(@ModelAttribute Product product, BindingResult bindingResult, Principal principal,
+                             RedirectAttributes redirectAttributes, Model model) {
         if (principal != null) {
-            UserEntity currentUser = userService.findByUsername(principal.getName());
-            product.setUserEntity(currentUser);
+            User currentUser = userService.findByUsername(principal.getName());
+            product.setUser(currentUser);
         }
 
-        //검증 오류 결과를 보관
-        Map<String, String> errors = new HashMap<>();
+
         //검증 로직
         if (!StringUtils.hasText(product.getProductName())) {
-            errors.put("productName", "상품 이름은 필수입니다.");
+            bindingResult.rejectValue("productName","required");
+        }
+        if (product.getPrice() == null || product.getPrice() < 1000 || product.getPrice() > 1000000) {
+            bindingResult.rejectValue("price","range", new Object[]{1000,100000},null);
         }
         if (!StringUtils.hasText(product.getDescription())) {
-            errors.put("description", "상품 설명은 필수입니다.");
+            bindingResult.rejectValue("description","required");
         }
         if (product.getSalesRegions().isEmpty()) {
-            errors.put("salesRegions", "판매 지역은 필수입니다.");
-        }
-        if (product.getPrice() == null || product.getPrice() < 1000 || product.getPrice() >
-                1000000) {
-            errors.put("price", "가격은 1,000 ~ 1,000,000 까지 허용합니다.");
+            bindingResult.rejectValue("salesRegions","required");
         }
         if (product.getStock() == null || product.getStock() > 9999) {
-            errors.put("stock", "수량은 최대 9,999 까지 허용합니다.");
+            bindingResult.rejectValue("stock","max", new Object[]{99999},null);
         }
         //특정 필드가 아닌 복합 룰 검증
         if (product.getPrice() != null && product.getStock() != null) {
             long resultPrice = product.getPrice() * product.getStock();
             if (resultPrice < 10000) {
-                errors.put("globalError", "가격 * 수량의 합은 10,000원 이상이어야 합니다. 현재값 = " + resultPrice);
+                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice},null);
+                bindingResult.addError(new ObjectError("product", "가격 * 수량의 합은 10,000원 이상이어야 합니다. 현재값 = " + resultPrice));
             }
         }
         //검증에 실패하면 다시 입력 폼으로
-        if (!errors.isEmpty()) {
-            model.addAttribute("errors", errors);
-            model.addAttribute("product", product);
+        if (bindingResult.hasErrors()) {
+            log.info("bindingResult = {}", bindingResult);
             List<SalesRegion> list = Arrays.asList(SalesRegion.values());
             model.addAttribute("allSalesRegions", list);
+            model.addAttribute("product", product);
             return "product/productAdd";
-        } else {
-            productService.saveProduct(product);
-            return "redirect:/products";
         }
+
+        Product savedProduct = productService.saveProduct(product);
+        redirectAttributes.addAttribute("productId", savedProduct.getProductID());
+        redirectAttributes.addAttribute("status", true);
+
+        return "redirect:/product/{productId}";
+
     }
 
-    @GetMapping("/products")
+    @GetMapping("/product/{productId}")
+    public String productDetail(@PathVariable(value = "productId") Long productId, Model model) {
+        Optional<Product> product = productService.findById(productId);
+        if (product.isEmpty()) {
+            //오류
+        } else {
+            model.addAttribute("product", product.get());
+        }
+        return "product/details";
+    }
+
+
+    @GetMapping("/product/list")
     public String showProductList(Model model) {
-        List<ProductEntity> products = productService.findAllProducts();
+        List<Product> products = productService.findAllProducts();
         model.addAttribute("products", products);
         return "product/products";
     }

@@ -1,7 +1,6 @@
 package com.bulkpurchase.domain.dto;
 
-import com.bulkpurchase.domain.entity.UserEntity;
-import org.springframework.context.annotation.Bean;
+import com.bulkpurchase.domain.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,10 +10,10 @@ import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final UserEntity userEntity;
+    private final User user;
 
-    public CustomUserDetails(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public CustomUserDetails(User user) {
+        this.user = user;
     }
 
     @Override
@@ -26,7 +25,7 @@ public class CustomUserDetails implements UserDetails {
 
             @Override
             public String getAuthority() {
-                return userEntity.getRole();
+                return user.getRole();
             }
         });
 
@@ -35,12 +34,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return userEntity.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return userEntity.getUsername();
+        return user.getUsername();
     }
 
     // 계정의 만료

@@ -1,13 +1,11 @@
 package com.bulkpurchase.domain.repository;
 
-import com.bulkpurchase.domain.entity.UserEntity;
+import com.bulkpurchase.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    UserEntity findByEmail(String email);
-    UserEntity findByUsername(String username);
+public interface UserRepository extends JpaRepository<User, Long> {
+    User findByEmail(String email);
+    User findByUsername(String username);
 
     boolean existsByUsername(String username);
 

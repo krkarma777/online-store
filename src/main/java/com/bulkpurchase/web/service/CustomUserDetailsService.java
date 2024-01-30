@@ -1,7 +1,7 @@
 package com.bulkpurchase.web.service;
 
 import com.bulkpurchase.domain.dto.CustomUserDetails;
-import com.bulkpurchase.domain.entity.UserEntity;
+import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }

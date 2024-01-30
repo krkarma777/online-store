@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.users;
 
-import com.bulkpurchase.domain.entity.UserEntity;
+import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.repository.UserRepository;
 import com.bulkpurchase.domain.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
-import java.util.Date;
 
 @Controller
 @Slf4j
@@ -31,7 +30,7 @@ public class MyPageController {
 
     @GetMapping("/mypage")
     public String myPageForm(Model model, Principal principal) {
-        UserEntity user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName());
 
         model.addAttribute("user", user);
         return "users/myPage";
@@ -39,17 +38,17 @@ public class MyPageController {
 
     @GetMapping("/mypage/edit")
     public String userEditForm(Model model, Principal principal) {
-        UserEntity user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName());
         model.addAttribute("user", user);
         return "users/edit";
     }
     @PostMapping("/mypage/update")
-    public String userEditForm(@ModelAttribute UserEntity user, Principal principal) {
+    public String userEditForm(@ModelAttribute User user, Principal principal) {
         log.info("user = {}" , user);
 
         String password = user.getPassword();
         String email = user.getEmail();
-        UserEntity existingUser = userService.findByUsername(principal.getName());
+        User existingUser = userService.findByUsername(principal.getName());
 
         // 비밀번호가 비어 있지 않으면 해시 처리
         if (password != null && !password.isEmpty()) {

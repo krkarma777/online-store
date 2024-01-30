@@ -10,7 +10,7 @@ import java.util.Date;
 @Table(name = "Subscriptions")
 @Getter
 @Setter
-public class SubscriptionEntity {
+public class Subscription {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +18,7 @@ public class SubscriptionEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID", nullable = false)
-    private UserEntity userEntity;
+    private User user;
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
