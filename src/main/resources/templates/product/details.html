@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            margin-top: 20px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+        }
+        .card-img-top {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            height: 300px;
+            object-fit: cover;
+        }
+        .card-title {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .card-text {
+            font-size: 1.1em;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .price {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+
+
+<div class="container mt-5">
+    <div class="card">
+        <img th:src="${product.imageURL}" class="card-img-top" alt="Product Image">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${product.productName}">Product Name</h5>
+            <p class="card-text" th:text="${product.description}">Description</p>
+            <p class="card-text"><strong>Price:</strong> <span class="price" th:text="${product.price}">Price</span></p>
+            <p class="card-text"><strong>Stock:</strong> <span th:text="${product.stock}">Stock</span></p>
+            <a href="#" class="btn btn-primary">Order Now</a>
+            <!-- 수정하기 버튼 추가 -->
+            <a th:href="@{/product/edit/{id}(id=${product.productID})}" class="btn btn-secondary">Edit</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
