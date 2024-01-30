@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import com.bulkpurchase.domain.entity.Product;
@@ -50,9 +51,8 @@ public class ProductController {
 
 
         //검증 로직
-        if (!StringUtils.hasText(product.getProductName())) {
-            bindingResult.rejectValue("productName","required");
-        }
+        ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult, "productName","required");
+
         if (product.getPrice() == null || product.getPrice() < 1000 || product.getPrice() > 1000000) {
             bindingResult.rejectValue("price","range", new Object[]{1000,100000},null);
         }
