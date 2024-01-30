@@ -2,7 +2,7 @@ package com.bulkpurchase.domain.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.bulkpurchase.domain.entity.Product;
+import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.repository.ProductRepository;
 
 import java.util.List;

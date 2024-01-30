@@ -1,5 +1,6 @@
 package com.bulkpurchase.domain.entity;
 
+import com.bulkpurchase.domain.entity.product.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

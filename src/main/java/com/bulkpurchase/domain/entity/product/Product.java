@@ -1,6 +1,7 @@
-package com.bulkpurchase.domain.entity;
+package com.bulkpurchase.domain.entity.product;
 
 
+import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -20,29 +21,30 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
+    @NotNull(groups =  UpdateCheck.class)
     private Long productID;
 
-    @NotEmpty
+    @NotEmpty(groups = {SaveCheck.class, UpdateCheck.class})
     @Column(nullable = false, length = 100)
     private String productName;
 
-    @NotEmpty
+    @NotEmpty(groups = {SaveCheck.class, UpdateCheck.class})
     @Column(length = 500)
     private String description;
 
-    @NotNull
+    @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
     @Column(nullable = false)
-    @Range(min = 1000, max = 1000000)
+    @Range(min = 1000, max = 1000000, groups = {SaveCheck.class})
     private Long price;
 
-    @NotNull
+    @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
     @Column(nullable = false)
     private Integer stock;
 
     @Column(length = 200)
     private String imageURL;
 
+    @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID")
     private User user;

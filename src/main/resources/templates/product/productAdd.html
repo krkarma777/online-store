@@ -21,7 +21,7 @@
 
 <div class="container my-4">
     <h2 th:text="#{page.addProduct}">상품 등록</h2>
-    <form th:action="@{/product/add}" th:object="${product}" method="post" class="row g-3">
+    <form th:action="@{/product/add}" th:object="${product}" method="post" class="row g-3" enctype="multipart/form-data">
 
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
@@ -88,6 +88,12 @@
         <div class="col-12">
             <button type="submit" class="btn btn-primary" th:text="#{page.addProduct}">상품 등록</button>
         </div>
+
+        <div class="col-md-6">
+            <label for="image" class="form-label">이미지 업로드</label>
+            <input type="file" name="image" class="form-control" id="image">
+        </div>
+
     </form>
 </div>
 

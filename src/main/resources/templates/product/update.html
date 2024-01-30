@@ -5,7 +5,14 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-        /* 여기에 필요한 스타일 추가 */
+        .container {
+            max-width: 560px;
+        }
+
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -13,43 +20,42 @@
 
 <div class="container mt-5">
     <h2>Edit Product</h2>
-    <form th:action="@{/product/edit/{productId}(productId=${product.productID})}" th:object="${product}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/product/update/{productId}(productId=${product.productID})}" th:object="${product}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="productID" th:field="*{productID}" th:value="*{productID}">
         <input type="hidden" name="user" th:field="*{user}" th:value="*{user}">
         <input type="hidden" name="salesRegions" th:field="*{salesRegions}" th:value="*{salesRegions}">
 
         <div class="form-group">
-            <label for="productName">Product Name</label>
-            <input type="text" th:field="*{productName}" class="form-control" id="productName" placeholder="Enter product name">
+            <label for="productName" th:text="#{label.product.name}">Product Name</label>
+            <input type="text" th:field="*{productName}" th:errorclass="field-error" class="form-control" id="productName" placeholder="Enter product name">
         </div>
         <div class="field-error" th:errors="*{productName}">
             상품명 오류
         </div>
         <div class="form-group">
-            <label for="description">Description</label>
-            <textarea th:field="*{description}" class="form-control" id="description" rows="3" placeholder="Enter description"></textarea>
+            <label for="description" th:text="#{label.product.description}">Description</label>
+            <textarea th:field="*{description}" th:errorclass="field-error" class="form-control" id="description" rows="3" placeholder="Enter description"></textarea>
         </div>
         <div class="field-error" th:errors="*{description}">
             상품명 오류
         </div>
         <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" th:field="*{price}" class="form-control" id="price" placeholder="Enter price">
+            <label for="price" th:text="#{label.product.price}">Price</label>
+            <input type="number" th:field="*{price}" th:errorclass="field-error" class="form-control" id="price" placeholder="Enter price">
         </div>
         <div class="field-error" th:errors="*{price}">
             상품명 오류
         </div>
         <div class="form-group">
-            <label for="stock">Stock</label>
-            <input type="number" th:field="*{stock}" class="form-control" id="stock" placeholder="Enter stock">
+            <label for="stock" th:text="#{label.product.stock}">Stock</label>
+            <input type="number" th:field="*{stock}" th:errorclass="field-error" class="form-control" id="stock" placeholder="Enter stock">
         </div>
         <div class="field-error" th:errors="*{stock}">
             상품명 오류
         </div>
-        <div class="form-group">
-            <label for="imageURL">Image URL</label>
-            <input type="text" th:field="*{imageURL}" class="form-control" id="imageURL" placeholder="Enter image URL">
-        </div>
+        <label for="image">Image</label>
+        <input type="file" class="form-control" id="image" name="image">
+        <input type="hidden" th:field="*{imageURL}" th:value="*{imageURL}">
         <!-- 다른 필드들 추가 -->
         <button type="submit" class="btn btn-primary">Update Product</button>
     </form>

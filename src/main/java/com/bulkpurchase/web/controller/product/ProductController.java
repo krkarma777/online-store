@@ -1,8 +1,11 @@
 package com.bulkpurchase.web.controller.product;
 
-import com.bulkpurchase.domain.entity.Product;
+import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.entity.product.SaveCheck;
+import com.bulkpurchase.domain.entity.product.UpdateCheck;
 import com.bulkpurchase.domain.enums.SalesRegion;
+import com.bulkpurchase.domain.service.ImageStorageService;
 import com.bulkpurchase.domain.service.ProductService;
 import com.bulkpurchase.domain.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -29,6 +31,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final UserService userService;
+    private final ImageStorageService imageStorageService;
 
     @GetMapping("/product/add")
     public String showRegistrationForm(Model model) {
@@ -39,8 +42,8 @@ public class ProductController {
     }
 
     @PostMapping("/product/add")
-    public String addProduct(@Validated @ModelAttribute Product product, BindingResult bindingResult, Principal principal,
-                             RedirectAttributes redirectAttributes, Model model) {
+    public String addProduct(@Validated(SaveCheck.class) @ModelAttribute Product product, BindingResult bindingResult, Principal principal,
+                             RedirectAttributes redirectAttributes, Model model, @RequestParam("image") MultipartFile image) {
         if (principal != null) {
             User currentUser = userService.findByUsername(principal.getName());
             product.setUser(currentUser);
@@ -55,6 +58,13 @@ public class ProductController {
             model.addAttribute("allSalesRegions", list);
             model.addAttribute("product", product);
             return "product/productAdd";
+        }
+
+        log.info("image1={}", image);
+        // 이미지 처리
+        if (!image.isEmpty()) {
+            String imageUrl = imageStorageService.store(image);
+            product.setImageURL(imageUrl);
         }
 
         Product savedProduct = productService.saveProduct(product);
@@ -84,7 +94,7 @@ public class ProductController {
         return "product/products";
     }
 
-    @GetMapping("/product/edit/{productId}")
+    @GetMapping("/product/update/{productId}")
     public String editForm(@PathVariable(value = "productId") Long productId, Model model) {
         Optional<Product> product = productService.findById(productId);
         if (product.isEmpty()) {
@@ -92,17 +102,26 @@ public class ProductController {
         } else {
             model.addAttribute("product", product.get());
         }
-        return "product/edit";
+        return "product/update";
     }
 
-    @PostMapping("/product/edit/{productId}")
-    public String editSave(@ModelAttribute @Validated Product product, BindingResult bindingResult,@PathVariable(value = "productId") Long productId, Model model) {
+    @PostMapping("/product/update/{productId}")
+    public String updateSave(@ModelAttribute @Validated(UpdateCheck.class) Product product, BindingResult bindingResult,
+                             @PathVariable(value = "productId") Long productId, Model model,@RequestParam("image") MultipartFile image) {
         log.info("product = {}" , product);
         if (bindingResult.hasErrors()) {
             List<SalesRegion> list = Arrays.asList(SalesRegion.values());
             model.addAttribute("allSalesRegions", list);
             model.addAttribute("product", product);
-            return "product/edit";
+            return "product/update";
+        }
+
+        log.info("image1={}", image);
+        // 이미지 처리
+        if (!image.isEmpty()) {
+            imageStorageService.delete(product.getImageURL());
+            String imageUrl = imageStorageService.store(image);
+            product.setImageURL(imageUrl);
         }
 
         Product savedProduct = productService.saveProduct(product);

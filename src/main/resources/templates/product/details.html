@@ -47,7 +47,7 @@
 
 <div class="container mt-5">
     <div class="card">
-        <img th:src="${product.imageURL}" class="card-img-top" alt="Product Image">
+        <img th:src="@{'/images/' + ${product.imageURL}}" class="card-img-top" alt="Product Image">
         <div class="card-body">
             <h5 class="card-title" th:text="${product.productName}">Product Name</h5>
             <p class="card-text" th:text="${product.description}">Description</p>
@@ -55,7 +55,7 @@
             <p class="card-text"><strong>Stock:</strong> <span th:text="${product.stock}">Stock</span></p>
             <a href="#" class="btn btn-primary">Order Now</a>
             <!-- 수정하기 버튼 추가 -->
-            <a th:href="@{/product/edit/{id}(id=${product.productID})}" class="btn btn-secondary">Edit</a>
+            <a th:href="@{/product/update/{id}(id=${product.productID})}" class="btn btn-secondary">Edit</a>
         </div>
     </div>
 </div>

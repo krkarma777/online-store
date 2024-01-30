@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.service.validator;
 
-import com.bulkpurchase.domain.entity.Product;
+import com.bulkpurchase.domain.entity.product.Product;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
