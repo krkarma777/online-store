@@ -17,10 +17,8 @@
         <tr>
             <th th:text="#{label.product.id}">ID</th>
             <th th:text="#{label.product.name}">상품명</th>
-            <th th:text="#{label.product.description}">설명</th>
             <th th:text="#{label.product.price}">가격</th>
             <th th:text="#{label.product.stock}">재고</th>
-            <th th:text="#{label.product.imageURL}">이미지 URL</th>
             <th th:text="#{label.product.userId}">판매자</th>
             <th th:text="#{label.product.region}">판매 지역</th>
             <th>행동</th>
@@ -30,10 +28,8 @@
         <tr th:each="product : ${products}">
             <td th:text="${product.productID}"></td>
             <td th:text="${product.productName}"></td>
-            <td th:text="${product.description}"></td>
             <td th:text="${product.price}"></td>
             <td th:text="${product.stock}"></td>
-            <td th:text="${product.imageURL}"></td>
             <td th:text="${product.user.username}"></td>
             <td>
                 <span th:each="region : ${product.salesRegions}" th:text="${region}"></span>

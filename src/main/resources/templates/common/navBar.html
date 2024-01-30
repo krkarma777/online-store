@@ -26,17 +26,17 @@
             <ul class="navbar-nav">
                 <!-- 로그인 상태가 아닐 경우에만 로그인 링크를 보여줌 -->
                 <li class="nav-item" th:if="${!isAuthenticated}">
-                    <a class="nav-link" href="login">로그인</a>
+                    <a class="nav-link" href="/login">로그인</a>
                 </li>
                 <li class="nav-item" th:if="${isAuthenticated}">
-                    <a class="nav-link" href="mypage">마이페이지</a>
+                    <a class="nav-link" href="/mypage">마이페이지</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="register" th:if="${!isAuthenticated}">회원가입</a>
+                    <a class="nav-link" href="/register" th:if="${!isAuthenticated}">회원가입</a>
                 </li>
                 <!-- 로그인 상태일 경우에만 로그아웃 링크를 보여줌 -->
                 <li class="nav-item" th:if="${isAuthenticated}">
-                    <a class="nav-link" href="logout">로그아웃</a>
+                    <a class="nav-link" href="/logout">로그아웃</a>
                 </li>
 
             </ul>
