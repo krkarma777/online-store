@@ -13,22 +13,38 @@
 
 <div class="container mt-5">
     <h2>Edit Product</h2>
-    <form th:action="@{/product/edit}" th:object="${product}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/product/edit/{productId}(productId=${product.productID})}" th:object="${product}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="productID" th:field="*{productID}" th:value="*{productID}">
+        <input type="hidden" name="user" th:field="*{user}" th:value="*{user}">
+        <input type="hidden" name="salesRegions" th:field="*{salesRegions}" th:value="*{salesRegions}">
+
         <div class="form-group">
             <label for="productName">Product Name</label>
             <input type="text" th:field="*{productName}" class="form-control" id="productName" placeholder="Enter product name">
+        </div>
+        <div class="field-error" th:errors="*{productName}">
+            상품명 오류
         </div>
         <div class="form-group">
             <label for="description">Description</label>
             <textarea th:field="*{description}" class="form-control" id="description" rows="3" placeholder="Enter description"></textarea>
         </div>
+        <div class="field-error" th:errors="*{description}">
+            상품명 오류
+        </div>
         <div class="form-group">
             <label for="price">Price</label>
             <input type="number" th:field="*{price}" class="form-control" id="price" placeholder="Enter price">
         </div>
+        <div class="field-error" th:errors="*{price}">
+            상품명 오류
+        </div>
         <div class="form-group">
             <label for="stock">Stock</label>
             <input type="number" th:field="*{stock}" class="form-control" id="stock" placeholder="Enter stock">
+        </div>
+        <div class="field-error" th:errors="*{stock}">
+            상품명 오류
         </div>
         <div class="form-group">
             <label for="imageURL">Image URL</label>

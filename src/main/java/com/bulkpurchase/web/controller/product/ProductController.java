@@ -95,20 +95,19 @@ public class ProductController {
         return "product/edit";
     }
 
-    @PostMapping("/product/edit")
-    public String editSave(@ModelAttribute @Validated Product product, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+    @PostMapping("/product/edit/{productId}")
+    public String editSave(@ModelAttribute @Validated Product product, BindingResult bindingResult,@PathVariable(value = "productId") Long productId, Model model) {
+        log.info("product = {}" , product);
         if (bindingResult.hasErrors()) {
             List<SalesRegion> list = Arrays.asList(SalesRegion.values());
             model.addAttribute("allSalesRegions", list);
             model.addAttribute("product", product);
-            return "product/edit/"+product.getProductID();
+            return "product/edit";
         }
 
         Product savedProduct = productService.saveProduct(product);
-        redirectAttributes.addAttribute("productId", savedProduct.getProductID());
-        redirectAttributes.addAttribute("status", true);
 
-        return "redirect:/product/{productId}";
+        return "redirect:/product/" +productId;
     }
 
 
