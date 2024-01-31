@@ -47,7 +47,11 @@
 
 <div class="container mt-5">
     <div class="card">
-        <img th:src="@{'/images/' + ${product.imageURL}}" class="card-img-top" alt="Product Image">
+        <div th:if="${product.imageUrls != null}">
+            <div th:each="url : ${product.imageUrls}">
+                <img th:src="@{'/images/' + ${url}}" class="card-img-top" alt="Product Image">
+            </div>
+        </div>
         <div class="card-body">
             <h5 class="card-title" th:text="${product.productName}">Product Name</h5>
             <p class="card-text" th:text="${product.description}">Description</p>

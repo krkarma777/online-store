@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -41,9 +42,6 @@ public class Product {
     @Column(nullable = false)
     private Integer stock;
 
-    @Column(length = 200)
-    private String imageURL;
-
     @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID")
@@ -55,6 +53,11 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private Set<SalesRegion> salesRegions = new HashSet<>();
 
+    @ElementCollection
+    @CollectionTable(name = "product_image_urls", joinColumns = @JoinColumn(name = "productID"))
+    @Column(name = "imageUrl")
+    private List<String> imageUrls;
+
     @Override
     public String toString() {
         return "Product{" +
@@ -63,7 +66,7 @@ public class Product {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", stock=" + stock +
-                ", imageURL='" + imageURL + '\'' +
+                ", imageURL='" + imageUrls + '\'' +
                 ", user=" + user +
                 ", salesRegions=" + salesRegions +
                 '}';

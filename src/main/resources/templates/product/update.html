@@ -14,6 +14,88 @@
             color: #dc3545;
         }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script th:inline="javascript">
+        $(document).ready(function () {
+            var uploadedImages = /*[[${product.imageUrls}]]*/ []; // Thymeleaf로부터 이미지 URL 리스트 초기화
+
+
+            // 초기 이미지 리스트 로드
+            function loadInitialImageList() {
+                // 서버에서 가져온 이미지 URL 리스트를 사용하여 초기화
+                // 예: uploadedImages = ['image1.jpg', 'image2.jpg', ...]; ${product.imageUrls}
+                updateImageList();
+            }
+
+            $("#image").change(function () {
+                const formData = new FormData();
+                formData.append('image', $('#image')[0].files[0]);
+
+                $.ajax({
+                    url: '/upload-image',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        var imageUrl = data.imageUrl;
+
+                        // 중복된 이미지가 없다면 배열에 추가
+                        if (imageUrl !=null && !uploadedImages.includes(imageUrl)) {
+                            uploadedImages.push(imageUrl);
+                            addHiddenInput(imageUrl);
+                        }
+                        updateImageList();
+                    },
+                    error: function (xhr, status, error) {
+                        // 오류 처리
+                        alert("이미지 업로드 실패: " + error);
+                    }
+                });
+            });
+            // 업로드한 이미지 리스트를 업데이트하는 함수
+
+            function updateImageList() {
+                $('#file-list').empty();
+                uploadedImages.forEach(function(imageUrl, index) {
+                    $('#file-list').append(
+                        '<li><img src="/images/' + imageUrl + '" style="width: 100px; height: auto;">' +
+                        '<button onclick="removeImage(\'' + imageUrl + '\')">Remove</button></li>'
+                    );
+
+                });
+            }
+            function addHiddenInput(imageUrl) {
+                var input = $('<input>').attr({
+                    type: 'hidden',
+                    name: 'imageUrls',
+                    value: imageUrl
+                });
+
+                // 폼에 input 필드 추가
+                $('form').append(input);
+            }
+            // 이미지를 리스트에서 제거하는 함수
+            window.removeImage = function(imageUrl) {
+                uploadedImages = uploadedImages.filter(function(url) {
+                    return url !== imageUrl;
+                });
+                updateImageList();
+            }
+
+            // 페이지 로드 시 초기 이미지 리스트 로드
+            loadInitialImageList();
+
+            // 폼 제출 이벤트 핸들러
+            $('form').on('submit', function() {
+                $('input[name="imageUrls"]').each(function() {
+                    if (!this.value || this.value.trim() === '') {
+                        $(this).remove(); // 무효한 필드 제거
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
@@ -37,29 +119,42 @@
             <textarea th:field="*{description}" th:errorclass="field-error" class="form-control" id="description" rows="3" placeholder="Enter description"></textarea>
         </div>
         <div class="field-error" th:errors="*{description}">
-            상품명 오류
+            description 오류
         </div>
         <div class="form-group">
             <label for="price" th:text="#{label.product.price}">Price</label>
             <input type="number" th:field="*{price}" th:errorclass="field-error" class="form-control" id="price" placeholder="Enter price">
         </div>
         <div class="field-error" th:errors="*{price}">
-            상품명 오류
+            price 오류
         </div>
         <div class="form-group">
             <label for="stock" th:text="#{label.product.stock}">Stock</label>
             <input type="number" th:field="*{stock}" th:errorclass="field-error" class="form-control" id="stock" placeholder="Enter stock">
         </div>
         <div class="field-error" th:errors="*{stock}">
-            상품명 오류
+            stock 오류
         </div>
-        <label for="image">Image</label>
-        <input type="file" class="form-control" id="image" name="image">
-        <input type="hidden" th:field="*{imageURL}" th:value="*{imageURL}">
+        <div class="form-group">
+            <label for="image">Images</label>
+            <div id="image-list">
+                <!-- 기존 이미지 목록을 표시하고, 각 이미지에 삭제 버튼을 제공 -->
+                <div th:each="imageUrl : ${product.imageUrls}">
+                    <img th:src="@{'/images/' + ${imageUrl}}" style="width: 100px; height: auto;"/>
+                    <button type="button" onclick="removeImage('${imageUrl}')">Remove</button>
+                </div>
+            </div>
+
+        </div>
+
         <!-- 다른 필드들 추가 -->
         <button type="submit" class="btn btn-primary">Update Product</button>
+
+        <input type="file" class="form-control" id="image" name="image" multiple>
+        <!-- 숨겨진 input 필드를 여기에 동적으로 추가 -->
     </form>
 </div>
+
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -50,6 +52,18 @@ public class ImageStorageService {
             return filename;
         } catch (IOException e) {
             throw new RuntimeException("Failed to store file", e);
+        }
+    }
+
+    public List<String> listAllFiles() {
+        try {
+            return Files.walk(this.rootLocation, 1)
+                    .filter(path -> !path.equals(this.rootLocation))
+                    .map(this.rootLocation::relativize)
+                    .map(Path::toString)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read stored files", e);
         }
     }
 }

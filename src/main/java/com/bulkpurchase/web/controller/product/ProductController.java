@@ -43,7 +43,7 @@ public class ProductController {
 
     @PostMapping("/product/add")
     public String addProduct(@Validated(SaveCheck.class) @ModelAttribute Product product, BindingResult bindingResult, Principal principal,
-                             RedirectAttributes redirectAttributes, Model model, @RequestParam("image") MultipartFile image) {
+                             RedirectAttributes redirectAttributes, Model model) {
         if (principal != null) {
             User currentUser = userService.findByUsername(principal.getName());
             product.setUser(currentUser);
@@ -58,13 +58,6 @@ public class ProductController {
             model.addAttribute("allSalesRegions", list);
             model.addAttribute("product", product);
             return "product/productAdd";
-        }
-
-        log.info("image1={}", image);
-        // 이미지 처리
-        if (!image.isEmpty()) {
-            String imageUrl = imageStorageService.store(image);
-            product.setImageURL(imageUrl);
         }
 
         Product savedProduct = productService.saveProduct(product);
@@ -107,21 +100,13 @@ public class ProductController {
 
     @PostMapping("/product/update/{productId}")
     public String updateSave(@ModelAttribute @Validated(UpdateCheck.class) Product product, BindingResult bindingResult,
-                             @PathVariable(value = "productId") Long productId, Model model,@RequestParam("image") MultipartFile image) {
+                             @PathVariable(value = "productId") Long productId, Model model) {
         log.info("product = {}" , product);
         if (bindingResult.hasErrors()) {
             List<SalesRegion> list = Arrays.asList(SalesRegion.values());
             model.addAttribute("allSalesRegions", list);
             model.addAttribute("product", product);
             return "product/update";
-        }
-
-        log.info("image1={}", image);
-        // 이미지 처리
-        if (!image.isEmpty()) {
-            imageStorageService.delete(product.getImageURL());
-            String imageUrl = imageStorageService.store(image);
-            product.setImageURL(imageUrl);
         }
 
         Product savedProduct = productService.saveProduct(product);
