@@ -1,8 +1,12 @@
 package com.bulkpurchase.web.controller.users;
 
 import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.entity.product.Product;
+import com.bulkpurchase.domain.repository.ProductRepository;
 import com.bulkpurchase.domain.repository.UserRepository;
-import com.bulkpurchase.domain.service.UserService;
+import com.bulkpurchase.web.service.ProductService;
+import com.bulkpurchase.web.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -12,25 +16,25 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class MyPageController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
-    public MyPageController(UserService userService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final ProductService productService;
 
     @GetMapping("/mypage")
     public String myPageForm(Model model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
+        List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
+
+        model.addAttribute("products", productsList);
 
         model.addAttribute("user", user);
         return "users/myPage";
@@ -60,7 +64,7 @@ public class MyPageController {
         }
 
 
-        userRepository.save(user);
+        userService.save(user);
         return "redirect:/mypage";
     }
 }

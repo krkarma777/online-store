@@ -1,5 +1,6 @@
-package com.bulkpurchase.domain.service;
+package com.bulkpurchase.web.service;
 
+import com.bulkpurchase.domain.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.bulkpurchase.domain.entity.product.Product;
@@ -29,4 +30,9 @@ public class ProductService {
     public Optional<Product> findById(Long productId) {
         return productRepository.findById(productId);
     }
+
+    public List<Product> findByUserOrderByProductIDDesc(User user) {
+        return productRepository.findByUserOrderByProductIDDesc(user);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.bulkpurchase.domain.entity;
 
+import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -52,4 +53,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<SalesRegion> salesRegions = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Product> products = new HashSet<>();
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>상품 목록</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-img-top {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+<div class="container mt-4">
+    <h2 class="mb-4">상품 목록</h2>
+    <div class="row">
+        <!-- 모든 상품을 반복 표시 -->
+        <div th:each="product : ${products}" class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-img-container">
+                    <img th:src="${product.imageUrls != null and !product.imageUrls.isEmpty() ?
+                                  '/images/' + product.imageUrls[0] :
+                                  '/images/default.jpg'}"
+                         class="card-img-top"
+                         alt="Product Image">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${product.productName}">상품명</h5>
+                    <p class="card-text" th:text="${product.description}">상품 설명</p>
+                    <a th:href="@{'/product/' + ${product.productID}}" class="btn btn-primary">자세히 보기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

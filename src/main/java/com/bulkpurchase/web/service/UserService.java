@@ -1,9 +1,11 @@
-package com.bulkpurchase.domain.service;
+package com.bulkpurchase.web.service;
 
 import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -15,4 +17,11 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public Optional<User> findByUserid(Long userId) {
+        return userRepository.findById(userId);
+    }
 }

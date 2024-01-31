@@ -6,8 +6,8 @@ import com.bulkpurchase.domain.entity.product.SaveCheck;
 import com.bulkpurchase.domain.entity.product.UpdateCheck;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import com.bulkpurchase.domain.service.ImageStorageService;
-import com.bulkpurchase.domain.service.ProductService;
-import com.bulkpurchase.domain.service.UserService;
+import com.bulkpurchase.web.service.ProductService;
+import com.bulkpurchase.web.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -15,8 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -114,5 +112,16 @@ public class ProductController {
         return "redirect:/product/" +productId;
     }
 
+    @GetMapping("/products/{userId}")
+    public String productsByUser(@PathVariable(value = "userId") Long userId, Model model) {
+        Optional<User> byUserid = userService.findByUserid(userId);
+        User user = null;
+        if (byUserid.isPresent()) {
+            user = byUserid.get();
+        }
+        List<Product> products = productService.findByUserOrderByProductIDDesc(user);
+        model.addAttribute("products", products);
+        return "product/productsByUser";
+    }
 
 }

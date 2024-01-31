@@ -12,19 +12,23 @@
             padding: 20px;
             margin-bottom: 20px;
         }
+
         .user-info-title, .sales-regions-title {
             color: #495057;
             margin-bottom: 15px;
             border-bottom: 2px solid #0d6efd;
             padding-bottom: 10px;
         }
+
         .user-info p, .sales-regions ul {
             font-size: 1.1em;
         }
+
         .sales-regions ul {
             list-style-type: none;
             padding-left: 0;
         }
+
         .sales-regions ul li:before {
             content: "\2022";
             color: #0d6efd;
@@ -33,8 +37,33 @@
             width: 1em;
             margin-left: -1em;
         }
+        .card-img-top {
+            width: 100%; /* 너비를 컨테이너에 맞춤 */
+            height: 200px; /* 높이 고정 */
+            object-fit: contain; /* 이미지 비율을 유지하며 컨테이너를 채움 */
+        }
+        .card {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        .card-img-container {
+            flex: 0 0 200px; /* 이미지 컨테이너의 너비 고정 */
+            height: 200px; /* 이미지 컨테이너의 높이 고정 */
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .card-body {
+            flex: 1; /* 카드 내용이 남은 공간을 채우도록 설정 */
+        }
+        .products-title {
+            margin-bottom: 20px;
+        }
     </style>
-<link rel="stylesheet" type="text/css" href="/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
@@ -50,12 +79,32 @@
         <a href="/mypage/edit" class="btn btn-primary">정보 수정</a>
     </div>
 
-    <div class="sales-regions">
-        <h3 class="sales-regions-title">판매 지역</h3>
-        <ul>
-            <li th:each="region : ${user.salesRegions}" th:text="${region}"></li>
-        </ul>
-        <a href="/mypage/edit/regions" class="btn btn-primary">지역 수정</a>
+
+    <!-- 상품 목록 섹션 -->
+    <div class="products">
+        <h3 class="products-title">내 상품 목록</h3>
+        <div class="row">
+            <!-- 최근 등록된 상품 5개만 반복 표시 -->
+            <div th:each="product, iterStat : ${products}" th:if="${iterStat.count <= 4}" class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-img-container">
+                        <!-- 첫 번째 이미지 URL 사용 -->
+                        <img th:src="${product.imageUrls != null and !product.imageUrls.isEmpty() ?
+                          '/images/' + product.imageUrls[0] :
+                          '/images/default.jpg'}"
+                             class="card-img-top"
+                             alt="Product Image">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${product.productName}">상품명</h5>
+                        <p class="card-text" th:text="${product.description}">상품 설명</p>
+                        <a th:href="@{'/product/' + ${product.productID}}" class="btn btn-primary">자세히 보기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- '더보기' 링크 -->
+        <a th:href="@{'/products/' + ${user.userID}}"  class="btn btn-secondary mt-3">더보기</a>
     </div>
 </div>
 
