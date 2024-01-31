@@ -1,23 +1,19 @@
-package com.bulkpurchase.web.service;
+package com.bulkpurchase.domain.service.user;
 
 import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class RegisterService {
 
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public RegisterService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Transactional
     public User registerProcess(User newUser) {

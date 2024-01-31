@@ -1,6 +1,7 @@
-package com.bulkpurchase.web.service;
+package com.bulkpurchase.domain.service;
 
 import com.bulkpurchase.domain.entity.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.bulkpurchase.domain.entity.product.Product;
@@ -10,14 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
-
-    @Autowired
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
 
     public Product saveProduct(Product product) {
         return productRepository.save(product);

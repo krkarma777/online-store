@@ -1,12 +1,9 @@
 package com.bulkpurchase.config;
 
-import com.bulkpurchase.web.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -21,8 +18,8 @@ public class SecurityConfig {
                         (authorize) -> authorize
                                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 정적 리소스 허용
                                 .requestMatchers("/register", "/registerProc", "/login", "/loginProc", "/").permitAll()
-                                .requestMatchers("/mypage","/mypage/update" , "/mypage/edit").authenticated()
-                                .requestMatchers("/my/**", "/productAdd").hasAnyRole("판매자", "관리자")
+                                .requestMatchers("/mypage","/mypage/update" , "/mypage/edit" ,"/cart", "/cart/add").authenticated()
+                                .requestMatchers("/product/add").hasAnyRole("판매자", "관리자")
                                 .requestMatchers("/admin").hasRole("관리자")
                                 .requestMatchers("/*").permitAll()
                                 .anyRequest().authenticated()

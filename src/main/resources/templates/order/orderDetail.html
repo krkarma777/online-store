@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>주문 상세</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h2 class="mb-3">주문 상세</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">주문 정보</div>
+        <div class="card-body">
+            <p><strong>주문 번호:</strong> <span th:text="${order.orderID}"></span></p>
+            <p><strong>주문 날짜:</strong> <span th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd')}"></span></p>
+            <p><strong>총 가격:</strong> <span th:text="${order.totalPrice}"></span></p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">주문 상품</div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>제품명</th>
+                    <th>수량</th>
+                    <th>가격</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="detail : ${orderDetails}">
+                    <td th:text="${detail.product.productName}"></td>
+                    <td th:text="${detail.quantity}"></td>
+                    <td th:text="${detail.price}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">결제 정보</div>
+        <div class="card-body">
+            <p><strong>결제 방법:</strong> <span th:text="${payment.paymentMethod}"></span></p>
+            <p><strong>결제 금액:</strong> <span th:text="${payment.amount}"></span></p>
+            <p><strong>결제 날짜:</strong> <span th:text="${#dates.format(payment.paymentDate, 'yyyy-MM-dd')}"></span></p>
+        </div>
+    </div>
+
+    <a href="/" class="btn btn-primary">홈으로 돌아가기</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -2,10 +2,8 @@ package com.bulkpurchase.web.controller.users;
 
 import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.entity.product.Product;
-import com.bulkpurchase.domain.repository.ProductRepository;
-import com.bulkpurchase.domain.repository.UserRepository;
-import com.bulkpurchase.web.service.ProductService;
-import com.bulkpurchase.web.service.UserService;
+import com.bulkpurchase.domain.service.ProductService;
+import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

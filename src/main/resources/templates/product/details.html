@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Product Details</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
         body {
@@ -57,8 +57,18 @@
             <p class="card-text" th:text="${product.description}">Description</p>
             <p class="card-text"><strong>Price:</strong> <span class="price" th:text="${product.price}">Price</span></p>
             <p class="card-text"><strong>Stock:</strong> <span th:text="${product.stock}">Stock</span></p>
+            <!-- 주문 버튼 -->
             <a href="#" class="btn btn-primary">Order Now</a>
-            <!-- 수정하기 버튼 추가 -->
+
+            <!-- 수정 버튼 -->
+            <a th:href="@{/product/update/{id}(id=${product.productID})}" class="btn btn-secondary">Edit</a>
+
+            <!-- 카트에 추가 버튼 -->
+            <form th:action="@{/cart/add}" method="post">
+                <input type="hidden" name="productID" th:value="${product.productID}" />
+                <input type="hidden" name="quantity" value="1" /> <!-- 기본 수량 1, 필요에 따라 수정 -->
+                <button type="submit" class="btn btn-success">Add to Cart</button>
+            </form>
             <a th:href="@{/product/update/{id}(id=${product.productID})}" class="btn btn-secondary">Edit</a>
         </div>
     </div>
@@ -66,6 +76,6 @@
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 </body>
 </html>

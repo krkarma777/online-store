@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.service;
+package com.bulkpurchase.domain.service.user;
 
 import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.repository.UserRepository;
