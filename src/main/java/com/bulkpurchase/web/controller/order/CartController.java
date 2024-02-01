@@ -94,6 +94,24 @@ public class CartController {
         return ResponseEntity.ok("선택한 상품들이 삭제되었습니다.");
     }
 
+    @PostMapping("/update")
+    public ResponseEntity<?> updateItem(@RequestParam(value = "itemId") Long itemId,
+                                                 @RequestParam(value = "quantity") Integer quantity,
+                                                 Principal principal) {
+
+        if (principal == null) return createErrorResponse(HttpStatus.UNAUTHORIZED, "사용자 인증이 필요합니다.");
+
+        Optional<CartItem> byId = cartItemService.findById(itemId);
+        if (byId.isEmpty()) {
+            return createErrorResponse(HttpStatus.NOT_FOUND, "해당 아이템이 존재하지 않습니다.");
+        } else {
+            CartItem cartItem = byId.get();
+            cartItem.setQuantity(quantity);
+            cartItemService.saveCartItem(cartItem);
+            return ResponseEntity.ok("수정되었습니다.");
+        }
+    }
+
     private ResponseEntity<?> createErrorResponse(HttpStatus status, String message) {
         return ResponseEntity.status(status).body(message);
     }
