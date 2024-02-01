@@ -24,4 +24,8 @@ public class CartService {
             return cartRepository.save(newCart); // 새 장바구니 저장
         }
     }
+
+    public Optional<Cart> findByUser(User user) {
+        return cartRepository.findByUser(user);
+    }
 }

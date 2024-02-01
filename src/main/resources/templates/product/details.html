@@ -64,17 +64,44 @@
             <a th:href="@{/product/update/{id}(id=${product.productID})}" class="btn btn-secondary">Edit</a>
 
             <!-- 카트에 추가 버튼 -->
-            <form th:action="@{/cart/add}" method="post">
+            <form id="add-to-cart-form" th:action="@{/cart/add}" method="post">
                 <input type="hidden" name="productID" th:value="${product.productID}" />
-                <input type="hidden" name="quantity" value="1" /> <!-- 기본 수량 1, 필요에 따라 수정 -->
-                <button type="submit" class="btn btn-success">Add to Cart</button>
-            </form>
-            <a th:href="@{/product/update/{id}(id=${product.productID})}" class="btn btn-secondary">Edit</a>
+                <input type="number" name="quantity" value="1" /> <!-- 기본 수량 1, 필요에 따라 수정 -->
+                <button type="button" class="btn btn-success">Add to Cart</button>
+            </form>545
         </div>
     </div>
 </div>
+<!-- 표준 jQuery 라이브러리로 교체 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#add-to-cart-form").on('submit', function(e) {
+            e.preventDefault(); // 폼 기본 제출 막기
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(), // 폼 데이터를 직렬화
+                success: function(data) {
+                    alert("장바구니에 담겼습니다."); // 성공 알림
+                },
+                error: function(xhr, status, error) {
+                    alert("Error adding product to cart!"); // 에러 알림
+                }
+            });
+        });
+
+        // '카트에 추가' 버튼의 클릭 이벤트를 직접 바인딩
+        $("#add-to-cart-form button").click(function() {
+            $("#add-to-cart-form").submit();
+        });
+    });
+</script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 </body>

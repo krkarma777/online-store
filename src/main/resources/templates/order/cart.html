@@ -17,20 +17,24 @@
                 <th>가격</th>
                 <th>수량</th>
                 <th>합계</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item : ${cart.items}">
-                <td><input type="checkbox" th:name="itemId" th:value="${item.cartItemID}"/></td>
+            <tr th:each="item : ${cart.items}" th:id="'item-' + ${item.cartItemID}">
+            <td><input type="checkbox" th:name="itemId" th:value="${item.cartItemID}"/></td>
                 <td th:text="${item.product.productName}">상품명</td>
                 <td th:text="${item.product.price}">가격</td>
                 <td><input type="number" th:name="quantity" th:value="${item.quantity}" min="1"/></td>
                 <td th:text="${item.quantity * item.product.price}">합계</td>
+                <td>
+                    <button type="button" class="delete-btn" th:attr="data-itemid=${item.cartItemID}">삭제</button>
+                </td>
             </tr>
             </tbody>
         </table>
         <button type="submit" class="btn btn-primary">수량 수정</button>
-        <button type="submit" formaction="@{/cart/delete}" class="btn btn-danger">선택 삭제</button>
+        <button type="button" class="btn btn-danger" onclick="deleteSelectedItems()">선택 삭제</button>
         <button type="submit" formaction="@{/checkout}" class="btn btn-success">결제하기</button>
     </form>
 </div>
@@ -40,9 +44,57 @@
         $("#checkAll").click(function(){
             $("input[type='checkbox']").prop('checked', $(this).prop('checked'));
         });
-    });
-</script>
 
+        $('.delete-btn').on('click', function() {
+            var itemId = $(this).data('itemid'); // 'data-itemid' 속성에서 itemId를 가져옵니다.
+            deleteCartItem(itemId);
+        });
+    });
+
+
+    function deleteCartItem(itemId) {
+        $.ajax({
+            url: '/cart/delete',
+            type: 'POST',
+            data: { itemId: itemId },
+            success: function(response) {
+                // 삭제 성공 시 페이지에서 해당 항목 제거
+                // 예: $('#item-' + itemId).remove();
+                alert('상품이 삭제되었습니다.');
+                $('#item-' + itemId).remove();
+            },
+            error: function(xhr, status, error) {
+                // 에러 처리, 서버로부터의 응답을 바탕으로 메시지를 표시
+                var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '삭제 중 오류가 발생했습니다.';
+                alert('삭제 중 오류가 발생했습니다.');
+            }
+        });
+    }
+
+    function deleteSelectedItems() {
+        var selectedItems = [];
+        $("input[name='itemId']:checked").each(function() {
+            selectedItems.push($(this).val());
+        });
+
+        $.ajax({
+            url: '/cart/deleteSelected',
+            type: 'POST',
+            traditional: true,
+            data: { itemIds: selectedItems },
+            success: function(response) {
+                // 성공 처리
+                alert('선택된 상품이 삭제되었습니다.');
+                location.reload(); // 페이지 새로고침
+            },
+            error: function(error) {
+                // 실패 처리
+                alert('삭제 중 오류가 발생했습니다.');
+            }
+        });
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>

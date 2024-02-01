@@ -34,11 +34,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/register" th:if="${!isAuthenticated}">회원가입</a>
                 </li>
-                <!-- 로그인 상태일 경우에만 로그아웃 링크를 보여줌 -->
+                <li class="nav-item" th:if="${isAuthenticated}">
+                    <a class="nav-link" href="/cart">장바구니</a>
+                </li>
                 <li class="nav-item" th:if="${isAuthenticated}">
                     <a class="nav-link" href="/logout">로그아웃</a>
                 </li>
-
             </ul>
         </div>
     </div>
