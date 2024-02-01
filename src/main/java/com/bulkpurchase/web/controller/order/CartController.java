@@ -45,7 +45,17 @@ public class CartController {
 
         User user = userService.findByUsername(principal.getName());
         Cart cart = cartService.cartFindOrCreate(user);
-        cartItemService.saveCartItem(new CartItem(cart, productOpt.get(), quantity));
+
+        // 장바구니에서 해당 상품 검색
+        List<CartItem> existingItems = cartItemService.findByCartAndProduct(cart, productOpt.get());
+
+        if (!existingItems.isEmpty()) {
+            CartItem existingItem = existingItems.get(0);
+            existingItem.setQuantity(existingItem.getQuantity() + quantity);
+            cartItemService.saveCartItem(existingItem);
+        } else {
+            cartItemService.saveCartItem(new CartItem(cart, productOpt.get(), quantity));
+        }
         return ResponseEntity.ok("상품이 장바구니에 추가되었습니다.");
     }
 

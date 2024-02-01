@@ -1,6 +1,8 @@
 package com.bulkpurchase.domain.service.cart;
 
+import com.bulkpurchase.domain.entity.Cart;
 import com.bulkpurchase.domain.entity.CartItem;
+import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.repository.cart.CartItemRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,4 +34,9 @@ public class CartItemService {
     public Optional<CartItem> findById(Long itemId) {
         return cartItemRepository.findById(itemId);
     }
+
+    public List<CartItem> findByCartAndProduct(Cart cart, Product product) {
+        return cartItemRepository.findByCartAndProduct(cart, product);
+    }
+
 }
