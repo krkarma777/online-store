@@ -36,7 +36,7 @@ public class Product {
     @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
     @Column(nullable = false)
     @Range(min = 1000, max = 1000000, groups = {SaveCheck.class})
-    private Long price;
+    private Double price;
 
     @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
     @Column(nullable = false)

@@ -1,5 +1,6 @@
 package com.bulkpurchase.domain.service.user;
 
+import com.bulkpurchase.config.AppConfig;
 import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,15 @@ public class RegisterService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    public RegisterService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Transactional
     public User registerProcess(User newUser) {
+        System.out.println("userRepository = " + userRepository);
         if (userRepository.existsByUsername(newUser.getUsername())) {
             throw new IllegalStateException("이미 사용중인 사용자명입니다.");
         }

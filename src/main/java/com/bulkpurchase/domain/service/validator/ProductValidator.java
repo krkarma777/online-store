@@ -36,7 +36,7 @@ public class ProductValidator implements Validator {
         }
         //특정 필드가 아닌 복합 룰 검증
         if (product.getPrice() != null && product.getStock() != null) {
-            long resultPrice = product.getPrice() * product.getStock();
+            double resultPrice = product.getPrice() * product.getStock();
             if (resultPrice < 10000) {
                 errors.reject("totalPriceMin", new Object[]{10000, resultPrice},null);
             }

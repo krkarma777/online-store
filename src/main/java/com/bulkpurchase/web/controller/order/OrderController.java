@@ -1,5 +1,6 @@
 package com.bulkpurchase.web.controller.order;
 
+import com.bulkpurchase.domain.dto.OrderViewModel;
 import com.bulkpurchase.domain.entity.*;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.service.ProductService;
@@ -53,6 +54,7 @@ public class OrderController {
                                @RequestParam("cartID") Long cartID,
                                Principal principal, Model model) {
 
+        // 주문 생성
         User user = userService.findByUsername(principal.getName());
         Map<Long, Integer> productIdQuantityMap = new HashMap<>();
         Order order = orderService.saveOrder(user, totalPrice);
@@ -67,17 +69,29 @@ public class OrderController {
 
         // 결제 정보 생성
         Payment payment = getPayment(totalPrice, paymentMethod, order);
-
-
+        
         // 결제 정보 저장
         Payment savedPayment = paymentService.save(payment);
-
         model.addAttribute("savedPayment", savedPayment);
 
+        // 카트 삭제
         cartService.deleteById(cartID);
 
         return "order/orderSuccess";
     }
+
+    @GetMapping("list")
+    public String orderList(Model model, Principal principal) {
+        try {
+            User user = userService.findByUsername(principal.getName());
+            List<OrderViewModel> orderViewModels = orderService.getOrderViewModelsByUser(user);
+            model.addAttribute("orderViewModels", orderViewModels);
+            return "order/orders";
+        } catch (Exception e) {
+            return "error/400";
+        }
+    }
+
 
     private void paramIter(HttpServletRequest request, Map<Long, Integer> productIdQuantityMap) {
         Enumeration<String> params = request.getParameterNames();
@@ -97,6 +111,7 @@ public class OrderController {
             Long productId = entry.getKey();
             Optional<Product> productOpt = productService.findById(productId);
             if (productOpt.isPresent()) {
+                // 수정해야함
                 Product product = productOpt.get();
                 Integer quantity = entry.getValue();
                 OrderDetail orderDetail = orderDetailService.save(order, product, quantity);

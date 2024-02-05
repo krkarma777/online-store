@@ -7,6 +7,8 @@ import com.bulkpurchase.domain.repository.order.OrderDetailRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class OrderDetailService {
@@ -19,6 +21,11 @@ public class OrderDetailService {
         orderDetail.setOrder(order);
         orderDetail.setQuantity(quantity);
         orderDetail.setProduct(product);
+        System.out.println("orderDetail = " + orderDetail);
         return orderDetailRepository.save(orderDetail);
+    }
+
+    public List<OrderDetail> findByOrder(Order order) {
+        return orderDetailRepository.findByOrder(order);
     }
 }

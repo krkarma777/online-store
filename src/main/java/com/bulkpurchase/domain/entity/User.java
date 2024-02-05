@@ -19,22 +19,22 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userid")
+    @Column
     private Long userID;
 
-    @Column(name = "username", nullable = false, length = 50, unique = true)
+    @Column(nullable = false, length = 50, unique = true)
     private String username;
 
-    @Column(name = "email", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String password;
 
-    @Column(name = "role", length = 20)
+    @Column(length = 20)
     private String role;
 
-    @Column(name = "usergrade", length = 20)
+    @Column(length = 20)
     private String userGrade;
 
     @PrePersist
@@ -42,7 +42,7 @@ public class User {
         createDate = new Date();
     }
 
-    @Column(name = "createdate")
+    @Column
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createDate;
