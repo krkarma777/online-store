@@ -58,7 +58,6 @@
         <input type="hidden" name="totalPrice" id="hiddenTotalPrice" value="0">
         <button type="submit" class="btn btn-primary">주문하기</button>
     </form>
-    <button id="payWithPayPal" type="button" class="btn btn-primary">페이팔로 결제하기</button>
 </div>
 <script>
     $(document).ready(function() {
@@ -84,31 +83,6 @@
         }
     });
 
-    $('#payWithPayPal').click(function(e) {
-        e.preventDefault();
-        const paypalUrl = 'https://www.sandbox.paypal.com/checkoutnow?token=sb-b5rqd29080304';
-        const popup = window.open(paypalUrl, 'paypalWindow', 'width=800,height=600');
-
-        const redirectOnSuccess = 'your_redirect_url_on_success';
-        const checkPaymentStatus = function() {
-            $.ajax({
-                url: '/check-payment-status',
-                method: 'GET',
-                success: function(data) {
-                    if (data.paymentStatus === 'COMPLETED') {
-                        window.location.href = redirectOnSuccess;
-                    }
-                }
-            });
-        };
-
-        const paymentCheckInterval = setInterval(function() {
-            if (popup.closed) {
-                clearInterval(paymentCheckInterval);
-                checkPaymentStatus();
-            }
-        }, 1000);
-    });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
