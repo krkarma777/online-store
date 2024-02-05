@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-
+    
     public Order saveOrder(User user, Double totalPrice) {
         Order order = new Order();
         order.setUser(user);

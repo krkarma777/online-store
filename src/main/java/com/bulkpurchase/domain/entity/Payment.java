@@ -29,4 +29,8 @@ public class Payment {
 
     @Column(length = 50)
     private String paymentMethod;
+
+    // 결제 상태 필드 추가
+    @Column(length = 20, nullable = false)
+    private String status; // 예: "APPROVED", "CANCELLED", "PENDING", etc.
 }
