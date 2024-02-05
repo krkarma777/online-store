@@ -26,4 +26,14 @@ public class Order {
 
     @Column(nullable = false)
     private Double totalPrice;
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderID=" + orderID +
+                ", user=" + user +
+                ", orderDate=" + orderDate +
+                ", totalPrice=" + totalPrice +
+                '}';
+    }
 }

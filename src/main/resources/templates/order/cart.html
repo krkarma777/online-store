@@ -47,9 +47,11 @@
             </tr>
             </tbody>
         </table>
+        <input type="hidden" id="cartId" name="cartId" th:value="${cart.cartID}"/>
         <button type="button" class="btn btn-danger" onclick="deleteSelectedItems()">선택 삭제</button>
-        <button type="submit" formaction="@{/checkout}" class="btn btn-success">결제하기</button>
     </form>
+
+    <button type="button" onclick="submitFormWithCartId()" class="btn btn-success">결제하기</button>
     <div class="cart-summary">
         <div class="subtotal">상품가격: <span id="subtotal">0</span>원</div>
         <div class="discount">할인금액: <span id="discount">0</span>원</div>
@@ -61,6 +63,14 @@
 </div>
 
 <script>
+
+    function submitFormWithCartId() {
+
+        var cartId = document.getElementById('cartId').value;
+        var form = document.querySelector('form'); // form을 정확히 선택하도록 셀렉터를 조정하세요.
+        form.action = '/order/' + cartId;
+        form.submit();
+    }
     // 아이템의 가격, 할인, 배송비를 업데이트하는 함수
     function updateCartSummary() {
         var subtotal = 0;

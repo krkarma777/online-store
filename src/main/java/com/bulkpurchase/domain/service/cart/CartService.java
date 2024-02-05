@@ -5,11 +5,13 @@ import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.repository.cart.CartRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CartService {
 
     private final CartRepository cartRepository;
@@ -25,7 +27,15 @@ public class CartService {
         }
     }
 
+
     public Optional<Cart> findByUser(User user) {
         return cartRepository.findByUser(user);
+    }
+    public Optional<Cart> findById(Long cartID) {
+        return cartRepository.findById(cartID);
+    }
+
+    public void deleteById(Long id) {
+        cartRepository.deleteById(id);
     }
 }

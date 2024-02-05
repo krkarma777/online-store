@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>주문 성공</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+<div class="container mt-4">
+    <h2>주문 완료</h2>
+    <div class="alert alert-success" role="alert">
+        주문이 성공적으로 처리되었습니다. 주문 번호: <span th:text="${order.orderID}"></span>
+    </div>
+
+    <div class="order-details">
+        <h3>주문 상세</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>제품명</th>
+                <th>수량</th>
+                <th>가격</th>
+                <th>합계</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="detail : ${orderDetails}">
+                <td th:text="${detail.product.productName}"></td>
+                <td th:text="${detail.quantity}"></td>
+                <td th:text="${detail.product.price}"></td>
+                <td th:text="${order.totalPrice}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="payment-info">
+        <h3>결제 정보</h3>
+        <p><strong>결제 방식:</strong> <span th:text="${savedPayment.paymentMethod}"></span></p>
+        <p><strong>결제 일자:</strong> <span th:text="${#dates.format(savedPayment.paymentDate, 'yyyy-MM-dd')}"></span></p>
+        <p><strong>결제 금액:</strong> <span th:text="${savedPayment.amount}"></span>원</p>
+    </div>
+
+    <div class="actions">
+        <a href="/" class="btn btn-primary">홈으로</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
