@@ -53,13 +53,33 @@ public class OrderController {
                                @RequestParam("cartID") Long cartID,
                                Principal principal, Model model) {
 
-        System.out.println("totalPrice = " + totalPrice);
         User user = userService.findByUsername(principal.getName());
         Map<Long, Integer> productIdQuantityMap = new HashMap<>();
         Order order = orderService.saveOrder(user, totalPrice);
         model.addAttribute("order", order);
 
         // 제품 ID와 수량 파싱
+        paramIter(request, productIdQuantityMap);
+
+        // 주문 항목 처리
+        List<OrderDetail> orderDetails = getOrderDetails(productIdQuantityMap, order);
+        model.addAttribute("orderDetails", orderDetails);
+
+        // 결제 정보 생성
+        Payment payment = getPayment(totalPrice, paymentMethod, order);
+
+
+        // 결제 정보 저장
+        Payment savedPayment = paymentService.save(payment);
+
+        model.addAttribute("savedPayment", savedPayment);
+
+        cartService.deleteById(cartID);
+
+        return "order/orderSuccess";
+    }
+
+    private void paramIter(HttpServletRequest request, Map<Long, Integer> productIdQuantityMap) {
         Enumeration<String> params = request.getParameterNames();
         while (params.hasMoreElements()) {
             String paramName = params.nextElement();
@@ -69,8 +89,9 @@ public class OrderController {
                 productIdQuantityMap.put(productId, quantity);
             }
         }
+    }
 
-        // 주문 항목 처리
+    private List<OrderDetail> getOrderDetails(Map<Long, Integer> productIdQuantityMap, Order order) {
         List<OrderDetail> orderDetails = new ArrayList<>();
         for (Map.Entry<Long, Integer> entry : productIdQuantityMap.entrySet()) {
             Long productId = entry.getKey();
@@ -82,23 +103,21 @@ public class OrderController {
                 orderDetails.add(orderDetail);
             }
         }
-        model.addAttribute("orderDetails", orderDetails);
+        return orderDetails;
+    }
 
-        // 결제 정보 생성
+    private Payment getPayment(Double totalPrice, String paymentMethod, Order order) {
         Payment payment = new Payment();
         payment.setOrder(order); // 주문 정보 설정
         payment.setPaymentDate(new Date()); // 현재 날짜로 결제일 설정
         payment.setAmount(totalPrice); // 폼에서 받은 총 가격 설정
         payment.setPaymentMethod(paymentMethod); // 폼에서 받은 결제 방식 설정
-
-        // 결제 정보 저장
-        Payment savedPayment = paymentService.save(payment);
-
-        model.addAttribute("savedPayment", savedPayment);
-
-        cartService.deleteById(cartID);
-
-        return "order/orderSuccess";
+        if (paymentMethod.equals("Credit Card") || paymentMethod.equals("Kakao Pay")) {
+            payment.setStatus("결제 완료");
+        } else if (paymentMethod.equals("Bank Transfer")) {
+            payment.setStatus("보류");
+        }
+        return payment;
     }
 
 }

@@ -18,7 +18,6 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user);
         order.setTotalPrice(totalPrice);
-        System.out.println("order = " + order);
         return orderRepository.save(order);
     }
 }
