@@ -12,6 +12,7 @@ import com.bulkpurchase.domain.service.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/order")
 @RequiredArgsConstructor
+@Slf4j
 public class OrderController {
     private final ProductService productService;
     private final CartService cartService;
@@ -42,7 +44,6 @@ public class OrderController {
         Set<CartItem> items = cart.getItems();
 
         model.addAttribute("cartID", cartID);
-        System.out.println("cartID = " + cartID);
         model.addAttribute("items", items);
         return "order/orderForm";
     }
@@ -52,19 +53,21 @@ public class OrderController {
                                @RequestParam("totalPrice") Double totalPrice,
                                @RequestParam("paymentMethod") String paymentMethod,
                                @RequestParam("cartID") Long cartID,
+                               @RequestParam("quantity") List<Integer> quantitys,
                                Principal principal, Model model) {
 
         // 주문 생성
         User user = userService.findByUsername(principal.getName());
-        Map<Long, Integer> productIdQuantityMap = new HashMap<>();
         Order order = orderService.saveOrder(user, totalPrice);
         model.addAttribute("order", order);
 
         // 제품 ID와 수량 파싱
-        paramIter(request, productIdQuantityMap);
+        Map<Long, Long> productIdMap = new HashMap<>();
+        paramIter(request, productIdMap);
+
 
         // 주문 항목 처리
-        List<OrderDetail> orderDetails = getOrderDetails(productIdQuantityMap, order);
+        List<OrderDetail> orderDetails = getOrderDetails(productIdMap, order, quantitys);
         model.addAttribute("orderDetails", orderDetails);
 
         // 결제 정보 생성
@@ -93,29 +96,28 @@ public class OrderController {
     }
 
 
-    private void paramIter(HttpServletRequest request, Map<Long, Integer> productIdQuantityMap) {
+    private void paramIter(HttpServletRequest request, Map<Long, Long> productIdQuantityMap) {
         Enumeration<String> params = request.getParameterNames();
         while (params.hasMoreElements()) {
             String paramName = params.nextElement();
             if (paramName.startsWith("product_")) {
-                Long productId = Long.valueOf(paramName.split("_")[1]);
-                Integer quantity = Integer.valueOf(request.getParameter(paramName));
-                productIdQuantityMap.put(productId, quantity);
+                Long index = Long.valueOf(paramName.split("_")[1]);
+                Long productId = Long.valueOf(request.getParameter(paramName));
+                productIdQuantityMap.put(index, productId);
             }
         }
     }
 
-    private List<OrderDetail> getOrderDetails(Map<Long, Integer> productIdQuantityMap, Order order) {
+    private List<OrderDetail> getOrderDetails(Map<Long, Long> productIdMap, Order order, List<Integer> quantitys) {
         List<OrderDetail> orderDetails = new ArrayList<>();
-        for (Map.Entry<Long, Integer> entry : productIdQuantityMap.entrySet()) {
-            Long productId = entry.getKey();
-            Optional<Product> productOpt = productService.findById(productId);
-            if (productOpt.isPresent()) {
-                // 수정해야함
-                Product product = productOpt.get();
-                Integer quantity = entry.getValue();
-                OrderDetail orderDetail = orderDetailService.save(order, product, quantity);
-                orderDetails.add(orderDetail);
+        for (Long value : productIdMap.values()) {
+            for (Integer quantity : quantitys) {
+                Optional<Product> productOpt = productService.findById(value);
+                if (productOpt.isPresent()) {
+                    Product product = productOpt.get();
+                    OrderDetail orderDetail = orderDetailService.save(order, product, quantity);
+                    orderDetails.add(orderDetail);
+                }
             }
         }
         return orderDetails;
