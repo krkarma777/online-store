@@ -24,22 +24,32 @@
                 </form>
             </ul>
             <ul class="navbar-nav">
-                <!-- 로그인 상태가 아닐 경우에만 로그인 링크를 보여줌 -->
+
                 <li class="nav-item" th:if="${!isAuthenticated}">
                     <a class="nav-link" href="/login">로그인</a>
                 </li>
-                <li class="nav-item" th:if="${isAuthenticated}">
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''자영업자'')')}">
                     <a class="nav-link" href="/mypage">마이페이지</a>
                 </li>
-                <li class="nav-item" th:if="${isAuthenticated}">
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''자영업자'')')}">
                     <a class="nav-link" href="/order/list">주문내역</a>
                 </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''자영업자'')')}">
+                    <a class="nav-link" href="/cart">장바구니</a>
+                </li>
+
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''판매자'')')}">
+                    <a class="nav-link" href="/seller">판매자페이지</a>
+                </li>
+
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''관리자'')')}">
+                    <a class="nav-link" href="/admin">관리자 페이지</a>
+                </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="/register" th:if="${!isAuthenticated}">회원가입</a>
                 </li>
-                <li class="nav-item" th:if="${isAuthenticated}">
-                    <a class="nav-link" href="/cart">장바구니</a>
-                </li>
+
                 <li class="nav-item" th:if="${isAuthenticated}">
                     <a class="nav-link" href="/logout">로그아웃</a>
                 </li>

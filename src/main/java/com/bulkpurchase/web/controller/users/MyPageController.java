@@ -29,7 +29,9 @@ public class MyPageController {
 
     @GetMapping("/mypage")
     public String myPageForm(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName());
+        User user = getUser(principal, "ROLE_자영업자");
+        if (user == null) return "error/403";
+
         List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
 
         model.addAttribute("products", productsList);
@@ -64,5 +66,39 @@ public class MyPageController {
 
         userService.save(user);
         return "redirect:/mypage";
+    }
+
+    @GetMapping("/seller")
+    public String sellerPageForm(Model model, Principal principal) {
+        User user = getUser(principal, "ROLE_판매자");
+        if (user == null) return "error/403";
+        List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
+
+        model.addAttribute("products", productsList);
+
+        model.addAttribute("user", user);
+        return "seller/sellerPage";
+    }
+
+
+    @GetMapping("/admin")
+    public String adminPageForm(Model model, Principal principal) {
+        User user = getUser(principal, "ROLE_관리자");
+        if (user == null) return "error/403";
+        List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
+
+        model.addAttribute("products", productsList);
+
+        model.addAttribute("user", user);
+        return "admin/adminPage";
+    }
+
+
+    private User getUser(Principal principal, String role) {
+        User user = userService.findByUsername(principal.getName());
+        if (!user.getRole().equals(role)) {
+            return null;
+        }
+        return user;
     }
 }

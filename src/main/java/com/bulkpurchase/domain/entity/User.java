@@ -29,17 +29,29 @@ public class User {
     private String email;
 
     @Column(nullable = false, length = 100)
+    private String realName; // 실제 이름 필드 추가
+
+    @Column(nullable = false, length = 100)
     private String password;
 
     @Column(length = 20)
     private String role;
 
     @Column(length = 20)
-    private String userGrade;
+    private String userGrade = "1"; // 기본값을 "1"로 설정
+
+    @Column(nullable = false, length = 20)
+    private String phoneNumber; // 휴대폰 번호 필드 추가
+
+    @Column(length = 255)
+    private String address; // 주소 필드 추가
 
     @PrePersist
     protected void onCreate() {
         createDate = new Date();
+        if (userGrade == null) { // userGrade가 null일 경우 기본값으로 "1" 설정
+            userGrade = "1";
+        }
     }
 
     @Column
