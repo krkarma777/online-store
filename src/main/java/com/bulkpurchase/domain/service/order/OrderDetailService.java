@@ -21,7 +21,7 @@ public class OrderDetailService {
         orderDetail.setOrder(order);
         orderDetail.setQuantity(quantity);
         orderDetail.setProduct(product);
-        orderDetail.setPrice(product.getPrice());
+        orderDetail.setPrice(product.getPrice()*quantity);
         return orderDetailRepository.save(orderDetail);
     }
 

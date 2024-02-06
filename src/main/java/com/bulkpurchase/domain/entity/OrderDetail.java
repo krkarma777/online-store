@@ -28,4 +28,10 @@ public class OrderDetail {
 
     @Column(nullable = false)
     private Double price;
+
+    @Column(nullable = true)
+    private String shippingCompany;
+
+    @Column(nullable = true)
+    private String shippingNumber;
 }
