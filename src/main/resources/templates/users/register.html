@@ -163,6 +163,7 @@
                                 <option value="ROLE_판매자">판매자</option>
                             </select>
                         </div>
+                        <input type="hidden" id="zipCode" name="zipCode">
                         <button type="submit" class="btn btn-primary btn-block">가입하기</button>
                     </form>
                 </div>
@@ -176,8 +177,11 @@
     function searchAddress() {
         new daum.Postcode({
             oncomplete: function(data) {
-                document.getElementById('address').value = data.address;
-                document.getElementById('detailAddress').focus();
+                // 우편번호와 주소를 입력 필드에 설정
+                document.getElementById('address').value = data.address; // 주소
+                document.getElementById('zipCode').value = data.zonecode; // 우편번호
+
+                document.getElementById('detailAddress').focus(); // 상세주소 필드로 포커스 이동
             }
         }).open();
     }

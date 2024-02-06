@@ -46,6 +46,12 @@ public class User {
     @Column(length = 255)
     private String address; // 주소 필드 추가
 
+    @Column(length = 255) // detailAddress 필드 추가
+    private String detailAddress; // 세부 주소 필드
+
+    @Column(length = 20) // 우편번호 필드 추가
+    private String zipCode; // 우편번호
+
     @PrePersist
     protected void onCreate() {
         createDate = new Date();
