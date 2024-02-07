@@ -1,56 +1,110 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>주문 목록 및 배송 조회</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>주문 목록 목업</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        body {
+            padding-top: 140px; /* 네비게이션 바의 높이보다 약간 더 큰 값 */
+        }
+        .order-container {
+            max-width: 768px;
+            margin: auto;
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .order-header div,
+        .order-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .order-date {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .order-list {
+            list-style: none;
+            padding: 0;
+        }
+        .order-item {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .order-item img {
+            width: 80px;
+            height: 80px;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+        .order-item-detail {
+            flex-grow: 1;
+        }
+        .order-item-actions {
+            text-align: right;
+        }
+        .order-item-actions button {
+            padding: 5px 10px;
+            margin-left: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .order-item-actions button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
-<div class="container mt-5">
-    <h2>주문 목록 및 배송 조회</h2>
-    <div class="mt-3">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>주문 번호</th>
-                <th>주문 날짜</th>
-                <th>총 가격</th>
-                <th>주문 상태</th>
-                <th>주문 상세 정보</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="order : ${orderViewModels}">
-                <td th:text="${order.orderID}"></td>
-                <td th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                <td th:text="${order.totalPrice}"></td>
-                <td th:text="${order.status}"></td>
-                <td>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>제품명</th>
-                            <th>수량</th>
-                            <th>가격</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="detail : ${order.orderDetails}">
-                            <td th:text="${detail.product.name}"></td>
-                            <td th:text="${detail.quantity}"></td>
-                            <td th:text="${detail.price}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+<div class="order-container">
+    <div class="order-header">
+        <div>최근 6개월</div>
+        <div>
+            <span>2024</span>
+            <span>2023</span>
+            <span>2022</span>
+            <span>2021</span>
+            <span>2020</span>
+            <span>2019</span>
+        </div>
+    </div>
+
+
+    <!-- 주문 목록 반복 -->
+    <div th:each="orderViewModel : ${orderViewModels}">
+        <div class="order-date" th:text="${#dates.format(orderViewModel.orderDate, 'yyyy. MM. dd')} + ' 주문'">2024. 1. 27 주문</div>
+        <ul class="order-list">
+            <!-- 주문 상세 목록 반복 -->
+            <li class="order-item" th:each="orderDetail : ${orderViewModel.orderDetails}">
+                <img th:src="${orderDetail.product.imageUrl}" alt="Product Image" />
+                <div class="order-item-detail">
+                    <div th:text="'상품명: ' + ${orderDetail.product.name}">상품명: 제품 A</div>
+                    <div th:text="'가격: ' + ${orderDetail.price} + '원'">가격: 4,100원</div>
+                    <div th:text="'수량: ' + ${orderDetail.quantity} + '개'">수량: 1개</div>
+                </div>
+                <div class="order-item-actions">
+                    <a th:href="@{/order/tracking(orderId=${orderViewModel.orderID})}"><button type="button">배송조회</button></a>
+                    <a th:href="@{/order/return(orderId=${orderViewModel.orderID})}"><button type="button">교환, 반품 신청</button></a>
+                    <a th:href="@{/review/write(productId=${orderDetail.product.productID})}"><button type="button">리뷰 작성하기</button></a>
+                </div>
+            </li>
+        </ul>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<div th:replace="~{common/footer :: footer1}"></div>
+<div th:replace="~{common/footer2 :: footer2}"></div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

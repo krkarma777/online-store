@@ -62,12 +62,12 @@ public class OrderController {
         model.addAttribute("order", order);
 
         // 제품 ID와 수량 파싱
-        Map<Long, Long> productIdMap = new HashMap<>();
-        paramIter(request, productIdMap);
+        Map<Long, Integer> productIdQuantityMap = new HashMap<>();
+        paramIter(request, productIdQuantityMap);
 
 
         // 주문 항목 처리
-        List<OrderDetail> orderDetails = getOrderDetails(productIdMap, order, quantitys);
+        List<OrderDetail> orderDetails = getOrderDetails(productIdQuantityMap, order);
         model.addAttribute("orderDetails", orderDetails);
 
         // 결제 정보 생성
@@ -96,28 +96,34 @@ public class OrderController {
     }
 
 
-    private void paramIter(HttpServletRequest request, Map<Long, Long> productIdQuantityMap) {
-        Enumeration<String> params = request.getParameterNames();
-        while (params.hasMoreElements()) {
-            String paramName = params.nextElement();
+    private void paramIter(HttpServletRequest request, Map<Long, Integer> productIdQuantityMap) {
+        Map<String, String[]> paramMap = request.getParameterMap();
+        for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
+            String paramName = entry.getKey();
             if (paramName.startsWith("product_")) {
-                Long index = Long.valueOf(paramName.split("_")[1]);
-                Long productId = Long.valueOf(request.getParameter(paramName));
-                productIdQuantityMap.put(index, productId);
+                try {
+                    Long productId = Long.valueOf(entry.getValue()[0]); // 상품 ID 추출
+                    Integer quantity = Integer.valueOf(request.getParameter("quantity")); // 해당 상품의 수량 추출
+                    productIdQuantityMap.put(productId, quantity);
+                } catch (NumberFormatException e) {
+                    log.error("상품 ID 또는 수량 파싱 오류", e);
+                }
             }
         }
     }
 
-    private List<OrderDetail> getOrderDetails(Map<Long, Long> productIdMap, Order order, List<Integer> quantitys) {
+
+    private List<OrderDetail> getOrderDetails(Map<Long, Integer> productIdQuantityMap, Order order) {
         List<OrderDetail> orderDetails = new ArrayList<>();
-        for (Long value : productIdMap.values()) {
-            for (Integer quantity : quantitys) {
-                Optional<Product> productOpt = productService.findById(value);
-                if (productOpt.isPresent()) {
-                    Product product = productOpt.get();
-                    OrderDetail orderDetail = orderDetailService.save(order, product, quantity);
-                    orderDetails.add(orderDetail);
-                }
+        for (Map.Entry<Long, Integer> entry : productIdQuantityMap.entrySet()) {
+            Long productId = entry.getKey();
+            Integer quantity = entry.getValue();
+
+            Optional<Product> productOpt = productService.findById(productId);
+            if (productOpt.isPresent()) {
+                Product product = productOpt.get();
+                OrderDetail orderDetail = orderDetailService.save(order, product, quantity);
+                orderDetails.add(orderDetail);
             }
         }
         return orderDetails;

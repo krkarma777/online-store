@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 목록 목업</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .order-container {
+            max-width: 768px;
+            margin: auto;
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .order-header div,
+        .order-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .order-date {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .order-list {
+            list-style: none;
+            padding: 0;
+        }
+        .order-item {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .order-item img {
+            width: 80px;
+            height: 80px;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+        .order-item-detail {
+            flex-grow: 1;
+        }
+        .order-item-actions {
+            text-align: right;
+        }
+        .order-item-actions button {
+            padding: 5px 10px;
+            margin-left: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .order-item-actions button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+<div class="order-container">
+    <div class="order-header">
+        <div>최근 6개월</div>
+        <div>
+            <span>2024</span>
+            <span>2023</span>
+            <span>2022</span>
+            <span>2021</span>
+            <span>2020</span>
+            <span>2019</span>
+        </div>
+    </div>
+
+    <div class="order-date" th:text="${#dates.format(orderViewModels.order.orderDate, 'yyyy. MM. dd') + ' 주문'}">2024. 1. 27 주문</div>
+    <ul class="order-list" th:each="order : ${orderViewModels}">
+        <li class="order-item" th:each="order : ${orderViewModels.}">
+            <img src="example-product1.jpg" alt="Product Image">
+            <div class="order-item-detail">
+                <div>상품명: 제품 A</div>
+                <div>가격: 4,100원</div>
+                <div>수량: 1개</div>
+            </div>
+            <div class="order-item-actions">
+                <button>배송조회</button>
+                <button>교환, 반품 신청</button>
+                <button>리뷰 작성하기</button>
+            </div>
+        </li>
+        <!-- 반복되는 상품 아이템 -->
+    </ul>
+</div>
+</body>
+</html>

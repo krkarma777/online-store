@@ -29,8 +29,9 @@ body, html {
     color: white;
     text-align: center;
     font-size: 10px;
-    padding-top: 10px; /* 패딩 조정 */
+    padding-top: 15px; /* 패딩 조정 */
     width: 100%;
+    padding-bottom: 10px;
 }
 
 

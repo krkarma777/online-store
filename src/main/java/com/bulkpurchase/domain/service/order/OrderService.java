@@ -44,18 +44,24 @@ public class OrderService {
     public List<OrderViewModel> getOrderViewModelsByUser(User user) {
         List<OrderViewModel> orderViewModels = new ArrayList<>();
 
-        List<Order> orders = orderRepository.findByUser(user);
+        List<Order> orders = orderRepository.findByUserOrderByOrderIDDesc(user);
         for (Order order : orders) {
             List<OrderDetail> orderDetails = orderDetailRepository.findByOrder(order);
 
             List<OrderDetailViewModel> orderDetailViewModels = new ArrayList<>();
             for (OrderDetail orderDetail : orderDetails) {
                 Product product = orderDetail.getProduct();
+                List<String> imageUrls = product.getImageUrls();
+                String imageUrl = null;
+                if (!imageUrls.isEmpty()) {
+                    imageUrl = imageUrls.get(0);
+                }
                 ProductViewModel productViewModel = new ProductViewModel(
                         product.getProductID(),
                         product.getProductName(),
                         product.getPrice(),
-                        product.getDescription()
+                        product.getDescription(),
+                        imageUrl
                 );
 
                 OrderDetailViewModel orderDetailViewModel = new OrderDetailViewModel(

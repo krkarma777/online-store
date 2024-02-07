@@ -59,11 +59,14 @@
     <!-- 주문 내역 섹션 -->
     <div class="order-history">
         <h3 class="order-history-title">주문 내역</h3>
-        <ul th:each="order : ${orders}">
-            <li th:text="'주문 # ' + ${order.orderID} + ' - ' + ${order.status}">주문 #12345 - 배송 중</li>
+        <ul>
+            <li th:each="order, status : ${orders}" th:if="${status.index < 5}"
+                th:text="'주문 # ' + ${order.orderID} + ' - ' + ${order.status} + ' - ' + ${#dates.format(order.orderDate, 'yyyy-MM-dd')}">주문 #12345 - 배송 중
+            </li>
         </ul>
         <a href="/order/list" class="btn btn-secondary">주문 내역 보기</a>
     </div>
+
 
     <!-- 좋아하는 상품 섹션 -->
     <div class="favorite-products">
