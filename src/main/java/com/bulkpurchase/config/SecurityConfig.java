@@ -20,7 +20,7 @@ public class SecurityConfig {
                                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll() // 정적 리소스 허용
                                 .requestMatchers("/register", "/registerProc", "/login", "/loginProc", "/").permitAll()
                                 .requestMatchers("/mypage","/mypage/update" , "/mypage/edit" ,"/cart/**").authenticated()
-                                .requestMatchers("/product/add").hasAnyRole("판매자", "관리자")
+                                .requestMatchers("/product/add", "/seller").hasAnyRole("판매자", "관리자")
                                 .requestMatchers("/admin").hasRole("관리자")
                                 .requestMatchers("/*").permitAll()
                                 .anyRequest().authenticated()
