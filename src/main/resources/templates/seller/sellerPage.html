@@ -14,7 +14,7 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="#">홈 <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link active" href="/">홈 <span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="#">제품 관리</a>
             <a class="nav-item nav-link" href="#">주문 관리</a>
             <a class="nav-item nav-link" href="#">리뷰 관리</a>
@@ -43,9 +43,9 @@
                     최신 주문
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">주문 #1234</li>
-                    <li class="list-group-item">주문 #1235</li>
-                    <li class="list-group-item">주문 #1236</li>
+                    <li class="list-group-item" th:each="orderDetail : ${orderDetailList}">
+                        <span th:text="'주문 #' + ${orderDetail.order.orderID} + ' - ' + ${orderDetail.product.productName}"></span>
+                    </li>
                 </ul>
             </div>
         </div>

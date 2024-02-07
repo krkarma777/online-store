@@ -2,6 +2,7 @@ package com.bulkpurchase.web.controller.users;
 
 import com.bulkpurchase.domain.dto.OrderViewModel;
 import com.bulkpurchase.domain.entity.Order;
+import com.bulkpurchase.domain.entity.OrderDetail;
 import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.service.ProductService;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -84,11 +87,18 @@ public class MyPageController {
     public String sellerPageForm(Model model, Principal principal) {
         User user = getUser(principal, "ROLE_판매자");
         if (user == null) return "error/403";
-        List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
+        model.addAttribute("user", user);
 
+        List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
         model.addAttribute("products", productsList);
 
-        model.addAttribute("user", user);
+        List<OrderDetail> orderDetailList = new ArrayList<>();
+        for (Product product : productsList) {
+            Optional<OrderDetail> orderDetailOpt = orderDetailService.findByProductOrderByOrderDetailIDDesc(product);
+            orderDetailOpt.ifPresent(orderDetailList::add);
+        }
+        model.addAttribute("orderDetailList", orderDetailList);
+
         return "seller/sellerPage";
     }
 
