@@ -1,3 +1,99 @@
 body {
     padding-top: 80px; /* 네비게이션 바의 높이보다 약간 더 큰 값 */
 }
+.navbar {
+    position: fixed; /* 추가: 고정 위치 설정 */
+    width: 100%; /* 추가: 화면 전체 너비로 설정 */
+    z-index: 2; /* 추가: 에디터보다 위에 나타나도록 설정 */
+    top: 0; /* 수정: 브라우저 상단에 고정 */
+}
+.logo {
+    width: auto;
+    height: 50px;
+}
+body, html {
+    height: 100%; /* 전체 높이를 100%로 설정 */
+    margin: 0; /* 기본 마진 제거 */
+}
+
+/* 메인 컨테이너 최소 높이 설정 */
+.container {
+    min-height: calc(100vh - 160px); /* 뷰포트 높이에서 헤더와 푸터의 높이를 제외한 값 */
+    padding-top: 80px; /* 네비게이션 바 높이에 맞춰 조정 */
+}
+
+/* 기존 .footer2 스타일에서 position 속성 제거 */
+.footer2 {
+    line-height : 0.2em;
+    background-color: #333; /* 진한 회색 */
+    color: white;
+    text-align: center;
+    font-size: 10px;
+    padding-top: 10px; /* 패딩 조정 */
+    width: 100%;
+}
+
+
+/* 푸터 스타일 */
+.footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    border-top: 1px solid #e7e7e7;
+    margin-top: 100px;
+}
+.footer .footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e7e7e7;
+    margin-bottom: 20px;
+}
+.footer ul {
+    list-style: none;
+    padding: 0;
+}
+.footer ul li a {
+    color: #007bff;
+    text-decoration: none;
+}
+.footer .footer-bottom {
+    text-align: center;
+}
+.footer .footer-bottom p {
+    margin: 0;
+    color: #666;
+}
+.footer .footer-bottom a {
+    color: #007bff;
+    text-decoration: none;
+}
+.footer ul li {
+    display: inline-block; /* 또는 display: inline; 사용 가능 */
+    margin-right: 15px; /* 요소들 사이의 간격을 조정합니다. */
+}
+.footer ul li {
+    display: inline-block; /* 또는 display: inline; 사용 가능 */
+    margin-right: 15px; /* 요소들 사이의 간격을 조정합니다. */
+    color: black; /* 글자 색상을 검은색으로 설정 */
+}
+
+/* 마지막 항목을 제외한 모든 li 요소 뒤에 세로선 추가 */
+.footer ul li:not(:last-child)::after {
+    content: "|";
+    margin-left: 15px;
+    color: black; /* 세로선의 색상 */
+}
+
+/* 링크 스타일 변경 */
+.footer ul li a {
+    color: black; /* 링크의 글자 색상을 검은색으로 변경 */
+    text-decoration: none; /* 언더라인 제거 */
+}
+
+.footer .footer-bottom a {
+    color: black; /* 푸터 하단 링크의 글자 색상을 검은색으로 변경 */
+    text-decoration: none; /* 언더라인 제거 */
+}
