@@ -2,6 +2,7 @@ package com.bulkpurchase.domain.entity.product;
 
 
 import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -58,18 +59,9 @@ public class Product {
     @Column(name = "imageUrl")
     private List<String> imageUrls;
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "productID=" + productID +
-                ", productName='" + productName + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                ", stock=" + stock +
-                ", imageURL='" + imageUrls + '\'' +
-                ", user=" + user +
-                ", salesRegions=" + salesRegions +
-                '}';
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20, columnDefinition = "varchar(20) default 'ACTIVE'")
+    private ProductStatus status = ProductStatus.ACTIVE;
+
 }
 

@@ -32,4 +32,8 @@ public class OrderDetailService {
     public Optional<OrderDetail> findByProductOrderByOrderDetailIDDesc(Product product) {
         return orderDetailRepository.findByProductOrderByOrderDetailIDDesc(product);
     }
+
+    public List<OrderDetail> findAll() {
+        return orderDetailRepository.findAll();
+    }
 }

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 관리</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{seller/common/navBar :: content}"></div>
+<div class="container mt-4">
+    <h2>주문 관리</h2>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>주문번호</th>
+                <th>상품명</th>
+                <th>수량</th>
+                <th>주문 상태</th>
+                <th>주문 날짜</th>
+                <th>작업</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="orderDetail : ${orderDetailList}">
+                <td th:text="${orderDetail.order.orderID}"></td>
+                <td th:text="${orderDetail.product.productName}"></td>
+                <td th:text="${orderDetail.quantity}"></td>
+                <td th:text="${orderDetail.order.status.getDescription()}"></td>
+                <td th:text="${#dates.format(orderDetail.order.orderDate, 'yyyy-MM-dd')}"></td>
+                <td>
+                    <a th:href="@{/orders/edit/{orderDetailID}(orderDetailID=${orderDetail.orderDetailID})}" class="btn btn-sm btn-secondary">상태 업데이트</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

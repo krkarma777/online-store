@@ -7,20 +7,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">판매자 대시보드</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="/">홈 <span class="sr-only">(current)</span></a>
-            <a class="nav-item nav-link" href="#">제품 관리</a>
-            <a class="nav-item nav-link" href="#">주문 관리</a>
-            <a class="nav-item nav-link" href="#">리뷰 관리</a>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{seller/common/navBar :: content}"></div>
 
 <div class="container mt-4">
     <h1>환영합니다, 판매자님!</h1>

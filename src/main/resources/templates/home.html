@@ -3,30 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <title>Main Page</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
 </head>
 <body>
+
 <div th:replace="~{common/navBar :: content}"></div>
 
 <div class="container mt-4">
-    <h1 class="text-center">Welcome to MyApp!</h1>
-    <p class="text-center">This is a simple main page using Thymeleaf and Bootstrap.</p>
-    <p class="text-center" th:text="'Today is: ' + ${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"></p>
+    <!-- 인기 상품 섹션 -->
+    <section class="popular-products">
+        <h2>인기 상품</h2>
+        <div class="row">
+            <!-- 상품 카드 예시, 실제 데이터로 반복 -->
+            <div class="col-md-4" th:each="product : ${popularProducts}">
+                <div class="card">
+                    <img th:src="@{${product.imageUrl}}" class="card-img-top" alt="Product Image">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${product.name}">상품명</h5>
+                        <p class="card-text" th:text="${product.description}">상품 설명</p>
+                        <a href="#" class="btn btn-primary">상세보기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Buttons for navigation -->
-    <div class="d-flex justify-content-center mt-4">
-        <a href="/product/add" class="btn btn-primary m-2">상품 등록</a>
-        <a href="/product/list" class="btn btn-success m-2">상품 목록</a>
-    </div>
+    <!-- 식품 카테고리 섹션 -->
+    <section class="food-categories mt-4">
+        <h2>식품 카테고리</h2>
+        <div class="row">
+            <!-- 카테고리 예시, 실제 카테고리로 반복 -->
+            <div class="col-md-3" th:each="category : ${foodCategories}">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${category.name}">카테고리명</h5>
+                        <p class="card-text" th:text="${category.description}">카테고리 설명</p>
+                        <a href="#" class="btn btn-secondary">카테고리 보기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 프로모션 및 이벤트 안내 -->
+    <section class="promotions mt-4">
+        <h2>프로모션 및 이벤트</h2>
+        <div class="row">
+            <div class="col">
+                <p>최신 프로모션과 이벤트 소식을 확인하세요.</p>
+                <!-- 이벤트 내용, Thymeleaf로 동적 생성 예정 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 고객 후기 및 평가 섹션 -->
+    <section class="customer-reviews mt-4">
+        <h2>고객 후기</h2>
+        <div class="row">
+            <div class="col">
+                <!-- 후기 내용, Thymeleaf로 동적 생성 예정 -->
+            </div>
+        </div>
+    </section>
 </div>
+
 <div th:replace="~{common/footer :: footer1}"></div>
 <div th:replace="~{common/footer2 :: footer2}"></div>
-<!-- Bootstrap JS -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

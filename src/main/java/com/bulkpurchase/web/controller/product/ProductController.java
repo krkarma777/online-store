@@ -4,6 +4,7 @@ import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.entity.product.SaveCheck;
 import com.bulkpurchase.domain.entity.product.UpdateCheck;
+import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import com.bulkpurchase.domain.service.ImageStorageService;
 import com.bulkpurchase.domain.service.ProductService;
@@ -99,7 +100,7 @@ public class ProductController {
     @PostMapping("/product/update/{productId}")
     public String updateSave(@ModelAttribute @Validated(UpdateCheck.class) Product product, BindingResult bindingResult,
                              @PathVariable(value = "productId") Long productId, Model model) {
-        log.info("product = {}" , product);
+        log.info("product = {}", product);
         if (bindingResult.hasErrors()) {
             List<SalesRegion> list = Arrays.asList(SalesRegion.values());
             model.addAttribute("allSalesRegions", list);
@@ -109,7 +110,7 @@ public class ProductController {
 
         Product savedProduct = productService.saveProduct(product);
 
-        return "redirect:/product/" +productId;
+        return "redirect:/product/" + productId;
     }
 
     @GetMapping("/products/{userId}")
@@ -124,4 +125,39 @@ public class ProductController {
         return "product/productsByUser";
     }
 
+    @GetMapping("/product/delete/{productID}")
+    public String deleteProduct(@PathVariable(value = "productID") Long productID, Principal principal) {
+        Optional<Product> byId = productService.findById(productID);
+        User user = userService.findByUsername(principal.getName());
+        if (byId.isPresent()) {
+            Product product = byId.get();
+            if (product.getUser().equals(user)) {
+                product.setStatus(ProductStatus.INACTIVE);
+                productService.saveProduct(product);
+                return "redirect:/seller/products";
+            } else {
+                return "error/403";
+            }
+        } else {
+            return "error/403";
+        }
+    }
+
+    @GetMapping("/product/reactivate/{productID}")
+    public String reactiveProduct(@PathVariable(value = "productID") Long productID, Principal principal) {
+        Optional<Product> byId = productService.findById(productID);
+        User user = userService.findByUsername(principal.getName());
+        if (byId.isPresent()) {
+            Product product = byId.get();
+            if (product.getUser().equals(user)) {
+                product.setStatus(ProductStatus.ACTIVE);
+                productService.saveProduct(product);
+                return "redirect:/seller/products";
+            } else {
+                return "error/403";
+            }
+        } else {
+            return "error/403";
+        }
+    }
 }
