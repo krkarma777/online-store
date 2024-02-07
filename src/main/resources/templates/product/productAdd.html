@@ -65,7 +65,7 @@
                 $('#file-list').empty();
                 uploadedImages.forEach(function(imageUrl, index) {
                     $('#file-list').append(
-                        '<li><img src="/images/' + imageUrl + '" style="width: 100px; height: auto;">' +
+                        '<li><img src=' + imageUrl + '"/img/" style="width: 100px; height: auto;">' +
                         '<button onclick="removeImage(\'' + imageUrl + '\')">Remove</button></li>'
                     );
 

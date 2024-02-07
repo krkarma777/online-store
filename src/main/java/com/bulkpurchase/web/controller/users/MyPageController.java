@@ -1,8 +1,12 @@
 package com.bulkpurchase.web.controller.users;
 
+import com.bulkpurchase.domain.dto.OrderViewModel;
+import com.bulkpurchase.domain.entity.Order;
 import com.bulkpurchase.domain.entity.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.service.ProductService;
+import com.bulkpurchase.domain.service.order.OrderDetailService;
+import com.bulkpurchase.domain.service.order.OrderService;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +31,10 @@ public class MyPageController {
 
     private final ProductService productService;
 
+    private final OrderService orderService;
+
+    private final OrderDetailService orderDetailService;
+
     @GetMapping("/mypage")
     public String myPageForm(Model model, Principal principal) {
         User user = getUser(principal, "ROLE_자영업자");
@@ -37,6 +45,10 @@ public class MyPageController {
         model.addAttribute("products", productsList);
 
         model.addAttribute("user", user);
+
+        List<OrderViewModel> orders = orderService.getOrderViewModelsByUser(user);
+        model.addAttribute("orders", orders);
+
         return "users/myPage";
     }
 

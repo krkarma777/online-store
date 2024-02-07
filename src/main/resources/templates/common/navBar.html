@@ -1,16 +1,7 @@
 
-<style>
-    .navbar {
-        position: fixed; /* 추가: 고정 위치 설정 */
-        width: 100%; /* 추가: 화면 전체 너비로 설정 */
-        z-index: 2; /* 추가: 에디터보다 위에 나타나도록 설정 */
-        top: 0; /* 수정: 브라우저 상단에 고정 */
-    }
-</style>
-
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" th:fragment="content" th:with="isAuthenticated=${#authorization.expression('isAuthenticated()')}">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">로고</a>
+        <a class="navbar-brand" href="/"><img class="logo" src="/img/logo.png" alt="로고 이미지"></a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -31,9 +22,9 @@
                 <li class="nav-item" th:if="${#authorization.expression('hasRole(''자영업자'')')}">
                     <a class="nav-link" href="/mypage">마이페이지</a>
                 </li>
-                <li class="nav-item" th:if="${#authorization.expression('hasRole(''자영업자'')')}">
-                    <a class="nav-link" href="/order/list">주문내역</a>
-                </li>
+<!--                <li class="nav-item" th:if="${#authorization.expression('hasRole(''자영업자'')')}">-->
+<!--                    <a class="nav-link" href="/order/list">주문내역</a>-->
+<!--                </li>-->
                 <li class="nav-item" th:if="${#authorization.expression('hasRole(''자영업자'')')}">
                     <a class="nav-link" href="/cart">장바구니</a>
                 </li>

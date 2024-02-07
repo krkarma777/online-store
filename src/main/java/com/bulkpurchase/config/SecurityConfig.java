@@ -17,7 +17,7 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 정적 리소스 허용
+                                .requestMatchers("/css/**", "/js/**", "/img/**").permitAll() // 정적 리소스 허용
                                 .requestMatchers("/register", "/registerProc", "/login", "/loginProc", "/").permitAll()
                                 .requestMatchers("/mypage","/mypage/update" , "/mypage/edit" ,"/cart/**").authenticated()
                                 .requestMatchers("/product/add").hasAnyRole("판매자", "관리자")

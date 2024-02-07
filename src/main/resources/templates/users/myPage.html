@@ -2,7 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>마이페이지</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
         /* 기존 스타일은 유지 */
         .user-info, .sales-regions, .order-history, .favorite-products, .benefits {
@@ -54,12 +59,10 @@
     <!-- 주문 내역 섹션 -->
     <div class="order-history">
         <h3 class="order-history-title">주문 내역</h3>
-        <ul>
-            <li>주문 #12345 - <span>배송 중</span></li>
-            <li>주문 #12346 - <span>배송 완료</span></li>
-            <!-- 더 많은 주문 내역 -->
+        <ul th:each="order : ${orders}">
+            <li th:text="'주문 # ' + ${order.orderID} + ' - ' + ${order.status}">주문 #12345 - 배송 중</li>
         </ul>
-        <a href="/orders" class="btn btn-secondary">주문 내역 보기</a>
+        <a href="/order/list" class="btn btn-secondary">주문 내역 보기</a>
     </div>
 
     <!-- 좋아하는 상품 섹션 -->
@@ -84,7 +87,8 @@
     </div>
 
 </div>
-
+<div th:replace="~{common/footer :: footer1}"></div>
+<div th:replace="~{common/footer2 :: footer2}"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
