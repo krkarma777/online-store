@@ -93,11 +93,9 @@ public class MyPageController {
 
         List<OrderDetail> orderDetailList = new ArrayList<>();
         for (Product product : productsList) {
-            Optional<OrderDetail> orderDetailOpt = orderDetailService.findByProductOrderByOrderDetailIDDesc(product);
-            orderDetailOpt.ifPresent(orderDetailList::add);
+            orderDetailList = orderDetailService.findByProductOrderByOrderDetailIDDesc(product);
         }
         model.addAttribute("orderDetailList", orderDetailList);
-
         return "seller/sellerPage";
     }
 

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static com.bulkpurchase.domain.enums.OrderStatus.PENDING;
 
@@ -27,7 +28,10 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     private final OrderDetailRepository orderDetailRepository;
-    
+
+    public Order save(Order order) {
+        return orderRepository.save(order);
+    }
     public Order saveOrder(User user, Double totalPrice) {
         Order order = new Order();
         order.setUser(user);
@@ -39,6 +43,9 @@ public class OrderService {
 
     public List<Order> findByUser(User user) {
         return orderRepository.findByUser(user);
+    }
+    public Optional<Order> findById(Long orderID) {
+        return orderRepository.findById(orderID);
     }
 
     public List<OrderViewModel> getOrderViewModelsByUser(User user) {

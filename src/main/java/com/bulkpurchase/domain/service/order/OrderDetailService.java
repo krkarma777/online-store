@@ -29,11 +29,15 @@ public class OrderDetailService {
     public List<OrderDetail> findByOrder(Order order) {
         return orderDetailRepository.findByOrder(order);
     }
-    public Optional<OrderDetail> findByProductOrderByOrderDetailIDDesc(Product product) {
+    public List<OrderDetail> findByProductOrderByOrderDetailIDDesc(Product product) {
         return orderDetailRepository.findByProductOrderByOrderDetailIDDesc(product);
     }
 
     public List<OrderDetail> findAll() {
         return orderDetailRepository.findAll();
+    }
+
+    public Optional<OrderDetail> findByID(Long orderDetailID) {
+        return orderDetailRepository.findById(orderDetailID);
     }
 }

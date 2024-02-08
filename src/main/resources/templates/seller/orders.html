@@ -4,13 +4,37 @@
     <meta charset="UTF-8">
     <title>주문 관리</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; /* 배경색 설정 */
+        }
+        .container {
+            background: white; /* 컨테이너 배경색 */
+            border-radius: 8px; /* 둥근 모서리 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+            padding: 20px; /* 안쪽 여백 */
+            margin-top: 40px; /* 상단 여백 */
+        }
+        h2 {
+            color: #495057; /* 제목 색상 */
+            margin-bottom: 30px; /* 제목 아래 여백 */
+        }
+        .table th {
+            background-color: #007bff; /* 테이블 헤더 배경색 */
+            color: white; /* 테이블 헤더 글자색 */
+        }
+        .btn-status-update {
+            margin: 2px; /* 버튼 사이의 여백 */
+            width: 100px; /* 버튼 너비 */
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{seller/common/navBar :: content}"></div>
-<div class="container mt-4">
+<div class="container">
     <h2>주문 관리</h2>
     <div class="table-responsive">
-        <table class="table">
+        <table class="table table-hover align-middle">
             <thead>
             <tr>
                 <th>주문번호</th>
@@ -29,7 +53,12 @@
                 <td th:text="${orderDetail.order.status.getDescription()}"></td>
                 <td th:text="${#dates.format(orderDetail.order.orderDate, 'yyyy-MM-dd')}"></td>
                 <td>
-                    <a th:href="@{/orders/edit/{orderDetailID}(orderDetailID=${orderDetail.orderDetailID})}" class="btn btn-sm btn-secondary">상태 업데이트</a>
+                    <form th:action="@{/orders/edit/{orderDetailID}(orderDetailID=${orderDetail.orderDetailID})}" method="post">
+                        <button th:if="${orderDetail.order.status.getDescription() == '처리 대기 중'}" type="submit" name="orderStatus" value="PROCESSING" class="btn btn-sm btn-info btn-status-update">처리 중</button>
+                        <button th:if="${orderDetail.order.status.getDescription() == '처리 중'}" type="submit" name="orderStatus" value="SHIPPED" class="btn btn-sm btn-warning btn-status-update">배송 중</button>
+                        <button th:if="${orderDetail.order.status.getDescription() == '배송 중'}" type="submit" name="orderStatus" value="DELIVERED" class="btn btn-sm btn-success btn-status-update">배송 완료</button>
+                        <button th:if="${orderDetail.order.status.getDescription() != '배송 완료' and orderDetail.order.status.getDescription() != '취소됨'}" type="submit" name="orderStatus" value="CANCELLED" class="btn btn-sm btn-danger btn-status-update">취소</button>
+                    </form>
                 </td>
             </tr>
             </tbody>
