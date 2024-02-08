@@ -1,12 +1,13 @@
 package com.bulkpurchase.domain.entity.user;
-
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,15 +23,22 @@ public class User {
     @Column
     private Long userID;
 
+    @NotBlank(message = "아이디는 필수 항목입니다.", groups = RegisterCheck.class)
+    @Size(min = 3, max = 50, message = "아이디는 3자 이상 50자 이하로 입력해주세요.", groups = RegisterCheck.class)
     @Column(nullable = false, length = 50, unique = true)
     private String username;
 
+    @NotBlank(message = "이메일은 필수 항목입니다.", groups = RegisterCheck.class)
+    @Email(message = "유효한 이메일 주소를 입력해주세요.", groups = RegisterCheck.class)
     @Column(nullable = false, length = 100)
     private String email;
 
+    @NotBlank(message = "실제 이름은 필수 항목입니다.", groups = RegisterCheck.class)
     @Column(nullable = false, length = 100)
-    private String realName; // 실제 이름 필드 추가
+    private String realName;
 
+    @NotBlank(message = "비밀번호는 필수 항목입니다.", groups = RegisterCheck.class)
+    @Size(min = 8, message = "비밀번호는 8자 이상이어야 합니다.", groups = RegisterCheck.class)
     @Column(nullable = false, length = 100)
     private String password;
 
@@ -38,24 +46,25 @@ public class User {
     private String role;
 
     @Column(length = 20)
-    private String userGrade = "1"; // 기본값을 "1"로 설정
+    private String userGrade = "1";
 
+    @NotBlank(message = "휴대폰 번호는 필수 항목입니다.", groups = RegisterCheck.class)
     @Column(nullable = false, length = 20)
-    private String phoneNumber; // 휴대폰 번호 필드 추가
+    private String phoneNumber;
 
     @Column(length = 255)
-    private String address; // 주소 필드 추가
+    private String address;
 
-    @Column(length = 255) // detailAddress 필드 추가
-    private String detailAddress; // 세부 주소 필드
+    @Column(length = 255)
+    private String detailAddress;
 
-    @Column(length = 20) // 우편번호 필드 추가
-    private String zipCode; // 우편번호
+    @Column(length = 20)
+    private String zipCode;
 
     @PrePersist
     protected void onCreate() {
         createDate = new Date();
-        if (userGrade == null) { // userGrade가 null일 경우 기본값으로 "1" 설정
+        if (userGrade == null) {
             userGrade = "1";
         }
     }

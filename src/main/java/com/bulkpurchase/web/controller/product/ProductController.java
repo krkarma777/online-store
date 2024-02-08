@@ -100,7 +100,7 @@ public class ProductController {
     @PostMapping("/product/update/{productId}")
     public String updateSave(@ModelAttribute @Validated(UpdateCheck.class) Product product, BindingResult bindingResult,
                              @PathVariable(value = "productId") Long productId, Model model) {
-        log.info("product = {}", product);
+
         if (bindingResult.hasErrors()) {
             List<SalesRegion> list = Arrays.asList(SalesRegion.values());
             model.addAttribute("allSalesRegions", list);

@@ -14,7 +14,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        return userOpt.orElse(null);
     }
 
     public void save(User user) {
@@ -23,5 +24,23 @@ public class UserService {
 
     public Optional<User> findByUserid(Long userId) {
         return userRepository.findById(userId);
+    }
+
+    public boolean existsByUsername(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isPresent()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean existsByEmail(String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isPresent()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
