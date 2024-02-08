@@ -1,7 +1,6 @@
 package com.bulkpurchase.domain.service.user;
 
-import com.bulkpurchase.config.AppConfig;
-import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

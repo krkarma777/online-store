@@ -1,7 +1,7 @@
 package com.bulkpurchase.domain.repository.cart;
 
 import com.bulkpurchase.domain.entity.Cart;
-import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

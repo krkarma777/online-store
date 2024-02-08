@@ -1,4 +1,4 @@
-package com.bulkpurchase.domain.entity;
+package com.bulkpurchase.domain.entity.user;
 
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.enums.SalesRegion;

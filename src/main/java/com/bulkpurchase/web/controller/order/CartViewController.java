@@ -1,7 +1,7 @@
 package com.bulkpurchase.web.controller.order;
 
 import com.bulkpurchase.domain.entity.Cart;
-import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.cart.CartService;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;

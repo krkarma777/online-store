@@ -5,7 +5,7 @@ import com.bulkpurchase.domain.dto.OrderViewModel;
 import com.bulkpurchase.domain.dto.ProductViewModel;
 import com.bulkpurchase.domain.entity.Order;
 import com.bulkpurchase.domain.entity.OrderDetail;
-import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.repository.order.OrderDetailRepository;
 import com.bulkpurchase.domain.repository.order.OrderRepository;
@@ -87,4 +87,5 @@ public class OrderService {
 
         return orderViewModels;
     }
+
 }

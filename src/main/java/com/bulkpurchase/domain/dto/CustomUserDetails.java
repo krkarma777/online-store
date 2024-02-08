@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.dto;
 
-import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.entity.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

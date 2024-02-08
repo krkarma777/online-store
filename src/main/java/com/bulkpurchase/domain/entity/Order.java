@@ -1,5 +1,6 @@
 package com.bulkpurchase.domain.entity;
 
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;

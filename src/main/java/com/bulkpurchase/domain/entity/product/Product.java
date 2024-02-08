@@ -1,7 +1,7 @@
 package com.bulkpurchase.domain.entity.product;
 
 
-import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import jakarta.persistence.*;

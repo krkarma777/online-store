@@ -1,7 +1,7 @@
 package com.bulkpurchase.web.controller.seller;
 
 import com.bulkpurchase.domain.entity.OrderDetail;
-import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.service.ProductService;

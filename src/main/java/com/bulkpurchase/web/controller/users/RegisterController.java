@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.users;
 
-import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.RegisterService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

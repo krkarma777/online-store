@@ -2,7 +2,7 @@ package com.bulkpurchase.web.controller.order;
 
 import com.bulkpurchase.domain.entity.Cart;
 import com.bulkpurchase.domain.entity.CartItem;
-import com.bulkpurchase.domain.entity.User;
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.service.ProductService;
 import com.bulkpurchase.domain.service.cart.CartItemService;
@@ -11,13 +11,11 @@ import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 
 @RestController

@@ -3,6 +3,7 @@ package com.bulkpurchase.web.controller.order;
 import com.bulkpurchase.domain.dto.OrderViewModel;
 import com.bulkpurchase.domain.entity.*;
 import com.bulkpurchase.domain.entity.product.Product;
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.ProductService;
 import com.bulkpurchase.domain.service.cart.CartService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
