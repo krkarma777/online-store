@@ -82,22 +82,7 @@ public class MyPageController {
         return "redirect:/mypage";
     }
 
-    @GetMapping("/seller")
-    public String sellerPageForm(Model model, Principal principal) {
-        User user = getUser(principal, "ROLE_판매자");
-        if (user == null) return "error/403";
-        model.addAttribute("user", user);
 
-        List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
-        model.addAttribute("products", productsList);
-
-        List<OrderDetail> orderDetailList = new ArrayList<>();
-        for (Product product : productsList) {
-            orderDetailList = orderDetailService.findByProductOrderByOrderDetailIDDesc(product);
-        }
-        model.addAttribute("orderDetailList", orderDetailList);
-        return "seller/sellerPage";
-    }
 
 
     @GetMapping("/admin")

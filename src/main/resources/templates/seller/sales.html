@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>판매액 보기</title>
+</head>
+<body>
+
+<p>총 판매액: <span th:text="${totalSales}"></span></p>
+<p>연 판매액: <span th:text="${yearlySales}"></span> (현재 연도: <span th:text="${currentDate}"></span>)</p>
+<p>월 판매액: <span th:text="${monthlySales}"></span> (현재 월)</p>
+<p>일 판매액: <span th:text="${dailySales}"></span> (오늘)</p>
+
+
+</body>
+</html>

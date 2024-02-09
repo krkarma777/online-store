@@ -10,9 +10,14 @@ import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.repository.order.OrderDetailRepository;
 import com.bulkpurchase.domain.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +28,7 @@ import static com.bulkpurchase.domain.enums.OrderStatus.PENDING;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -39,6 +45,38 @@ public class OrderService {
         order.setStatus(PENDING);
         order.setOrderDate(new Date());
         return orderRepository.save(order);
+    }
+
+    /* 사이트 전체 판매액 */
+
+    public BigDecimal calculateTotalSales() {
+        return orderRepository.calculateTotalSales();
+    }
+    public BigDecimal calculateYearlySales(int year) {
+        return orderRepository.calculateYearlySales(year);
+    }
+    public BigDecimal calculateMonthlySales(int year, int month) {
+        return orderRepository.calculateMonthlySales(year, month);
+    }
+    public BigDecimal calculateDailySales() {
+        LocalDate localDate = LocalDate.now();
+        return orderRepository.calculateDailySales(localDate);
+    }
+
+    /* 판매자별 판매액 */
+    public BigDecimal calculateTotalSalesBySeller(Long userID){
+        return orderRepository.calculateTotalSalesBySeller(userID);
+    }
+    public BigDecimal calculateYearlySalesBySeller(int year, Long userID) {
+        return orderRepository.calculateYearlySalesBySeller(year, userID);
+    }
+
+    public BigDecimal calculateMonthlySalesBySeller(int year, int month, Long userID) {
+        return orderRepository.calculateMonthlySalesBySeller(year, month, userID);
+    }
+    public BigDecimal calculateDailySalesBySeller(Long userID) {
+        LocalDate localDate = LocalDate.now();
+        return orderRepository.calculateDailySalesBySeller(localDate, userID);
     }
 
     public List<Order> findByUser(User user) {
