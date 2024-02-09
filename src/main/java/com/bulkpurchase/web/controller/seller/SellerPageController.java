@@ -1,5 +1,6 @@
 package com.bulkpurchase.web.controller.seller;
 
+import com.bulkpurchase.domain.dto.SalesDataDTO;
 import com.bulkpurchase.domain.entity.OrderDetail;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
@@ -90,21 +91,26 @@ public class SellerPageController {
     public String salesView(Model model, Principal principal) {
         Long userID = userService.findByUsername(principal.getName()).getUserID();
 
-        LocalDate today = LocalDate.now();
-        int year = today.getYear();
-        int month = today.getMonthValue();
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(30);
 
-        BigDecimal totalSales = orderService.calculateTotalSalesBySeller(userID);
-        BigDecimal yearlySales = orderService.calculateYearlySalesBySeller(year, userID);
-        BigDecimal monthlySales = orderService.calculateMonthlySalesBySeller(year, month, userID);
-        BigDecimal dailySales = orderService.calculateDailySalesBySeller(userID);
+        // 최근 30일 판매 데이터
+        List<SalesDataDTO> last30DaysSales = orderService.calculateSalesLast30DaysBySeller(userID, startDate, endDate);
+        // 지난 12개월 판매 데이터
+        List<SalesDataDTO> last12MonthsSales = orderService.calculateSalesLast12MonthsBySeller(userID);
+        // 최근 3년 판매 데이터
+        List<SalesDataDTO> last3YearsSales = orderService.calculateSalesLast3YearsBySeller(userID);
 
-        model.addAttribute("totalSales", totalSales);
-        model.addAttribute("yearlySales", yearlySales);
-        model.addAttribute("monthlySales", monthlySales);
-        model.addAttribute("dailySales", dailySales);
+        // 모델에 데이터 추가
+        model.addAttribute("last30DaysSales", last30DaysSales);
+        model.addAttribute("last12MonthsSales", last12MonthsSales);
+        model.addAttribute("last3YearsSales", last3YearsSales);
 
-        String currentDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        log.info("last30DaysSales={}", last30DaysSales);
+        log.info("last12MonthsSales={}", last12MonthsSales);
+        log.info("last3YearsSales={}", last3YearsSales);
+
+        String currentDate = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         model.addAttribute("currentDate", currentDate);
 
         return "/seller/sales";

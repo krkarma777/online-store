@@ -3,6 +3,7 @@ package com.bulkpurchase.domain.service.order;
 import com.bulkpurchase.domain.dto.OrderDetailViewModel;
 import com.bulkpurchase.domain.dto.OrderViewModel;
 import com.bulkpurchase.domain.dto.ProductViewModel;
+import com.bulkpurchase.domain.dto.SalesDataDTO;
 import com.bulkpurchase.domain.entity.Order;
 import com.bulkpurchase.domain.entity.OrderDetail;
 import com.bulkpurchase.domain.entity.user.User;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.bulkpurchase.domain.enums.OrderStatus.PENDING;
 
@@ -74,6 +76,36 @@ public class OrderService {
     public BigDecimal calculateMonthlySalesBySeller(int year, int month, Long userID) {
         return orderRepository.calculateMonthlySalesBySeller(year, month, userID);
     }
+
+    public List<SalesDataDTO> calculateSalesLast30DaysBySeller(Long userID, LocalDate startDate, LocalDate endDate) {
+
+        List<Object[]> queryResult = orderRepository.calculateSalesLast30DaysBySeller(userID, startDate, endDate);
+        List<SalesDataDTO> salesDataDTOList = queryResult.stream()
+                .map(result -> new SalesDataDTO(result[0].toString(), (BigDecimal) result[1]))
+                .collect(Collectors.toList());
+
+        return salesDataDTOList;
+    }
+
+    public List<SalesDataDTO> calculateSalesLast12MonthsBySeller(Long userID) {
+        List<Object[]> queryResult = orderRepository.calculateSalesLast12MonthsBySeller(userID);
+        List<SalesDataDTO> salesDataDTOList = queryResult.stream()
+                .map(result -> new SalesDataDTO(result[0].toString(), (BigDecimal) result[1]))
+                .collect(Collectors.toList());
+
+        return salesDataDTOList;
+    }
+
+    public List<SalesDataDTO> calculateSalesLast3YearsBySeller(Long userID) {
+        List<Object[]> queryResult = orderRepository.calculateSalesLast3YearsBySeller(userID);
+        List<SalesDataDTO> salesDataDTOList = queryResult.stream()
+                .map(result -> new SalesDataDTO(result[0].toString(), (BigDecimal) result[1]))
+                .collect(Collectors.toList());
+
+        return salesDataDTOList;
+    }
+
+
     public BigDecimal calculateDailySalesBySeller(Long userID) {
         LocalDate localDate = LocalDate.now();
         return orderRepository.calculateDailySalesBySeller(localDate, userID);
@@ -132,5 +164,6 @@ public class OrderService {
 
         return orderViewModels;
     }
+
 
 }

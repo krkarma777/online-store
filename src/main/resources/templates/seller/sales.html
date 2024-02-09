@@ -1,16 +1,150 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>판매액 보기</title>
+    <title>판매량 통계</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            padding-top: 20px;
+        }
+        .chart-container {
+            padding: 20px;
+        }
+        .chart {
+            margin-bottom: 40px;
+        }
+    </style>
 </head>
 <body>
+<div th:replace="~{seller/common/navBar :: content}"></div>
+<div class="container">
+    <h2 class="mb-4">판매량 통계</h2>
+    <div class="row">
+        <div class="col chart-container">
+            <canvas id="last30DaysSalesChart" class="chart"></canvas>
+        </div>
+        <div class="col chart-container">
+            <canvas id="last12MonthsSalesChart" class="chart"></canvas>
+        </div>
+        <div class="col chart-container">
+            <canvas id="last3YearsSalesChart" class="chart"></canvas>
+        </div>
+    </div>
+</div>
 
-<p>총 판매액: <span th:text="${totalSales}"></span></p>
-<p>연 판매액: <span th:text="${yearlySales}"></span> (현재 연도: <span th:text="${currentDate}"></span>)</p>
-<p>월 판매액: <span th:text="${monthlySales}"></span> (현재 월)</p>
-<p>일 판매액: <span th:text="${dailySales}"></span> (오늘)</p>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const last30DaysSales = /*[[${last30DaysSales}]]*/ [];
+    const last12MonthsSales = /*[[${last12MonthsSales}]]*/ [];
+    const last3YearsSales = /*[[${last3YearsSales}]]*/ [];
 
+    // 차트 데이터 형식 변환 로직 추가
+    const formatChartData = (salesData) => {
+        return salesData.map(data => ({x: data.period, y: data.totalSales}));
+    };
 
+    // 최근 30일 판매 데이터 차트
+    const last30DaysSalesChartContext = document.getElementById('last30DaysSalesChart').getContext('2d');
+    new Chart(last30DaysSalesChartContext, {
+        type: 'line', // 라인 차트 사용
+        data: {
+            datasets: [{
+                label: '최근 30일 판매액',
+                data: formatChartData(last30DaysSales),
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: '일'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: '판매액'
+                    }
+                }
+            }
+        }
+    });
+
+    // 지난 12개월 판매 데이터 차트
+    const last12MonthsSalesChartContext = document.getElementById('last12MonthsSalesChart').getContext('2d');
+    new Chart(last12MonthsSalesChartContext, {
+        type: 'bar', // 바 차트 사용
+        data: {
+            datasets: [{
+                label: '지난 12개월 판매액',
+                data: formatChartData(last12MonthsSales),
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: '월'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: '판매액'
+                    }
+                }
+            }
+        }
+    });
+
+    // 최근 3년 판매 데이터 차트
+    const last3YearsSalesChartContext = document.getElementById('last3YearsSalesChart').getContext('2d');
+    new Chart(last3YearsSalesChartContext, {
+        type: 'bar', // 바 차트 사용
+        data: {
+            datasets: [{
+                label: '최근 3년 판매액',
+                data: formatChartData(last3YearsSales),
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: '년'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: '판매액'
+                    }
+                }
+            }
+        }
+    });
+
+    /*]]>*/
+</script>
 </body>
 </html>
