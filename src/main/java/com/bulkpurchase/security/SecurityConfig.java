@@ -1,5 +1,6 @@
-package com.bulkpurchase.config;
+package com.bulkpurchase.security;
 
+import com.bulkpurchase.security.handler.LoginAuthenticationFailureHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,6 +30,7 @@ public class SecurityConfig {
                 .formLogin((authorize) -> authorize
                         .loginPage("/login")
                         .loginProcessingUrl("/loginProc")
+                        .failureHandler(new LoginAuthenticationFailureHandler())
                         .permitAll()
                 )
 

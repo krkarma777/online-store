@@ -76,17 +76,33 @@
     <div class="login-container">
       <div class="login-header">로그인</div>
       <form th:action="@{/loginProc}" method="post" class="login-form">
-        <input type="text" class="form-control" id="username" name="username" placeholder="아이디" required>
-        <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호" required>
+        <input type="text" class="form-control" id="username" name="username" placeholder="아이디" required
+               th:classappend="${param.error} ? 'is-invalid' : ''">
+        <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호" required
+               th:classappend="${param.error} ? 'is-invalid' : ''">
+        <div th:if="${param.error}">
+          <p class="error-message">이메일 또는 비밀번호를 다시 확인하세요. 씨드에 등록되지 않은 아이디거나, 아이디 또는 비밀번호를 잘못 입력하셨습니다.</p>
+        </div>
         <button type="submit" class="btn btn-primary">로그인</button>
         <hr>
         <a href="/register" class="login-form-link">회원가입</a>
         <div class="login-form-footer">
           ©Test. All rights reserved.
 
+        </div>
       </form>
     </div>
   </div>
 </div>
+<style>
+  .error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  .is-invalid {
+    border-color: red;
+  }
+</style>
 </body>
 </html>
