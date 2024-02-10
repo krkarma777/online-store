@@ -2,6 +2,7 @@ package com.bulkpurchase.web.controller.admin;
 
 import com.bulkpurchase.domain.dto.OrderViewModel;
 import com.bulkpurchase.domain.dto.SalesDataDTO;
+import com.bulkpurchase.domain.entity.Order;
 import com.bulkpurchase.domain.entity.product.Category;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
@@ -35,9 +36,7 @@ public class AdminPageController {
     @GetMapping
     public String adminPageForm(Model model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
-        if (!user.getRole().equals("ROLE_관리자")) {
-            return "error/403";
-        }
+
         List<Product> productsList = productService.findAllProducts();
         model.addAttribute("products", productsList);
 
@@ -62,9 +61,6 @@ public class AdminPageController {
         // 최근 3년 판매 데이터
         List<SalesDataDTO> last3YearsSales = adminDashboardService.calculateSalesLast3Years();
 
-        log.info("last30DaysSales = {}", last30DaysSales);
-        log.info("last12MonthsSales = {}", last12MonthsSales);
-        log.info("last3YearsSales = {}", last3YearsSales);
         // 모델에 데이터 추가
         model.addAttribute("last30DaysSales", last30DaysSales);
         model.addAttribute("last12MonthsSales", last12MonthsSales);
@@ -113,8 +109,8 @@ public class AdminPageController {
 
     @GetMapping("/order")
     public String orderManagementPage(Model model) {
-        List<OrderViewModel> orderViewModels = orderService.getOrderViewModels();
-        model.addAttribute("orderViewModels", orderViewModels);
+        List<Order> orders = orderService.findAll();
+        model.addAttribute("orders", orders);
 
         return "/admin/orderManagement";
     }

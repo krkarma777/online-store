@@ -10,3 +10,6 @@
     height: 50px;
 }
 
+body {
+    padding-top: 80px; /* 네비게이션 바의 높이보다 약간 더 큰 값 */
+}

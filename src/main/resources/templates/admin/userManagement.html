@@ -29,7 +29,7 @@
                 <td th:text="${user.username}"></td>
                 <td th:text="${user.realName}"></td>
                 <td th:text="${user.email}"></td>
-                <td th:text="${user.role}"></td>
+                <td th:text="${user.role.getDescription()}"></td>
                 <td th:text="${user.status.getDescription()}"></td>
                 <td>
                     <a th:href="@{'/admin/user/edit/' + ${user.userID}}" class="btn btn-primary btn-sm">편집</a>

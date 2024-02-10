@@ -12,13 +12,11 @@ import com.bulkpurchase.domain.repository.order.OrderDetailRepository;
 import com.bulkpurchase.domain.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -212,4 +210,7 @@ public class OrderService {
         return orderViewModels;
     }
 
+    public List<Order> findAll() {
+        return orderRepository.findAll();
+    }
 }

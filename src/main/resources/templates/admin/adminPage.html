@@ -4,7 +4,18 @@
     <meta charset="UTF-8">
     <title>관리자 대시보드</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/css/adminPage.css">
+<style>
+    .navbar {
+        position: fixed; /* 추가: 고정 위치 설정 */
+        width: 100%; /* 추가: 화면 전체 너비로 설정 */
+        z-index: 2; /* 추가: 에디터보다 위에 나타나도록 설정 */
+        top: 0; /* 수정: 브라우저 상단에 고정 */
+    }
+    .logo {
+        width: auto;
+        height: 50px;
+    }
+</style>
 </head>
 <body>
     <div th:replace="~{admin/common/navBar :: content}"></div>
