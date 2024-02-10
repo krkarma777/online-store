@@ -116,5 +116,9 @@ public class SellerPageController {
         return "/seller/sales";
     }
 
+    @GetMapping("/reviews")
+    public String reviews() {
+        return "seller/reviews";
+    }
 
 }
