@@ -15,7 +15,7 @@
         <div class="card-body">
             <p><strong>주문 번호:</strong> <span th:text="${order.orderID}"></span></p>
             <p><strong>주문 날짜:</strong> <span th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd')}"></span></p>
-            <p><strong>총 가격:</strong> <span th:text="${order.totalPrice}"></span></p>
+            <p><strong>총 가격:</strong> <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></span></p>
         </div>
     </div>
 
@@ -34,7 +34,7 @@
                 <tr th:each="detail : ${orderDetails}">
                     <td th:text="${detail.product.productName}"></td>
                     <td th:text="${detail.quantity}"></td>
-                    <td th:text="${detail.price}"></td>
+                    <td th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
                 </tr>
                 </tbody>
             </table>
@@ -45,7 +45,7 @@
         <div class="card-header">결제 정보</div>
         <div class="card-body">
             <p><strong>결제 방법:</strong> <span th:text="${payment.paymentMethod}"></span></p>
-            <p><strong>결제 금액:</strong> <span th:text="${payment.amount}"></span></p>
+            <p><strong>결제 금액:</strong> <span th:text="${#numbers.formatDecimal(payment.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></span></p>
             <p><strong>결제 날짜:</strong> <span th:text="${#dates.format(payment.paymentDate, 'yyyy-MM-dd')}"></span></p>
         </div>
     </div>

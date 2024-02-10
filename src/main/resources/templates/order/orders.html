@@ -90,7 +90,7 @@
                 <img th:src="${orderDetail.product.imageUrl}" alt="Product Image" />
                 <div class="order-item-detail">
                     <div th:text="'상품명: ' + ${orderDetail.product.name}">상품명: 제품 A</div>
-                    <div th:text="'가격: ' + ${orderDetail.price} + '원'">가격: 4,100원</div>
+                    <div th:text="'가격: ' + ${#numbers.formatDecimal(orderDetail.product.price, 0, 'COMMA', 0, 'POINT')} + '원'">가격: 4,100원</div>
                     <div th:text="'수량: ' + ${orderDetail.quantity} + '개'">수량: 1개</div>
                 </div>
                 <div class="order-item-actions">

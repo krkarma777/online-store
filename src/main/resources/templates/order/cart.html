@@ -29,7 +29,7 @@
             <tr th:each="item : ${cart.items}" th:id="'item-' + ${item.cartItemID}">
                 <td><input type="checkbox" th:name="itemId" th:value="${item.cartItemID}"/></td>
                 <td th:text="${item.product.productName}">상품명</td>
-                <td th:data-price="${item.product.price}" th:text="${item.product.price}">가격</td>
+                <td th:data-price="${item.product.price}" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '원'">가격</td>
                 <td>
                     <button type="button" class="quantity-change" th:data-itemid="${item.cartItemID}"
                             data-operation="decrease">-

@@ -28,8 +28,8 @@
             <tr th:each="detail : ${orderDetails}">
                 <td th:text="${detail.product.productName}"></td>
                 <td th:text="${detail.quantity}"></td>
-                <td th:text="${detail.product.price}"></td>
-                <td th:text="${order.totalPrice}"></td>
+                <td th:text="${#numbers.formatDecimal(detail.product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+                <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
             </tr>
             </tbody>
         </table>
@@ -39,7 +39,7 @@
         <h3>결제 정보</h3>
         <p><strong>결제 방식:</strong> <span th:text="${savedPayment.paymentMethod}"></span></p>
         <p><strong>결제 일자:</strong> <span th:text="${#dates.format(savedPayment.paymentDate, 'yyyy-MM-dd')}"></span></p>
-        <p><strong>결제 금액:</strong> <span th:text="${savedPayment.amount}"></span>원</p>
+        <p><strong>결제 금액:</strong> <span th:text="${#numbers.formatDecimal(savedPayment.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></span></p>
     </div>
 
     <div class="actions">

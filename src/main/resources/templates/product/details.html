@@ -59,19 +59,19 @@
         <div class="card-body">
             <h5 class="card-title" th:text="${product.productName}">Product Name</h5>
             <p class="card-text" th:text="${product.description}">Description</p>
-            <p class="card-text"><strong>Price:</strong> <span class="price" th:text="${product.price}">Price</span></p>
+            <p class="card-text"><strong>Price:</strong> <span class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'">Price</span></p>
             <p class="card-text"><strong>Stock:</strong> <span th:text="${product.stock}">Stock</span></p>
             <!-- 주문 버튼 -->
-            <a href="#" class="btn btn-primary">Order Now</a>
+            <a href="#" class="btn btn-primary">주문 하기</a>
 
             <!-- 수정 버튼 -->
-            <a th:href="@{/product/update/{id}(id=${product.productID})}" class="btn btn-secondary">Edit</a>
+            <a th:href="@{/product/update/{id}(id=${product.productID})}" class="btn btn-secondary">수정</a>
 
             <!-- 카트에 추가 버튼 -->
             <form id="add-to-cart-form" th:action="@{/cart/add}" method="post">
                 <input type="hidden" name="productID" th:value="${product.productID}" />
                 <input type="number" name="quantity" value="1" /> <!-- 기본 수량 1, 필요에 따라 수정 -->
-                <button type="button" class="btn btn-success">Add to Cart</button>
+                <button type="button" class="btn btn-success">장바구니  추가</button>
             </form>545
         </div>
     </div>
@@ -92,7 +92,7 @@
                     alert("장바구니에 담겼습니다."); // 성공 알림
                 },
                 error: function(xhr, status, error) {
-                    alert("Error adding product to cart!"); // 에러 알림
+                    alert("장바구니 추가 에러 발생"); // 에러 알림
                 }
             });
         });

@@ -28,7 +28,7 @@
         <tr th:each="product : ${products}">
             <td th:text="${product.productID}"></td>
             <td th:text="${product.productName}"></td>
-            <td th:text="${product.price}"></td>
+            <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
             <td th:text="${product.stock}"></td>
             <td th:text="${product.user.username}"></td>
             <td>

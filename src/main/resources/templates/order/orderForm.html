@@ -26,7 +26,7 @@
                 <tr th:each="item, itemStat : ${items}">
                     <td th:text="${item.product.productName}"></td>
                     <td th:text="${item.product.description}"></td>
-                    <td th:text="${item.product.price}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '원'" th:data-price="${item.product.price}"></td>
                     <td>
                         <label>
                             <input type="number" name="quantity" min="1" value="1" th:value="${item.quantity}" class="form-control">
@@ -72,13 +72,13 @@
         function calculateTotalPrice() {
             let totalPrice = 0;
             $('tbody tr').each(function() {
-                const price = parseFloat($(this).find('td').eq(2).text());
+                const price = parseFloat($(this).find('td[data-price]').data('price'));
                 const quantity = parseInt($(this).find('input[type="number"]').val()) || 0;
                 totalPrice += price * quantity;
             });
 
             // 총 가격 표시 및 hidden input 값 업데이트
-            $("#totalPrice").text(totalPrice);
+            $("#totalPrice").text(totalPrice.toLocaleString());
             $("#hiddenTotalPrice").val(totalPrice);
         }
     });
