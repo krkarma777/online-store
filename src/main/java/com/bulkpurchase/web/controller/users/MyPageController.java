@@ -36,7 +36,7 @@ public class MyPageController {
 
     @GetMapping("/mypage")
     public String myPageForm(Model model, Principal principal) {
-        User user = getUser(principal, "ROLE_자영업자");
+        User user = userService.findByUsername(principal.getName());
         if (user == null) return "error/403";
 
         List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
@@ -84,11 +84,5 @@ public class MyPageController {
 
 
 
-    private User getUser(Principal principal, String role) {
-        User user = userService.findByUsername(principal.getName());
-        if (!user.getRole().equals(role)) {
-            return null;
-        }
-        return user;
-    }
+
 }

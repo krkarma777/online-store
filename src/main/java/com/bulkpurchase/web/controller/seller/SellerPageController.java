@@ -36,9 +36,6 @@ public class SellerPageController {
     @GetMapping
     public String sellerPageForm(Model model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
-        if (!user.getRole().equals("ROLE_판매자")) {
-            return "error/403";
-        }
         model.addAttribute("user", user);
 
         List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
