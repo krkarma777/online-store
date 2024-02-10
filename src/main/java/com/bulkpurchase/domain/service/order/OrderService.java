@@ -165,5 +165,51 @@ public class OrderService {
         return orderViewModels;
     }
 
+    public List<OrderViewModel> getOrderViewModels() {
+        List<OrderViewModel> orderViewModels = new ArrayList<>();
+
+        List<Order> orders = orderRepository.findAll();
+        for (Order order : orders) {
+            List<OrderDetail> orderDetails = orderDetailRepository.findByOrder(order);
+
+            List<OrderDetailViewModel> orderDetailViewModels = new ArrayList<>();
+            for (OrderDetail orderDetail : orderDetails) {
+                Product product = orderDetail.getProduct();
+                List<String> imageUrls = product.getImageUrls();
+                String imageUrl = null;
+                if (!imageUrls.isEmpty()) {
+                    imageUrl = imageUrls.get(0);
+                }
+                ProductViewModel productViewModel = new ProductViewModel(
+                        product.getProductID(),
+                        product.getProductName(),
+                        product.getPrice(),
+                        product.getDescription(),
+                        imageUrl
+                );
+
+                OrderDetailViewModel orderDetailViewModel = new OrderDetailViewModel(
+                        orderDetail.getOrderDetailID(),
+                        productViewModel,
+                        orderDetail.getQuantity(),
+                        orderDetail.getPrice()
+                );
+
+                orderDetailViewModels.add(orderDetailViewModel);
+            }
+
+            OrderViewModel orderViewModel = new OrderViewModel(
+                    order.getOrderID(),
+                    order.getOrderDate(),
+                    order.getTotalPrice(),
+                    order.getStatus(),
+                    orderDetailViewModels
+            );
+
+            orderViewModels.add(orderViewModel);
+        }
+
+        return orderViewModels;
+    }
 
 }

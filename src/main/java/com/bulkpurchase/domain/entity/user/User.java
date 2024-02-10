@@ -1,6 +1,8 @@
 package com.bulkpurchase.domain.entity.user;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.enums.SalesRegion;
+import com.bulkpurchase.domain.enums.UserRole;
+import com.bulkpurchase.domain.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -42,8 +44,9 @@ public class User {
     @Column(nullable = false, length = 100)
     private String password;
 
-    @Column(length = 20)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private UserRole role;
 
     @Column(length = 20)
     private String userGrade = "1";
@@ -82,4 +85,8 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Product> products = new HashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private UserStatus status = UserStatus.ACTIVE;
 }

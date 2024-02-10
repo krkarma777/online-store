@@ -1,13 +1,13 @@
 package com.bulkpurchase.domain.enums;
 
-public enum UserRole {
-    ROLE_자영업자("자영업자"),
-    ROLE_판매자("판매자"),
-    ROLE_관리자("관리자");
+public enum UserStatus {
+    ACTIVE("활성"),
+    INACTIVE("비활성"),
+    BANNED("차단됨");
 
     private final String description;
 
-    UserRole(String description) {
+    UserStatus(String description) {
         this.description = description;
     }
 

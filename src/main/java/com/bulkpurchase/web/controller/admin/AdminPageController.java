@@ -1,10 +1,12 @@
 package com.bulkpurchase.web.controller.admin;
 
+import com.bulkpurchase.domain.dto.OrderViewModel;
 import com.bulkpurchase.domain.dto.SalesDataDTO;
 import com.bulkpurchase.domain.entity.product.Category;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.AdminDashboardService;
+import com.bulkpurchase.domain.service.order.OrderService;
 import com.bulkpurchase.domain.service.product.CategoryService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.UserService;
@@ -28,6 +30,7 @@ public class AdminPageController {
     private final UserService userService;
     private final AdminDashboardService adminDashboardService;
     private final CategoryService categoryService;
+    private final OrderService orderService;
 
     @GetMapping
     public String adminPageForm(Model model, Principal principal) {
@@ -93,17 +96,26 @@ public class AdminPageController {
         return "redirect:/admin/category"; // 카테고리 관리 페이지로 리다이렉트
     }
     @GetMapping("/user")
-    public String userManagementPage() {
+    public String userManagementPage(Model model) {
+        List<User> users = userService.findAll();
+        model.addAttribute("users", users);
+
         return "/admin/userManagement";
     }
 
     @GetMapping("/product")
-    public String productManagementPage() {
+    public String productManagementPage(Model model) {
+        List<Product> products = productService.findAllProducts();
+        model.addAttribute("products", products);
+
         return "/admin/productManagement";
     }
 
     @GetMapping("/order")
-    public String orderManagementPage() {
+    public String orderManagementPage(Model model) {
+        List<OrderViewModel> orderViewModels = orderService.getOrderViewModels();
+        model.addAttribute("orderViewModels", orderViewModels);
+
         return "/admin/orderManagement";
     }
 
