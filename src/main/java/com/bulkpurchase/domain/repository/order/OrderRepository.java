@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 @Repository
@@ -17,6 +18,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUser(User user);
 
     List<Order> findByUserOrderByOrderIDDesc(User user);
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status NOT IN :excludedStatuses")
+    long countByStatusExcluding(@Param("excludedStatuses") Collection<OrderStatus> excludedStatuses);
 
     /* 전체 판매액 */
 
@@ -36,6 +40,33 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // 하루 판매액
     @Query(value = "SELECT SUM(od.price * od.quantity) FROM ORDER_DETAILS od JOIN orders o ON od.OrderID = o.OrderID JOIN products p ON od.ProductID = p.ProductID WHERE TRUNC(o.order_date) = TRUNC(:date)", nativeQuery = true)
     BigDecimal calculateDailySales(@Param("date") LocalDate date);
+
+    // 최근 30일간 판매액
+    @Query(value = "SELECT TRUNC(o.order_date) as day, SUM(od.price * od.quantity) as total_sales " +
+            "FROM order_details od " +
+            "JOIN orders o ON od.orderid = o.orderid " +
+            "WHERE o.order_date BETWEEN :startDate AND :endDate " +
+            "GROUP BY TRUNC(o.order_date)",
+            nativeQuery = true)
+    List<Object[]> calculateSalesLast30Days(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    // 최근 12개월간 판매액
+    @Query(value = "SELECT TO_CHAR(o.order_date, 'YYYY-MM') as month, SUM(od.price * od.quantity) as total_sales " +
+            "FROM order_details od " +
+            "JOIN orders o ON od.orderid = o.orderid " +
+            "WHERE o.order_date >= ADD_MONTHS(CURRENT_DATE, -12) " +
+            "GROUP BY TO_CHAR(o.order_date, 'YYYY-MM')",
+            nativeQuery = true)
+    List<Object[]> calculateSalesLast12Months();
+
+    // 최근 3년간 판매액
+    @Query(value = "SELECT EXTRACT(YEAR FROM o.order_date) as year, SUM(od.price * od.quantity) as total_sales " +
+            "FROM order_details od " +
+            "JOIN orders o ON od.orderid = o.orderid " +
+            "WHERE o.order_date >= ADD_MONTHS(CURRENT_DATE, -36) " +
+            "GROUP BY EXTRACT(YEAR FROM o.order_date)",
+            nativeQuery = true)
+    List<Object[]> calculateSalesLast3Years();
 
     /* 판매자별 판매액 */
 

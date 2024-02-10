@@ -85,17 +85,6 @@ public class MyPageController {
 
 
 
-    @GetMapping("/admin")
-    public String adminPageForm(Model model, Principal principal) {
-        User user = getUser(principal, "ROLE_관리자");
-        if (user == null) return "error/403";
-        List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
-
-        model.addAttribute("products", productsList);
-
-        model.addAttribute("user", user);
-        return "admin/adminPage";
-    }
 
 
     private User getUser(Principal principal, String role) {

@@ -61,7 +61,7 @@
         <h3 class="order-history-title">주문 내역</h3>
         <ul>
             <li th:each="order, status : ${orders}" th:if="${status.index < 5}"
-                th:text="'주문 # ' + ${order.orderID} + ' - ' + ${order.status} + ' - ' + ${#dates.format(order.orderDate, 'yyyy-MM-dd')}">주문 #12345 - 배송 중
+                th:text="'주문 # ' + ${order.orderID} + ' - ' + ${order.status.getDescription()} + ' - ' + ${#dates.format(order.orderDate, 'yyyy-MM-dd')}">주문 #12345 - 배송 중
             </li>
         </ul>
         <a href="/order/list" class="btn btn-secondary">주문 내역 보기</a>

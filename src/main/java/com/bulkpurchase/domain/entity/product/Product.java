@@ -63,5 +63,9 @@ public class Product {
     @Column(nullable = false, length = 20, columnDefinition = "varchar(20) default 'ACTIVE'")
     private ProductStatus status = ProductStatus.ACTIVE;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoryID")
+    private Category category;
+
 }
 

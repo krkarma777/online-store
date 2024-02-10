@@ -105,9 +105,6 @@ public class SellerPageController {
         model.addAttribute("last12MonthsSales", last12MonthsSales);
         model.addAttribute("last3YearsSales", last3YearsSales);
 
-        String currentDate = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        model.addAttribute("currentDate", currentDate);
-
         return "/seller/sales";
     }
 

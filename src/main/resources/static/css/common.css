@@ -1,6 +1,4 @@
-body {
-    padding-top: 80px; /* 네비게이션 바의 높이보다 약간 더 큰 값 */
-}
+
 .navbar {
     position: fixed; /* 추가: 고정 위치 설정 */
     width: 100%; /* 추가: 화면 전체 너비로 설정 */
@@ -15,7 +13,9 @@ body, html {
     height: 100%; /* 전체 높이를 100%로 설정 */
     margin: 0; /* 기본 마진 제거 */
 }
-
+body {
+    padding-top: 80px; /* 네비게이션 바의 높이보다 약간 더 큰 값 */
+}
 /* 메인 컨테이너 최소 높이 설정 */
 .container {
     min-height: calc(100vh - 160px); /* 뷰포트 높이에서 헤더와 푸터의 높이를 제외한 값 */
