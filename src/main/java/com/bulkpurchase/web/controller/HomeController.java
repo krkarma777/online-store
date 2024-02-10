@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller;
 
-import com.bulkpurchase.domain.service.ProductService;
+import com.bulkpurchase.domain.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

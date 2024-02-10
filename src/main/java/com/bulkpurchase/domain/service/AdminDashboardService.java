@@ -2,11 +2,10 @@ package com.bulkpurchase.domain.service;
 
 import com.bulkpurchase.domain.dto.SalesDataDTO;
 import com.bulkpurchase.domain.enums.OrderStatus;
-import com.bulkpurchase.domain.repository.ProductRepository;
+import com.bulkpurchase.domain.repository.product.ProductRepository;
 import com.bulkpurchase.domain.repository.UserRepository;
 import com.bulkpurchase.domain.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

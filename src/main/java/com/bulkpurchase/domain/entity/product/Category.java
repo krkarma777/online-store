@@ -23,6 +23,7 @@ public class Category {
 
     // 자식 카테고리와의 관계 설정
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("name ASC") // 이름으로 자식 카테고리들을 오름차순 정렬
     private Set<Category> children = new HashSet<>();
 
     // 자식 카테고리 추가 메서드

@@ -4,7 +4,7 @@ import com.bulkpurchase.domain.entity.Cart;
 import com.bulkpurchase.domain.entity.CartItem;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
-import com.bulkpurchase.domain.service.ProductService;
+import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.cart.CartItemService;
 import com.bulkpurchase.domain.service.cart.CartService;
 import com.bulkpurchase.domain.service.user.UserService;

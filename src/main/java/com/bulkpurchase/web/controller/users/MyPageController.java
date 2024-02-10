@@ -1,10 +1,9 @@
 package com.bulkpurchase.web.controller.users;
 
 import com.bulkpurchase.domain.dto.OrderViewModel;
-import com.bulkpurchase.domain.entity.OrderDetail;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
-import com.bulkpurchase.domain.service.ProductService;
+import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.order.OrderService;
 import com.bulkpurchase.domain.service.user.UserService;
@@ -18,9 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @Slf4j

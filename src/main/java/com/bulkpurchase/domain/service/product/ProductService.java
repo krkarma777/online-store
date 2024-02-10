@@ -1,4 +1,4 @@
-package com.bulkpurchase.domain.service;
+package com.bulkpurchase.domain.service.product;
 
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.bulkpurchase.domain.entity.product.Product;
-import com.bulkpurchase.domain.repository.ProductRepository;
+import com.bulkpurchase.domain.repository.product.ProductRepository;
 
 import java.util.List;
 import java.util.Optional;

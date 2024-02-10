@@ -7,7 +7,7 @@ import com.bulkpurchase.domain.entity.product.UpdateCheck;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import com.bulkpurchase.domain.service.ImageStorageService;
-import com.bulkpurchase.domain.service.ProductService;
+import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
