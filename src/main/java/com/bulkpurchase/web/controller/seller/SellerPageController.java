@@ -54,7 +54,6 @@ public class SellerPageController {
 
         BigDecimal dailySales = orderService.calculateDailySalesBySeller(user.getUserID());
         model.addAttribute("dailySales", dailySales);
-        log.info("dailySales = {}", dailySales);
 
         return "seller/sellerPage";
     }
@@ -105,10 +104,6 @@ public class SellerPageController {
         model.addAttribute("last30DaysSales", last30DaysSales);
         model.addAttribute("last12MonthsSales", last12MonthsSales);
         model.addAttribute("last3YearsSales", last3YearsSales);
-
-        log.info("last30DaysSales={}", last30DaysSales);
-        log.info("last12MonthsSales={}", last12MonthsSales);
-        log.info("last3YearsSales={}", last3YearsSales);
 
         String currentDate = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         model.addAttribute("currentDate", currentDate);
