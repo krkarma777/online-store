@@ -1,4 +1,4 @@
-package com.bulkpurchase.domain.entity;
+package com.bulkpurchase.domain.entity.order;
 
 import com.bulkpurchase.domain.entity.product.Product;
 import jakarta.persistence.*;

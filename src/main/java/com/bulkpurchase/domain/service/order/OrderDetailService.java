@@ -1,7 +1,7 @@
 package com.bulkpurchase.domain.service.order;
 
-import com.bulkpurchase.domain.entity.Order;
-import com.bulkpurchase.domain.entity.OrderDetail;
+import com.bulkpurchase.domain.entity.order.Order;
+import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.repository.order.OrderDetailRepository;
 import lombok.RequiredArgsConstructor;

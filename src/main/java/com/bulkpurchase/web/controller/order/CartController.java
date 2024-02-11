@@ -1,7 +1,7 @@
 package com.bulkpurchase.web.controller.order;
 
-import com.bulkpurchase.domain.entity.Cart;
-import com.bulkpurchase.domain.entity.CartItem;
+import com.bulkpurchase.domain.entity.cart.Cart;
+import com.bulkpurchase.domain.entity.cart.CartItem;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.service.product.ProductService;

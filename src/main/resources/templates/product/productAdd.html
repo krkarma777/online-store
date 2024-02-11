@@ -1,186 +1,197 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>상품 등록</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
         .container {
-            max-width: 560px;
+            max-width: 800px;
+            margin-top: 20px;
         }
         .field-error {
-            border-color: #dc3545;
             color: #dc3545;
         }
-    </style>
-    <script
-            src="https://code.jquery.com/jquery-3.7.1.js"
-            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-            crossorigin="anonymous"></script>
-    <script>
-        $(document).ready(function () {
-            var uploadedImages = []; // 업로드한 이미지를 저장할 배열
-            // 초기 이미지 리스트 로드
-            function loadInitialImageList() {
-                // 서버에서 가져온 이미지 URL 리스트를 사용하여 초기화
-                // 예: uploadedImages = ['image1.jpg', 'image2.jpg', ...];
-
-                updateImageList();
+        .image-preview-container {
+            margin-top: 15px;
+            margin-bottom: 15px;
         }
-
-            $("#image").change(function () {
-                // 선택된 모든 파일을 처리
-                var files = $('#image')[0].files;
-                for (var i = 0; i < files.length; i++) {
-                    var formData = new FormData();
-                    formData.append('image', files[i]);
-
-                    $.ajax({
-                        url: '/upload-image',
-                        type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function (data) {
-                            var imageUrl = data.imageUrl;
-
-                            // 중복된 이미지가 없다면 배열에 추가
-                            if (imageUrl !=null && !uploadedImages.includes(imageUrl)) {
-                                uploadedImages.push(imageUrl);
-                                addHiddenInput(imageUrl);
-                            }
-                            updateImageList();
-                        },
-                        error: function (xhr, status, error) {
-                            // 오류 처리
-                            alert("이미지 업로드 실패: " + error);
-                        }
-                    });
-                }
-            });
-
-            // 업로드한 이미지 리스트를 업데이트하는 함수
-
-            function updateImageList() {
-                $('#file-list').empty();
-                uploadedImages.forEach(function(imageUrl, index) {
-                    $('#file-list').append(
-                        '<li><img src=' + imageUrl + '"/img/" style="width: 100px; height: auto;">' +
-                        '<button onclick="removeImage(\'' + imageUrl + '\')">Remove</button></li>'
-                    );
-
-                });
-            }
-            function addHiddenInput(imageUrl) {
-                var input = $('<input>').attr({
-                    type: 'hidden',
-                    name: 'imageUrls',
-                    value: imageUrl
-                });
-
-                // 폼에 input 필드 추가
-                $('form').append(input);
-            }
-            // 이미지를 리스트에서 제거하는 함수
-            window.removeImage = function(imageUrl) {
-                uploadedImages = uploadedImages.filter(function(url) {
-                    return url !== imageUrl;
-                });
-                updateImageList();
-            }
-
-            // 페이지 로드 시 초기 이미지 리스트 로드
-            loadInitialImageList();
-
-            // 폼 제출 이벤트 핸들러
-            $('form').on('submit', function() {
-                $('input[name="imageUrls"]').each(function() {
-                    if (!this.value || this.value.trim() === '') {
-                        $(this).remove(); // 무효한 필드 제거
-                    }
-                });
-            });
-        });
-    </script>
+        .image-preview {
+            width: 100px;
+            height: auto;
+            margin-right: 5px;
+            border-radius: 5px;
+        }
+        .btn-remove-image {
+            cursor: pointer;
+            color: #dc3545;
+            margin-left: -25px;
+            margin-bottom: 90px;
+            background-color: transparent;
+            border: none;
+        }
+        .image-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .image-list-item {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 5px;
+        }
+        .custom-file-upload {
+            border: 1px solid #ccc;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            margin-top: 5px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .form-section {
+            margin-bottom: 20px;
+        }
+        .form-section-header {
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
-<div class="container my-4">
-    <h2 th:text="#{page.addProduct}">상품 등록</h2>
-    <form th:action="@{/product/add}" th:object="${product}" method="post" class="row g-3">
-
-
-    <div th:if="${#fields.hasGlobalErrors()}">
-            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
-                글로벌 오류 메시지
-            </p>
+<div class="container shadow p-4 mb-5 bg-body rounded">
+    <h2 class="text-center mb-4">상품 등록</h2>
+    <form th:action="@{/product/add}" th:object="${product}" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+        <div class="form-section">
+            <div class="form-section-header">기본 정보</div>
+            <div class="mb-3">
+                <label for="productName" class="form-label">상품명</label>
+                <input type="text" class="form-control" id="productName" th:field="*{productName}" required>
+                <div class="field-error" th:errors="*{productName}"></div>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">가격</label>
+                <input type="number" class="form-control" id="price" th:field="*{price}" required>
+                <div class="field-error" th:errors="*{price}"></div>
+            </div>
+            <div class="mb-3">
+                <label for="stock" class="form-label">재고</label>
+                <input type="number" class="form-control" id="stock" th:field="*{stock}" required>
+                <div class="field-error" th:errors="*{stock}"></div>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">카테고리 선택</label>
+                <select class="form-select" id="category" th:field="*{category.categoryID}" required>
+                    <option value="">카테고리를 선택하세요</option>
+                    <option th:each="category : ${categories}" th:value="${category.categoryID}" th:text="${category.name}"></option>
+                </select>
+                <div class="field-error" th:errors="*{category.categoryID}"></div>
+            </div>
         </div>
-
-        <div class="col-md-6">
-            <label for="productName" class="form-label" th:text="#{label.product.name}">상품명</label>
-            <input type="text" th:field="*{productName}"
-                   th:errorclass="field-error" class="form-control" id="productName" placeholder="상품명을 입력하세요">
+        <div class="form-section">
+            <div class="form-section-header">상품 설명</div>
+            <textarea class="form-control" id="description" th:field="*{description}" rows="4" required></textarea>
+            <div class="field-error" th:errors="*{description}"></div>
         </div>
-        <div class="field-error" th:errors="*{productName}">
-            상품명 오류
+        <div class="form-section">
+            <div class="form-section-header">이미지 업로드</div>
+            <label for="image" class="custom-file-upload">파일 선택</label>
+            <input type="file" id="image" multiple style="display: none;" />
+            <ul class="image-list" id="file-list"></ul>
         </div>
-
-        <div class="col-md-6">
-            <label for="price" class="form-label" th:text="#{label.product.price}">가격</label>
-            <input type="number" th:field="*{price}"
-                   th:errorclass="field-error" class="form-control" id="price" placeholder="가격을 입력하세요">
-        </div>
-        <div class="field-error" th:errors="*{price}">
-            가격 오류
-        </div>
-
-        <div class="col-12">
-            <label for="description" class="form-label" th:text="#{label.product.description}">상품 설명</label>
-            <textarea class="form-control" th:field="*{description}"
-                      th:errorclass="field-error"
-                      id="description" placeholder="상품 설명"
-                      rows="3"></textarea>
-        </div>
-        <div class="field-error" th:errors="*{description}">
-            description 오류
-        </div>
-
-        <div class="col-md-6">
-            <label for="stock" class="form-label" th:text="#{label.product.stock}">재고</label>
-            <input type="number" th:field="*{stock}"
-                   th:errorclass="field-error" class="form-control" id="stock" placeholder="재고를 입력하세요">
-        </div>
-        <div class="field-error" th:errors="*{stock}">
-            stock 오류
-        </div>
-
-        <div class="col-md-6">
-            <label for="salesRegions" class="form-label" th:text="#{label.product.region}">판매 지역</label>
-            <select multiple="multiple" class="form-control" id="salesRegions" th:field="*{salesRegions}">
-                <option th:each="region : ${allSalesRegions}" th:value="${region}" th:text="${region}"></option>
-            </select>
-        </div>
-        <div class="field-error" th:errors="*{salesRegions}">
-            salesRegions 오류
-        </div>
-
-        <!-- 판매자 ID를 숨김 필드로 추가 -->
-        <input type="hidden" th:field="*{user.userID}"/>
-
-
-        <img id="image-preview" src="#" alt="Image Preview" style="max-width: 100%; height: auto; display: none"/>
-        <input type="hidden" th:field="*{imageUrls}"/>
-
-        <div class="col-12">
-            <button type="submit" class="btn btn-primary" th:text="#{page.addProduct}">상품 등록</button>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">상품 등록</button>
         </div>
     </form>
-    <div class="col-md-6">
-        <label for="image" class="form-label">이미지 업로드</label>
-        <input type="file" class="form-control" id="image" multiple>
-    </div>
-    <ul id="file-list"></ul>
 </div>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var uploadedImages = []; // 업로드한 이미지를 저장할 배열
+        // 초기 이미지 리스트 로드
+        function loadInitialImageList() {
+            // 서버에서 가져온 이미지 URL 리스트를 사용하여 초기화
+            // 예: uploadedImages = ['image1.jpg', 'image2.jpg', ...];
+
+            updateImageList();
+        }
+
+        $("#image").change(function () {
+            // 선택된 모든 파일을 처리
+            var files = $('#image')[0].files;
+            for (var i = 0; i < files.length; i++) {
+                var formData = new FormData();
+                formData.append('image', files[i]);
+
+                $.ajax({
+                    url: '/upload-image',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        var imageUrl = data.imageUrl;
+
+                        // 중복된 이미지가 없다면 배열에 추가
+                        if (imageUrl !=null && !uploadedImages.includes(imageUrl)) {
+                            uploadedImages.push(imageUrl);
+                            addHiddenInput(imageUrl);
+                        }
+                        updateImageList();
+                    },
+                    error: function (xhr, status, error) {
+                        // 오류 처리
+                        alert("이미지 업로드 실패: " + error);
+                    }
+                });
+            }
+        });
+
+        // 업로드한 이미지 리스트를 업데이트하는 함수
+
+        function updateImageList() {
+            $('#file-list').empty();
+            uploadedImages.forEach(function(imageUrl, index) {
+                $('#file-list').append(
+                    '<li><img src=' + imageUrl + '"/img/" style="width: 100px; height: auto;">' +
+                    '<button onclick="removeImage(\'' + imageUrl + '\')">Remove</button></li>'
+                );
+
+            });
+        }
+        function addHiddenInput(imageUrl) {
+            var input = $('<input>').attr({
+                type: 'hidden',
+                name: 'imageUrls',
+                value: imageUrl
+            });
+
+            // 폼에 input 필드 추가
+            $('form').append(input);
+        }
+        // 이미지를 리스트에서 제거하는 함수
+        window.removeImage = function(imageUrl) {
+            uploadedImages = uploadedImages.filter(function(url) {
+                return url !== imageUrl;
+            });
+            updateImageList();
+        }
+
+        // 페이지 로드 시 초기 이미지 리스트 로드
+        loadInitialImageList();
+
+        // 폼 제출 이벤트 핸들러
+        $('form').on('submit', function() {
+            $('input[name="imageUrls"]').each(function() {
+                if (!this.value || this.value.trim() === '') {
+                    $(this).remove(); // 무효한 필드 제거
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package com.bulkpurchase.domain.entity;
+package com.bulkpurchase.domain.entity.product;
 
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;

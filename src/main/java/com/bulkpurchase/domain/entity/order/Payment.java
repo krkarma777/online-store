@@ -1,4 +1,4 @@
-package com.bulkpurchase.domain.entity;
+package com.bulkpurchase.domain.entity.order;
 
 import jakarta.persistence.*;
 import lombok.Getter;

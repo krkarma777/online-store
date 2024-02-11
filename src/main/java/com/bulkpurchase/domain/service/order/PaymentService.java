@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.service.order;
 
-import com.bulkpurchase.domain.entity.Payment;
+import com.bulkpurchase.domain.entity.order.Payment;
 import com.bulkpurchase.domain.repository.order.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

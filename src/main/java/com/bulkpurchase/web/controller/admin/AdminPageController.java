@@ -1,8 +1,7 @@
 package com.bulkpurchase.web.controller.admin;
 
-import com.bulkpurchase.domain.dto.OrderViewModel;
 import com.bulkpurchase.domain.dto.SalesDataDTO;
-import com.bulkpurchase.domain.entity.Order;
+import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.product.Category;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;

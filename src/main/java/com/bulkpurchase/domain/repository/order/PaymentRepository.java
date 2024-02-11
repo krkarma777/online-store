@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.repository.order;
 
-import com.bulkpurchase.domain.entity.Payment;
+import com.bulkpurchase.domain.entity.order.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

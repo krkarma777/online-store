@@ -1,8 +1,7 @@
-package com.bulkpurchase.domain.entity;
+package com.bulkpurchase.domain.entity.cart;
 
 import com.bulkpurchase.domain.entity.product.Product;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

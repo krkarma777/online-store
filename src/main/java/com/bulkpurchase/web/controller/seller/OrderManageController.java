@@ -1,20 +1,17 @@
 package com.bulkpurchase.web.controller.seller;
 
-import com.bulkpurchase.domain.dto.UpdateOrderStatusModel;
-import com.bulkpurchase.domain.entity.Order;
-import com.bulkpurchase.domain.entity.OrderDetail;
+import com.bulkpurchase.domain.entity.order.Order;
+import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.OrderStatus;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.order.OrderService;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
 
 @Controller

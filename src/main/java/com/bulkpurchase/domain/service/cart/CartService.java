@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.service.cart;
 
-import com.bulkpurchase.domain.entity.Cart;
+import com.bulkpurchase.domain.entity.cart.Cart;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.cart.CartRepository;
 import lombok.RequiredArgsConstructor;

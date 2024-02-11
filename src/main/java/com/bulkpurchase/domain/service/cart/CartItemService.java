@@ -1,7 +1,7 @@
 package com.bulkpurchase.domain.service.cart;
 
-import com.bulkpurchase.domain.entity.Cart;
-import com.bulkpurchase.domain.entity.CartItem;
+import com.bulkpurchase.domain.entity.cart.Cart;
+import com.bulkpurchase.domain.entity.cart.CartItem;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.repository.cart.CartItemRepository;
 import jakarta.transaction.Transactional;
