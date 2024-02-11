@@ -156,12 +156,12 @@
             $('#file-list').empty();
             uploadedImages.forEach(function(imageUrl, index) {
                 $('#file-list').append(
-                    '<li><img src=' + imageUrl + '"/img/" style="width: 100px; height: auto;">' +
-                    '<button onclick="removeImage(\'' + imageUrl + '\')">Remove</button></li>'
+                    '<li><img src="/uploaded-images/' + imageUrl + '" style="width: 100px; height: auto;">' +
+                    '<button type="button" onclick="removeImage(\'' + imageUrl + '\')">Remove</button></li>'
                 );
-
             });
         }
+
         function addHiddenInput(imageUrl) {
             var input = $('<input>').attr({
                 type: 'hidden',

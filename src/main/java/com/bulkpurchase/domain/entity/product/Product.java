@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 
+import java.sql.Clob;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,8 +31,9 @@ public class Product {
     @Column(nullable = false, length = 100)
     private String productName;
 
+    @Column
     @NotEmpty(groups = {SaveCheck.class, UpdateCheck.class})
-    @Column(length = 500)
+    @Lob
     private String description;
 
     @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
