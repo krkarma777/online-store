@@ -45,7 +45,6 @@ public class Product {
     @Column(nullable = false)
     private Integer stock;
 
-    @NotNull(groups = {SaveCheck.class, UpdateCheck.class})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID")
     private User user;
@@ -69,5 +68,21 @@ public class Product {
     @JoinColumn(name = "categoryID")
     private Category category;
 
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "productID=" + productID +
+                ", productName='" + productName + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+                ", user=" + user +
+                ", salesRegions=" + salesRegions +
+                ", imageUrls=" + imageUrls +
+                ", status=" + status +
+                ", category=" + category +
+                '}';
+    }
 }
 

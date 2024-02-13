@@ -52,6 +52,8 @@ public class ProductController {
             User currentUser = userService.findByUsername(principal.getName());
             product.setUser(currentUser);
         }
+
+
         List<Category> categories = categoryService.findAllWithChildren();
         model.addAttribute("categories", categories);
         //검증에 실패하면 다시 입력 폼으로

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>상품 등록</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
         .container {
@@ -111,16 +112,45 @@
 <script>
     $(document).ready(function () {
         var uploadedImages = []; // 업로드한 이미지를 저장할 배열
-        // 초기 이미지 리스트 로드
-        function loadInitialImageList() {
-            // 서버에서 가져온 이미지 URL 리스트를 사용하여 초기화
-            // 예: uploadedImages = ['image1.jpg', 'image2.jpg', ...];
 
-            updateImageList();
+        class MyUploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            // 파일 업로드 로직
+            upload() {
+                return this.loader.file.then(file => {
+                    const formData = new FormData();
+                    formData.append('image', file); // 'image' 필드에 파일 추가
+
+                    return fetch('/upload-image', {
+                        method: 'POST',
+                        body: formData,
+                    }).then(response => response.json());
+                });
+            }
         }
 
+// 어댑터를 CKEditor에 추가
+        function MyCustomUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                return new MyUploadAdapter(loader);
+            };
+        }
+
+// 에디터 설정에 플러그인 추가
+        ClassicEditor
+            .create(document.querySelector('#description'), {
+                extraPlugins: [MyCustomUploadAdapterPlugin],
+                // 다른 설정
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        // 이미지 선택 시 처리 로직
         $("#image").change(function () {
-            // 선택된 모든 파일을 처리
             var files = $('#image')[0].files;
             for (var i = 0; i < files.length; i++) {
                 var formData = new FormData();
@@ -134,27 +164,23 @@
                     contentType: false,
                     success: function (data) {
                         var imageUrl = data.imageUrl;
-
-                        // 중복된 이미지가 없다면 배열에 추가
-                        if (imageUrl !=null && !uploadedImages.includes(imageUrl)) {
+                        if (imageUrl != null && !uploadedImages.includes(imageUrl)) {
                             uploadedImages.push(imageUrl);
                             addHiddenInput(imageUrl);
+                            updateImageList();
                         }
-                        updateImageList();
                     },
                     error: function (xhr, status, error) {
-                        // 오류 처리
                         alert("이미지 업로드 실패: " + error);
                     }
                 });
             }
         });
 
-        // 업로드한 이미지 리스트를 업데이트하는 함수
-
+        // 이미지 리스트를 업데이트하는 함수
         function updateImageList() {
             $('#file-list').empty();
-            uploadedImages.forEach(function(imageUrl, index) {
+            uploadedImages.forEach(function(imageUrl) {
                 $('#file-list').append(
                     '<li><img src="/uploaded-images/' + imageUrl + '" style="width: 100px; height: auto;">' +
                     '<button type="button" onclick="removeImage(\'' + imageUrl + '\')">Remove</button></li>'
@@ -162,16 +188,16 @@
             });
         }
 
+        // hidden input 필드 추가 함수
         function addHiddenInput(imageUrl) {
             var input = $('<input>').attr({
                 type: 'hidden',
                 name: 'imageUrls',
                 value: imageUrl
             });
-
-            // 폼에 input 필드 추가
             $('form').append(input);
         }
+
         // 이미지를 리스트에서 제거하는 함수
         window.removeImage = function(imageUrl) {
             uploadedImages = uploadedImages.filter(function(url) {
@@ -180,17 +206,14 @@
             updateImageList();
         }
 
-        // 페이지 로드 시 초기 이미지 리스트 로드
-        loadInitialImageList();
+        // 초기 이미지 리스트 로드
+        function loadInitialImageList() {
+            // 여기에 초기 이미지 로딩 로직 구현
+            // 예: 서버에서 이미지 URL 리스트를 가져와 uploadedImages 배열에 추가
+            updateImageList();
+        }
 
-        // 폼 제출 이벤트 핸들러
-        $('form').on('submit', function() {
-            $('input[name="imageUrls"]').each(function() {
-                if (!this.value || this.value.trim() === '') {
-                    $(this).remove(); // 무효한 필드 제거
-                }
-            });
-        });
+        loadInitialImageList(); // 페이지 로드 시 초기 이미지 리스트 로드
     });
 </script>
 </body>
