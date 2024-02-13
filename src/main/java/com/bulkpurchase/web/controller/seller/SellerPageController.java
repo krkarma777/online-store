@@ -49,6 +49,7 @@ public class SellerPageController {
 
         BigDecimal dailySales = orderService.calculateDailySalesBySeller(user.getUserID());
         model.addAttribute("dailySales", dailySales);
+        System.out.println("dailySales = " + dailySales);
 
         return "seller/sellerPage";
     }
@@ -74,9 +75,11 @@ public class SellerPageController {
 
         List<OrderDetail> orderDetailList = new ArrayList<>();
         for (Product product : productsList) {
-            orderDetailList = orderDetailService.findByProductOrderByOrderDetailIDDesc(product);
+            List<OrderDetail> orderDetailIDDesc = orderDetailService.findByProductOrderByOrderDetailIDDesc(product);
+            orderDetailList.addAll(orderDetailIDDesc);
         }
         model.addAttribute("orderDetailList", orderDetailList);
+        System.out.println("orderDetailList = " + orderDetailList);
 
         return "/seller/orders";
     }
@@ -85,7 +88,7 @@ public class SellerPageController {
     public String salesView(Model model, Principal principal) {
         Long userID = userService.findByUsername(principal.getName()).getUserID();
 
-        LocalDate endDate = LocalDate.now();
+        LocalDate endDate = LocalDate.now().plusDays(1);
         LocalDate startDate = endDate.minusDays(30);
 
         // 최근 30일 판매 데이터
@@ -94,6 +97,7 @@ public class SellerPageController {
         List<SalesDataDTO> last12MonthsSales = orderService.calculateSalesLast12MonthsBySeller(userID);
         // 최근 3년 판매 데이터
         List<SalesDataDTO> last3YearsSales = orderService.calculateSalesLast3YearsBySeller(userID);
+
 
         // 모델에 데이터 추가
         model.addAttribute("last30DaysSales", last30DaysSales);

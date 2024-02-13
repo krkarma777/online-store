@@ -1,6 +1,7 @@
 package com.bulkpurchase.domain.entity.order;
 
 import com.bulkpurchase.domain.entity.product.Product;
+import com.bulkpurchase.domain.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,4 +35,8 @@ public class OrderDetail {
 
     @Column(nullable = true)
     private String shippingNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private OrderStatus status;
 }

@@ -41,21 +41,21 @@
         <table class="table table-hover align-middle">
             <thead>
             <tr>
+                <th>상품번호</th>
+                <th>카테고리</th>
                 <th>상품명</th>
                 <th>가격</th>
                 <th>재고</th>
-                <th>설명</th>
-                <th>판매 지역</th>
                 <th>작업</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="product : ${products}">
+                <td th:text="${product.productID}"></td>
+                <td th:text="${product.category != null ? product.category.name : '없음'}"></td>
                 <td th:text="${product.productName}"></td>
                 <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
                 <td th:text="${product.stock}"></td>
-                <td th:text="${product.description}"></td>
-                <td th:text="${product.salesRegions}"></td>
                 <td>
                     <a th:href="@{/product/update/{productID}(productID=${product.productID})}" class="btn btn-sm btn-outline-secondary btn-custom">수정</a>
                     <a th:if="${product.status.name() == 'ACTIVE'}"

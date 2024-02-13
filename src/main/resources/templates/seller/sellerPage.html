@@ -20,7 +20,7 @@
                 </div>
                 <div class="card-body">
                     <h5 class="card-title"> 금일 총 판매액:
-                        <span th:text="${dailySales != null ? '₩' + #numbers.formatDecimal(dailySales, 0, 'NUMBER') : '₩0'}">₩0</span>
+                        <span th:text="${dailySales != null ? '₩' + #numbers.formatDecimal(dailySales, 0, 0) : '₩0'}">₩0</span>
                     </h5>
                     <p class="card-text">이번 달 총 판매액과 주문 건수를 확인하세요.</p>
                     <a href="/seller/sales" class="btn btn-primary">상세 보기</a>
