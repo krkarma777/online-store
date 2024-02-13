@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @Slf4j
@@ -69,11 +67,23 @@ public class ProductController {
 
     @GetMapping("/product/{productId}")
     public String productDetail(@PathVariable(value = "productId") Long productId, Model model) {
-        Optional<Product> product = productService.findById(productId);
-        if (product.isEmpty()) {
+        Optional<Product> productOpt = productService.findById(productId);
+        if (productOpt.isEmpty()) {
             //오류
         } else {
-            model.addAttribute("product", product.get());
+            Product product = productOpt.get();
+            model.addAttribute("product", product);
+
+            Category category = product.getCategory();
+            List<Category> parentCategories = new ArrayList<>();
+
+            while (category != null) {
+                parentCategories.add(category);
+                category = category.getParent();
+            }
+
+            Collections.reverse(parentCategories);
+            model.addAttribute("parentCategories", parentCategories);
         }
         return "product/details";
     }

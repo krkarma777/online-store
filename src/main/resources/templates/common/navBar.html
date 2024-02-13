@@ -1,5 +1,5 @@
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top" th:fragment="content" th:with="isAuthenticated=${#authorization.expression('isAuthenticated()')}">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" th:fragment="content" th:with="isAuthenticated=${#authorization.expression('isAuthenticated()')}">
     <div class="container-fluid">
         <a class="navbar-brand" href="/"><img class="logo" src="/img/logo.png" alt="로고 이미지"></a>
 
