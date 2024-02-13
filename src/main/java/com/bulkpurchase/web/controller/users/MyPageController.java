@@ -51,12 +51,17 @@ public class MyPageController {
         return "users/myPage";
     }
 
+
+
     @GetMapping("/mypage/edit")
     public String userEditForm(Model model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
         model.addAttribute("user", user);
         return "users/edit";
     }
+
+
+
     @PostMapping("/mypage/update")
     public String userEditForm(@ModelAttribute User user, Principal principal) {
         log.info("user = {}" , user);

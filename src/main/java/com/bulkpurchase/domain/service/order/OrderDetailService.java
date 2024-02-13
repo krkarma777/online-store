@@ -40,4 +40,8 @@ public class OrderDetailService {
     public Optional<OrderDetail> findByID(Long orderDetailID) {
         return orderDetailRepository.findById(orderDetailID);
     }
+
+    public void save(OrderDetail orderDetail) {
+        orderDetailRepository.save(orderDetail);
+    }
 }

@@ -31,9 +31,8 @@ public class OrderManageController {
         if (orderDetailOpt.isPresent()) {
             OrderDetail orderDetail = orderDetailOpt.get();
             if (orderDetail.getProduct().getUser().equals(user)) {
-                Order order = orderDetail.getOrder();
-                order.setStatus(status);
-                orderService.save(order);
+                orderDetail.setStatus(status);
+                orderDetailService.save(orderDetail);
                 return "redirect:/seller/orders";
             } else {
                 // 셀러가 그 주문에 접근할 권한이 없음
