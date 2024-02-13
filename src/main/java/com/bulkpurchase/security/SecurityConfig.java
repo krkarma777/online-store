@@ -20,11 +20,11 @@ public class SecurityConfig {
                         (authorize) -> authorize
                                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll() // 정적 리소스 허용
                                 .requestMatchers("/register/**", "/registerProc", "/login/**", "/loginProc", "/").permitAll()
-                                .requestMatchers("/mypage/**","/cart/**").authenticated()
+                                .requestMatchers("/mypage/**", "/cart/**").authenticated()
                                 .requestMatchers("/product/add", "/seller/**").hasAnyRole("판매자", "관리자")
                                 .requestMatchers("/admin/**").hasRole("관리자")
-                                .requestMatchers("/*").permitAll()
-                                .anyRequest().authenticated()
+/*                                .requestMatchers("/*").permitAll()*/
+                                .anyRequest().permitAll()
                 )
 
                 .formLogin((authorize) -> authorize
@@ -34,7 +34,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
 
-                        .logout((logoutConfig) ->
+                .logout((logoutConfig) ->
                         logoutConfig
                                 .logoutUrl("/logout")
                                 .logoutSuccessUrl("/main")

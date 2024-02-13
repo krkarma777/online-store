@@ -97,7 +97,7 @@
             <div class="field-error" th:errors="*{description}"></div>
         </div>
         <div class="form-section">
-            <div class="form-section-header">이미지 업로드</div>
+            <div class="form-section-header">대표 이미지 업로드</div>
             <label for="image" class="custom-file-upload">파일 선택</label>
             <input type="file" id="image" multiple style="display: none;" />
             <ul class="image-list" id="file-list"></ul>
@@ -118,7 +118,6 @@
                 this.loader = loader;
             }
 
-            // 파일 업로드 로직
             upload() {
                 return this.loader.file.then(file => {
                     const formData = new FormData();
@@ -127,7 +126,14 @@
                     return fetch('/upload-image', {
                         method: 'POST',
                         body: formData,
-                    }).then(response => response.json());
+                    })
+                        .then(response => response.json())
+                        .then(response => {
+                            // 서버 응답에서 이미지 URL을 추출하여 CKEditor 형식에 맞게 반환
+                            return {
+                                default: '/uploaded-images/' + response.imageUrl // 이미지 URL을 에디터가 요구하는 형식으로 매핑
+                            };
+                        });
                 });
             }
         }

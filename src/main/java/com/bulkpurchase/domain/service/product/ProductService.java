@@ -17,7 +17,6 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final OrderDetailService orderDetailService;
 
     public Product saveProduct(Product product) {
         return productRepository.save(product);

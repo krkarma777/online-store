@@ -1,13 +1,9 @@
 package com.bulkpurchase.web.controller.product;
 
-import com.bulkpurchase.domain.entity.product.Category;
-import com.bulkpurchase.domain.entity.product.Product;
+import com.bulkpurchase.domain.entity.product.*;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.entity.product.SaveCheck;
-import com.bulkpurchase.domain.entity.product.UpdateCheck;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.enums.SalesRegion;
-import com.bulkpurchase.domain.service.ImageStorageService;
 import com.bulkpurchase.domain.service.product.CategoryService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.UserService;
@@ -32,7 +28,6 @@ public class ProductController {
 
     private final ProductService productService;
     private final UserService userService;
-    private final ImageStorageService imageStorageService;
     private final CategoryService categoryService;
 
     @GetMapping("/product/add")
