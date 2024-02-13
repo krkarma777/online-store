@@ -1,19 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Edit Product</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/css/common.css">
-    <style>
-        .container {
-            max-width: 560px;
-        }
-
-        .field-error {
-            border-color: #dc3545;
-            color: #dc3545;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>상품 수정</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/common.css">
+<style>
+    .container {
+        max-width: 800px;
+        margin-top: 20px;
+    }
+    .field-error {
+        color: #dc3545;
+    }
+    .image-preview-container {
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+    .image-preview {
+        width: 100px;
+        height: auto;
+        margin-right: 5px;
+        border-radius: 5px;
+    }
+    .btn-remove-image {
+        cursor: pointer;
+        color: #dc3545;
+        margin-left: -25px;
+        margin-bottom: 90px;
+        background-color: transparent;
+        border: none;
+    }
+    .image-list {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    .image-list-item {
+        display: inline-block;
+        position: relative;
+        margin-bottom: 5px;
+    }
+    .custom-file-upload {
+        border: 1px solid #ccc;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        margin-top: 5px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+    .form-section {
+        margin-bottom: 20px;
+    }
+    .form-section-header {
+        margin-bottom: 10px;
+        font-size: 18px;
+        font-weight: 500;
+    }
+</style>
+</head>
     <script
             src="https://code.jquery.com/jquery-3.7.1.js"
             integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
@@ -64,14 +110,18 @@
 
             function updateImageList() {
                 // 기존에 표시된 이미지 리스트 업데이트
-                $('#image-list').empty();
+                $('#image-list').empty(); // 이미지 리스트를 초기화
                 uploadedImages.forEach(function(imageUrl, index) {
+                    // 이미지와 삭제 버튼을 포함하는 HTML 요소를 생성하여 리스트에 추가
                     $('#image-list').append(
-                        '<div><img src=' + imageUrl + '"/img/" style="width: 100px; height: auto;">' +
-                        '<button type="button" onclick="removeImage(\'' + imageUrl + '\')">Remove</button></div>'
+                        '<div class="image-list-item">' +
+                        '<img src="/uploaded-images/' + imageUrl + '" style="width: 100px; height: auto;">' +
+                        '<button type="button" class="btn-remove-image" onclick="removeImage(\'' + imageUrl + '\')">Remove</button>' +
+                        '</div>'
                     );
                 });
             }
+
             function addHiddenInput(imageUrl) {
                 var input = $('<input>').attr({
                     type: 'hidden',
@@ -86,7 +136,13 @@
                     return url !== imageUrl;
                 });
                 updateImageList();
+                removeHiddenInput(imageUrl); // hidden input을 제거하는 함수 호출
             };
+
+            function removeHiddenInput(imageUrl) {
+                // 이미지 URL에 해당하는 hidden input을 찾아서 제거
+                $("input[name='imageUrls'][value='" + imageUrl + "']").remove();
+            }
 
             loadInitialImageList();
 
@@ -100,7 +156,6 @@
             });
         });
     </script>
-</head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
 
@@ -118,13 +173,7 @@
         <div class="field-error" th:errors="*{productName}">
             상품명 오류
         </div>
-        <div class="form-group">
-            <label for="description" th:text="#{label.product.description}">Description</label>
-            <textarea th:field="*{description}" th:errorclass="field-error" class="form-control" id="description" rows="3" placeholder="Enter description"></textarea>
-        </div>
-        <div class="field-error" th:errors="*{description}">
-            description 오류
-        </div>
+
         <div class="form-group">
             <label for="price" th:text="#{label.product.price}">Price</label>
             <input type="number" th:field="*{price}" th:errorclass="field-error" class="form-control" id="price" placeholder="Enter price">
@@ -139,31 +188,141 @@
         <div class="field-error" th:errors="*{stock}">
             stock 오류
         </div>
-        <div class="form-group">
-            <label for="image">Images</label>
-            <div id="image-list">
-                <!-- 기존 이미지 목록을 표시하고, 각 이미지에 삭제 버튼을 제공 -->
-                <div th:each="imageUrl : ${product.imageUrls}">
-                    <img th:src="@{'/images/' + ${imageUrl}}" style="width: 100px; height: auto;"/>
-                    <button type="button" onclick="removeImage('${imageUrl}')">Remove</button>
-                </div>
-            </div>
-
+        <div class="form-section">
+            <div class="form-section-header">상품 설명</div>
+            <textarea class="form-control" id="description" th:field="*{description}" rows="4" required></textarea>
+            <div class="field-error" th:errors="*{description}"></div>
         </div>
-
-        <!-- 다른 필드들 추가 -->
-        <button type="submit" class="btn btn-primary">Update Product</button>
-
-        <!-- 이미지 업로드 부분 -->
-        <div class="form-group">
-            <label for="image">이미지 업로드</label>
-            <input type="file" class="form-control" id="image" name="image" multiple> <!-- multiple 속성 추가 -->
+        <div class="field-error" th:errors="*{description}">
+            description 오류
         </div>
-
+        <div class="form-section">
+            <div class="form-section-header">대표 이미지 업로드</div>
+            <label for="image" class="custom-file-upload">파일 선택</label>
+            <input type="file" id="image" multiple style="display: none;" />
+            <ul class="image-list" id="file-list"></ul>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">상품 수정</button>
+        </div>
     </form>
 </div>
 
 
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var uploadedImages = []; // 업로드한 이미지를 저장할 배열
+
+        class MyUploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            upload() {
+                return this.loader.file.then(file => {
+                    const formData = new FormData();
+                    formData.append('image', file); // 'image' 필드에 파일 추가
+
+                    return fetch('/upload-image', {
+                        method: 'POST',
+                        body: formData,
+                    })
+                        .then(response => response.json())
+                        .then(response => {
+                            // 서버 응답에서 이미지 URL을 추출하여 CKEditor 형식에 맞게 반환
+                            return {
+                                default: '/uploaded-images/' + response.imageUrl // 이미지 URL을 에디터가 요구하는 형식으로 매핑
+                            };
+                        });
+                });
+            }
+        }
+
+// 어댑터를 CKEditor에 추가
+        function MyCustomUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                return new MyUploadAdapter(loader);
+            };
+        }
+
+// 에디터 설정에 플러그인 추가
+        ClassicEditor
+            .create(document.querySelector('#description'), {
+                extraPlugins: [MyCustomUploadAdapterPlugin],
+                // 다른 설정
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        // 이미지 선택 시 처리 로직
+        $("#image").change(function () {
+            var files = $('#image')[0].files;
+            for (var i = 0; i < files.length; i++) {
+                var formData = new FormData();
+                formData.append('image', files[i]);
+
+                $.ajax({
+                    url: '/upload-image',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        var imageUrl = data.imageUrl;
+                        if (imageUrl != null && !uploadedImages.includes(imageUrl)) {
+                            uploadedImages.push(imageUrl);
+                            addHiddenInput(imageUrl);
+                            updateImageList();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("이미지 업로드 실패: " + error);
+                    }
+                });
+            }
+        });
+
+        // 이미지 리스트를 업데이트하는 함수
+        function updateImageList() {
+            $('#file-list').empty();
+            uploadedImages.forEach(function(imageUrl) {
+                $('#file-list').append(
+                    '<li><img src="/uploaded-images/' + imageUrl + '" style="width: 100px; height: auto;">' +
+                    '<button type="button" onclick="removeImage(\'' + imageUrl + '\')">Remove</button></li>'
+                );
+            });
+        }
+
+        // hidden input 필드 추가 함수
+        function addHiddenInput(imageUrl) {
+            var input = $('<input>').attr({
+                type: 'hidden',
+                name: 'imageUrls',
+                value: imageUrl
+            });
+            $('form').append(input);
+        }
+
+        // 이미지를 리스트에서 제거하는 함수
+        window.removeImage = function(imageUrl) {
+            uploadedImages = uploadedImages.filter(function(url) {
+                return url !== imageUrl;
+            });
+            updateImageList();
+        }
+
+        // 초기 이미지 리스트 로드
+        function loadInitialImageList() {
+            // 여기에 초기 이미지 로딩 로직 구현
+            // 예: 서버에서 이미지 URL 리스트를 가져와 uploadedImages 배열에 추가
+            updateImageList();
+        }
+
+        loadInitialImageList(); // 페이지 로드 시 초기 이미지 리스트 로드
+    });
+</script>
 </body>
 </html>

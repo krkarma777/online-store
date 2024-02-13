@@ -90,24 +90,4 @@ public class User {
     @Column(nullable = false, length = 20)
     private UserStatus status = UserStatus.ACTIVE;
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userID=" + userID +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", realName='" + realName + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                ", userGrade='" + userGrade + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", address='" + address + '\'' +
-                ", detailAddress='" + detailAddress + '\'' +
-                ", zipCode='" + zipCode + '\'' +
-                ", createDate=" + createDate +
-                ", salesRegions=" + salesRegions +
-                ", products=" + products +
-                ", status=" + status +
-                '}';
-    }
 }
