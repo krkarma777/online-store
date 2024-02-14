@@ -66,6 +66,16 @@
       width: auto;
       height: 200px;
     }
+    .error-message {
+      color: red;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .form-check-input {
+      margin-top: 10px;
+      padding-bottom: -20px;
+
+    }
   </style>
 </head>
 <body>
@@ -83,6 +93,11 @@
         <div th:if="${param.error}">
           <p class="error-message">이메일 또는 비밀번호를 다시 확인하세요. 씨드에 등록되지 않은 아이디거나, 아이디 또는 비밀번호를 잘못 입력하셨습니다.</p>
         </div>
+        <!-- 로그인 폼 내부에 체크박스 추가 -->
+        <div class="form-check" style="margin-top: 10px;">
+          <input style="height: 18px; position: relative; bottom: 6px;" type="checkbox" class="form-check-input" id="saveId" name="saveId">
+          <label class="form-check-label" for="saveId">아이디 저장</label>
+        </div>
         <button type="submit" class="btn btn-primary">로그인</button>
         <hr>
         <a href="/register" class="login-form-link">회원가입</a>
@@ -90,19 +105,30 @@
           ©Test. All rights reserved.
 
         </div>
+
       </form>
     </div>
   </div>
 </div>
-<style>
-  .error-message {
-    color: red;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-  }
-  .is-invalid {
-    border-color: red;
-  }
-</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 페이지 로드 시 저장된 아이디 불러오기
+    if (localStorage.getItem("savedId")) {
+      document.getElementById("username").value = localStorage.getItem("savedId");
+      document.getElementById("saveId").checked = true;
+    }
+
+    // 로그인 폼 제출 시 아이디 저장
+    document.querySelector(".login-form").addEventListener("submit", function() {
+      if (document.getElementById("saveId").checked) {
+        localStorage.setItem("savedId", document.getElementById("username").value);
+      } else {
+        localStorage.removeItem("savedId");
+      }
+    });
+  });
+</script>
+
 </body>
 </html>
