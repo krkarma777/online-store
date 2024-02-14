@@ -2,17 +2,17 @@ package com.bulkpurchase.domain.dto;
 
 import com.bulkpurchase.domain.enums.OrderStatus;
 
-public class UpdateOrderStatusModel {
+public class UpdateOrderStatusDTO {
 
     private Long orderDetailID;
     private OrderStatus status;
 
     // 기본 생성자
-    public UpdateOrderStatusModel() {
+    public UpdateOrderStatusDTO() {
     }
 
     // 모든 필드를 포함한 생성자
-    public UpdateOrderStatusModel(Long orderDetailID, OrderStatus status) {
+    public UpdateOrderStatusDTO(Long orderDetailID, OrderStatus status) {
         this.orderDetailID = orderDetailID;
         this.status = status;
     }

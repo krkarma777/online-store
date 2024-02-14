@@ -5,13 +5,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderDetailViewModel {
+public class OrderDetailViewDTO {
     private Long orderDetailID;
-    private ProductViewModel product;
+    private ProductViewDTO product;
     private Integer quantity;
     private Double price;
 
-    public OrderDetailViewModel(Long orderDetailID, ProductViewModel product, Integer quantity, Double price) {
+    public OrderDetailViewDTO(Long orderDetailID, ProductViewDTO product, Integer quantity, Double price) {
         this.orderDetailID = orderDetailID;
         this.product = product;
         this.quantity = quantity;
@@ -19,6 +19,6 @@ public class OrderDetailViewModel {
     }
 
 
-    public OrderDetailViewModel() {
+    public OrderDetailViewDTO() {
     }
 }

@@ -9,14 +9,14 @@ import java.util.List;
 
 @Getter
 @Setter
-public class OrderViewModel {
+public class OrderViewDTO {
     private Long orderID;
     private Date orderDate;
     private Double totalPrice;
     private OrderStatus status;
-    private List<OrderDetailViewModel> orderDetails;
+    private List<OrderDetailViewDTO> orderDetails;
 
-    public OrderViewModel(Long orderID, Date orderDate, Double totalPrice, OrderStatus status, List<OrderDetailViewModel> orderDetails) {
+    public OrderViewDTO(Long orderID, Date orderDate, Double totalPrice, OrderStatus status, List<OrderDetailViewDTO> orderDetails) {
         this.orderID = orderID;
         this.orderDate = orderDate;
         this.totalPrice = totalPrice;
@@ -24,6 +24,6 @@ public class OrderViewModel {
         this.orderDetails = orderDetails;
     }
 
-    public OrderViewModel() {
+    public OrderViewDTO() {
     }
 }

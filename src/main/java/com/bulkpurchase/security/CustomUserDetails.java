@@ -1,4 +1,4 @@
-package com.bulkpurchase.domain.dto;
+package com.bulkpurchase.security;
 
 import com.bulkpurchase.domain.entity.user.User;
 import org.springframework.security.core.GrantedAuthority;
