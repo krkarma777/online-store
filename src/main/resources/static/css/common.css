@@ -1,9 +1,15 @@
 
 .navbar {
-    /*position: fixed; !* 추가: 고정 위치 설정 *!*/
-    width: 100%; /* 추가: 화면 전체 너비로 설정 */
+/*    !*position: fixed; !* 추가: 고정 위치 설정 *!*!
+    width: 100%; !* 추가: 화면 전체 너비로 설정 *!*/
     z-index: 2; /* 추가: 에디터보다 위에 나타나도록 설정 */
 /*    top: 0; !* 수정: 브라우저 상단에 고정 *!*/
+}
+
+.topBar {
+    height: 100px;
+    position: relative;
+    z-index: 2000;
 }
 .logo {
     width: auto;
@@ -12,11 +18,6 @@
 body, html {
     height: 100%; /* 전체 높이를 100%로 설정 */
     margin: 0; /* 기본 마진 제거 */
-}
-/* 메인 컨테이너 최소 높이 설정 */
-.container {
-    min-height: calc(100vh - 160px); /* 뷰포트 높이에서 헤더와 푸터의 높이를 제외한 값 */
-    padding-top: 80px; /* 네비게이션 바 높이에 맞춰 조정 */
 }
 
 /* 기존 .footer2 스타일에서 position 속성 제거 */
@@ -95,3 +96,26 @@ body, html {
     color: black; /* 푸터 하단 링크의 글자 색상을 검은색으로 변경 */
     text-decoration: none; /* 언더라인 제거 */
 }
+/* 자식 드롭다운 메뉴 스타일링 */
+.dropdown-hover .dropdown-menu {
+    display: none; /* 기본적으로는 드롭다운 메뉴를 숨깁니다. */
+    margin-top: 0; /* 부모 항목과의 간격을 제거합니다. */
+}
+
+.dropdown-hover:hover .dropdown-menu {
+    display: block; /* 마우스 오버 시 드롭다운 메뉴를 표시합니다. */
+}
+
+/* 자식 드롭다운 메뉴가 부모 메뉴의 오른쪽에 위치하도록 설정 */
+.dropdown-menu .dropdown-submenu .dropdown-menu {
+    display: none;
+    position: absolute;
+    left: 100%; /* 부모 메뉴의 너비만큼 왼쪽에서 떨어진 위치에 배치 */
+    top: 0; /* 부모 메뉴와 동일한 높이에서 시작 */
+}
+
+/* 마우스 호버 시 자식 드롭다운 메뉴 표시 */
+.dropdown-menu .dropdown-submenu:hover .dropdown-menu {
+    display: block;
+}
+

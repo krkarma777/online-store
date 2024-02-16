@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.order;
 
-import com.bulkpurchase.domain.dto.OrderViewModel;
+import com.bulkpurchase.domain.dto.OrderViewDTO;
 import com.bulkpurchase.domain.entity.cart.Cart;
 import com.bulkpurchase.domain.entity.cart.CartItem;
 import com.bulkpurchase.domain.entity.order.Order;
@@ -92,8 +92,8 @@ public class OrderController {
     public String orderList(Model model, Principal principal) {
         try {
             User user = userService.findByUsername(principal.getName());
-            List<OrderViewModel> orderViewModels = orderService.getOrderViewModelsByUser(user);
-            model.addAttribute("orderViewModels", orderViewModels);
+            List<OrderViewDTO> orderViewDTOS = orderService.getOrderViewModelsByUser(user);
+            model.addAttribute("orderViewDTOS", orderViewDTOS);
             return "order/orders";
         } catch (Exception e) {
             return "error/400";

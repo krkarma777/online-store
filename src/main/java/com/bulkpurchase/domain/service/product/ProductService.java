@@ -1,7 +1,8 @@
 package com.bulkpurchase.domain.service.product;
 
+import com.bulkpurchase.domain.dto.PopularProductDTO;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.service.order.OrderDetailService;
+import com.bulkpurchase.domain.enums.ProductStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,12 +19,21 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    public List<Product> findPopularProductsByCategory(Long categoryID) {
+        return productRepository.findPopularProductsByCategory(categoryID);
+    }
+    public List<Product> findPopularProducts() {
+        return productRepository.findPopularProducts();
+    }
     public Product saveProduct(Product product) {
         return productRepository.save(product);
     }
 
     public List<Product> findAllProducts() {
         return productRepository.findAll();
+    }
+    public List<Product> findActiveProduct(ProductStatus status ) {
+        return productRepository.findActiveProduct(status);
     }
 
     public Optional<Product> findById(Long productId) {
@@ -50,4 +60,7 @@ public class ProductService {
         productRepository.deleteById(productID);
     }
 
+    public List<Product> findByCategoryCategoryID(Long categoryID) {
+        return productRepository.findByCategoryCategoryID(categoryID);
+    }
 }

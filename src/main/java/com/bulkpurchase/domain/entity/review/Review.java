@@ -1,5 +1,6 @@
-package com.bulkpurchase.domain.entity.product;
+package com.bulkpurchase.domain.entity.review;
 
+import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "Reviews")
@@ -41,7 +43,26 @@ public class Review {
     @Column(nullable = false)
     private Date creationDate;
 
-    @Column(nullable = true)
-    private String imageUrl;
+    @ElementCollection
+    @CollectionTable(name = "review_image_urls", joinColumns = @JoinColumn(name = "reviewID"))
+    @Column(name = "imageUrl")
+    private List<String> imageUrls;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OrderDetailID", nullable = false, unique = true)
+    private OrderDetail orderDetail;
+
+    @Override
+    public String toString() {
+        return "Review{" +
+                "reviewID=" + reviewID +
+                ", product=" + product +
+                ", user=" + user +
+                ", content='" + content + '\'' +
+                ", rating=" + rating +
+                ", creationDate=" + creationDate +
+                ", imageUrls=" + imageUrls +
+                ", orderDetail=" + orderDetail +
+                '}';
+    }
 }

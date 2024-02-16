@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 상세보기</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Swiper CSS for the image slider -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>
+    <style>
+        .username-masked {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .image-slider-container {
+            margin-bottom: 20px;
+        }
+        .review-content {
+            background-color: #f8f9fa;
+            border-left: 5px solid #0d6efd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #495057;
+        }
+        .like-dislike-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .report-link {
+            font-size: 0.8rem;
+            color: #dc3545;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .star-rating {
+            color: #ffc107;
+            font-size: 1.25rem;
+        }
+        .product-name {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .btn-primary {
+            margin-top: 20px;
+            display: block;
+            width: fit-content;
+        }
+        .center {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <p class="card-text"><span class="username-masked" th:text="${review.user.realName.charAt(0) + '*' + review.user.realName.charAt(review.user.realName.length() - 1)}">사용자명</span></p>
+            <div style="display: flex; align-items: center;">
+                <div class="star-rating" th:attr="data-rating=${review.rating}">
+                    <span th:each="star, iterStat : ${#numbers.sequence(1,5)}">
+                        <i th:class="${iterStat.count <= review.rating} ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+                    </span>
+                </div>
+                <p class="card-text" style="margin-left: 10px;"><span th:text="${#dates.format(review.creationDate, 'yyyy-MM-dd')}">작성일</span></p>
+            </div>
+            <h5 class="card-subtitle mb-2 product-name">상품명: <span th:text="${review.product.productName}">상품명</span></h5>
+            <div th:if="${!review.imageUrls.isEmpty()}" class="image-slider-container">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div th:each="url : ${review.imageUrls}" class="swiper-slide">
+                            <img th:src="${url}" class="img-fluid" alt="리뷰 이미지">
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+            <div class="review-content">
+                <p><span th:text="${review.content}">리뷰 내용...</span></p>
+            </div>
+            <div class="like-dislike-buttons">
+                <button type="button" class="btn btn-outline-success">좋아요 <span class="badge bg-success">42</span></button>
+                <button type="button" class="btn btn-outline-danger">싫어요 <span class="badge bg-danger">3</span></button>
+                <span class="report-link" onclick="reportReview()">신고하기</span>
+            </div>
+            <div class="center">
+                <a href="/reviews" class="btn btn-primary">리뷰 목록으로 돌아가기</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
+<!-- Swiper JS for the image slider -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+    var swiper = new Swiper('.swiper-container', {
+        loop: true,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+    });
+    function reportReview() {
+        // 신고 기능 구현
+        alert("신고가 접수되었습니다.");
+    }
+</script>
+</body>
+</html>

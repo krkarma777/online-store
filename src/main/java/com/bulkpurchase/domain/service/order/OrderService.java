@@ -1,8 +1,8 @@
 package com.bulkpurchase.domain.service.order;
 
-import com.bulkpurchase.domain.dto.OrderDetailViewModel;
-import com.bulkpurchase.domain.dto.OrderViewModel;
-import com.bulkpurchase.domain.dto.ProductViewModel;
+import com.bulkpurchase.domain.dto.OrderDetailViewDTO;
+import com.bulkpurchase.domain.dto.OrderViewDTO;
+import com.bulkpurchase.domain.dto.ProductViewDTO;
 import com.bulkpurchase.domain.dto.SalesDataDTO;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
@@ -116,14 +116,14 @@ public class OrderService {
         return orderRepository.findById(orderID);
     }
 
-    public List<OrderViewModel> getOrderViewModelsByUser(User user) {
-        List<OrderViewModel> orderViewModels = new ArrayList<>();
+    public List<OrderViewDTO> getOrderViewModelsByUser(User user) {
+        List<OrderViewDTO> orderViewDTOS = new ArrayList<>();
 
         List<Order> orders = orderRepository.findByUserOrderByOrderIDDesc(user);
         for (Order order : orders) {
             List<OrderDetail> orderDetails = orderDetailRepository.findByOrder(order);
 
-            List<OrderDetailViewModel> orderDetailViewModels = new ArrayList<>();
+            List<OrderDetailViewDTO> orderDetailViewDTOS = new ArrayList<>();
             for (OrderDetail orderDetail : orderDetails) {
                 Product product = orderDetail.getProduct();
                 List<String> imageUrls = product.getImageUrls();
@@ -131,7 +131,7 @@ public class OrderService {
                 if (!imageUrls.isEmpty()) {
                     imageUrl = imageUrls.get(0);
                 }
-                ProductViewModel productViewModel = new ProductViewModel(
+                ProductViewDTO productViewDTO = new ProductViewDTO(
                         product.getProductID(),
                         product.getProductName(),
                         product.getPrice(),
@@ -139,38 +139,38 @@ public class OrderService {
                         imageUrl
                 );
 
-                OrderDetailViewModel orderDetailViewModel = new OrderDetailViewModel(
+                OrderDetailViewDTO orderDetailViewDTO = new OrderDetailViewDTO(
                         orderDetail.getOrderDetailID(),
-                        productViewModel,
+                        productViewDTO,
                         orderDetail.getQuantity(),
                         orderDetail.getPrice()
                 );
 
-                orderDetailViewModels.add(orderDetailViewModel);
+                orderDetailViewDTOS.add(orderDetailViewDTO);
             }
 
-            OrderViewModel orderViewModel = new OrderViewModel(
+            OrderViewDTO orderViewDTO = new OrderViewDTO(
                     order.getOrderID(),
                     order.getOrderDate(),
                     order.getTotalPrice(),
                     order.getStatus(),
-                    orderDetailViewModels
+                    orderDetailViewDTOS
             );
 
-            orderViewModels.add(orderViewModel);
+            orderViewDTOS.add(orderViewDTO);
         }
 
-        return orderViewModels;
+        return orderViewDTOS;
     }
 
-    public List<OrderViewModel> getOrderViewModels() {
-        List<OrderViewModel> orderViewModels = new ArrayList<>();
+    public List<OrderViewDTO> getOrderViewModels() {
+        List<OrderViewDTO> orderViewDTOS = new ArrayList<>();
 
         List<Order> orders = orderRepository.findAll();
         for (Order order : orders) {
             List<OrderDetail> orderDetails = orderDetailRepository.findByOrder(order);
 
-            List<OrderDetailViewModel> orderDetailViewModels = new ArrayList<>();
+            List<OrderDetailViewDTO> orderDetailViewDTOS = new ArrayList<>();
             for (OrderDetail orderDetail : orderDetails) {
                 Product product = orderDetail.getProduct();
                 List<String> imageUrls = product.getImageUrls();
@@ -178,7 +178,7 @@ public class OrderService {
                 if (!imageUrls.isEmpty()) {
                     imageUrl = imageUrls.get(0);
                 }
-                ProductViewModel productViewModel = new ProductViewModel(
+                ProductViewDTO productViewDTO = new ProductViewDTO(
                         product.getProductID(),
                         product.getProductName(),
                         product.getPrice(),
@@ -186,28 +186,28 @@ public class OrderService {
                         imageUrl
                 );
 
-                OrderDetailViewModel orderDetailViewModel = new OrderDetailViewModel(
+                OrderDetailViewDTO orderDetailViewDTO = new OrderDetailViewDTO(
                         orderDetail.getOrderDetailID(),
-                        productViewModel,
+                        productViewDTO,
                         orderDetail.getQuantity(),
                         orderDetail.getPrice()
                 );
 
-                orderDetailViewModels.add(orderDetailViewModel);
+                orderDetailViewDTOS.add(orderDetailViewDTO);
             }
 
-            OrderViewModel orderViewModel = new OrderViewModel(
+            OrderViewDTO orderViewDTO = new OrderViewDTO(
                     order.getOrderID(),
                     order.getOrderDate(),
                     order.getTotalPrice(),
                     order.getStatus(),
-                    orderDetailViewModels
+                    orderDetailViewDTOS
             );
 
-            orderViewModels.add(orderViewModel);
+            orderViewDTOS.add(orderViewDTO);
         }
 
-        return orderViewModels;
+        return orderViewDTOS;
     }
 
     public List<Order> findAll() {

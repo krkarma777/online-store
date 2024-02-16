@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.users;
 
-import com.bulkpurchase.domain.dto.OrderViewModel;
+import com.bulkpurchase.domain.dto.OrderViewDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.service.product.ProductService;
@@ -45,7 +45,7 @@ public class MyPageController {
 
         model.addAttribute("user", user);
 
-        List<OrderViewModel> orders = orderService.getOrderViewModelsByUser(user);
+        List<OrderViewDTO> orders = orderService.getOrderViewModelsByUser(user);
         model.addAttribute("orders", orders);
 
         return "users/myPage";

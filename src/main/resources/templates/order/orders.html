@@ -82,21 +82,21 @@
 
 
     <!-- 주문 목록 반복 -->
-    <div th:each="orderViewModel : ${orderViewModels}">
-        <div class="order-date" th:text="${#dates.format(orderViewModel.orderDate, 'yyyy. MM. dd')} + ' 주문'">2024. 1. 27 주문</div>
+    <div th:each="orderViewDTO : ${orderViewDTOS}">
+        <div class="order-date" th:text="${#dates.format(orderViewDTO.orderDate, 'yyyy. MM. dd')} + ' 주문'">2024. 1. 27 주문</div>
         <ul class="order-list">
             <!-- 주문 상세 목록 반복 -->
-            <li class="order-item" th:each="orderDetail : ${orderViewModel.orderDetails}">
-                <img th:src="${orderDetail.product.imageUrl}" alt="Product Image" />
+            <li class="order-item" th:each="orderDetail : ${orderViewDTO.orderDetails}">
+                <img th:src=" ${'/uploaded-images/'+orderDetail.product.imageUrl}" alt="Product Image" />
                 <div class="order-item-detail">
                     <div th:text="'상품명: ' + ${orderDetail.product.name}">상품명: 제품 A</div>
                     <div th:text="'가격: ' + ${#numbers.formatDecimal(orderDetail.product.price, 0, 'COMMA', 0, 'POINT')} + '원'">가격: 4,100원</div>
                     <div th:text="'수량: ' + ${orderDetail.quantity} + '개'">수량: 1개</div>
                 </div>
                 <div class="order-item-actions">
-                    <a th:href="@{/order/tracking(orderId=${orderViewModel.orderID})}"><button type="button">배송조회</button></a>
-                    <a th:href="@{/order/return(orderId=${orderViewModel.orderID})}"><button type="button">교환, 반품 신청</button></a>
-                    <a th:href="@{/review/write(productId=${orderDetail.product.productID})}"><button type="button">리뷰 작성하기</button></a>
+                    <a th:href="@{/order/tracking(orderID=${orderViewDTO.orderID})}"><button type="button">배송조회</button></a>
+                    <a th:href="@{/order/return(orderID=${orderViewDTO.orderID})}"><button type="button">교환, 반품 신청</button></a>
+                    <a th:href="@{/review/write(productID=${orderDetail.product.productID},orderDetailID=${orderDetail.orderDetailID})}"><button type="button">리뷰 작성하기</button></a>
                 </div>
             </li>
         </ul>

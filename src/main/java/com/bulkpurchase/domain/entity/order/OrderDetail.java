@@ -38,5 +38,5 @@ public class OrderDetail {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
-    private OrderStatus status;
+    private OrderStatus status = OrderStatus.PENDING;
 }
