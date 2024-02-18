@@ -7,17 +7,15 @@ import com.bulkpurchase.domain.service.product.ProductInquiryService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 public class ProductInquiryController {
 
@@ -27,29 +25,22 @@ public class ProductInquiryController {
 
 
 
-    @PostMapping("/product/{productID}/inquiry/add")
-    public ResponseEntity<?> productInquiryAdd(@PathVariable("productID") Long productID, Principal principal, @RequestBody ProductInquiry productInquiry) {
+    @PostMapping("/inquiry/add")
+    public String productInquiryAdd(@RequestParam("productID") Long productID, Principal principal, @ModelAttribute ProductInquiry productInquiry) {
         User user = userService.findByUsername(principal.getName());
         Product product = productService.findById(productID).orElse(null);
         if (user == null) {
-            return ResponseEntity.badRequest().body("회원가입이 필요한 서비스입니다.");
+            return "error/403";
         }
 
         if (product == null) {
-            return ResponseEntity.badRequest().body("상품이 존재하지 않습니다.");
+            return "error/400";
         }
 
         productInquiry.setUser(user);
         productInquiry.setProduct(product);
         productInquiryService.save(productInquiry);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "success");
-        response.put("message", "상품 문의 등록 완료");
-        response.put("productID", productID);
-        response.put("userName", user.getRealName());
-        response.put("inquiryContent", productInquiry.getInquiryContent());
-
-        return ResponseEntity.ok(response);
+        return "redirect:/product/" + productID;
     }
 }

@@ -361,13 +361,13 @@
                             <p th:text="${reviewDetail.review.content}">리뷰 내용</p>
                         </div>
                         <div class="like-dislike-buttons">
-                            <button type="button" class="btn btn-outline-success btn-like">
+                            <button type="button" class="btn btn-outline-success btn-like" th:data-review-id="${reviewDetail.review.reviewID}">
                                 좋아요
-                                <span class="badge bg-success" th:text="${reviewDetail.likeCount}">0</span>
+                                <span class="badge bg-success like-count" th:id="'like-count-' + ${reviewDetail.review.reviewID}">0</span>
                             </button>
-                            <button type="button" class="btn btn-outline-danger btn-dislike">
+                            <button type="button" class="btn btn-outline-danger btn-dislike" th:data-review-id="${reviewDetail.review.reviewID}">
                                 싫어요
-                                <span class="badge bg-danger" th:text="${reviewDetail.dislikeCount}">0</span>
+                                <span class="badge bg-danger dislike-count" th:id="'dislike-count-' + ${reviewDetail.review.reviewID}">0</span>
                             </button>
                         </div>
                     </div>
@@ -424,11 +424,13 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="inquiryForm">
+                                    <!-- 문의하기 모달 내부의 폼 -->
+                                    <form id="inquiryForm" action="/inquiry/add" method="POST">
                                         <div class="mb-3">
                                             <label for="inquiryContent" class="form-label">문의 내용</label>
                                             <textarea class="form-control" id="inquiryContent" name="inquiryContent" required></textarea>
                                         </div>
+                                        <input type="hidden" name="productID" id="modalProductID" th:value="${productID}">
                                         <button type="submit" class="btn btn-primary">문의하기</button>
                                     </form>
                                 </div>
@@ -504,13 +506,6 @@
 </div>
 <div th:replace="~{common/footer :: footer1}"></div>
 <div th:replace="~{common/footer2 :: footer2}"></div>
-<!-- Bootstrap JS, Popper.js, and jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
-<!-- Swiper JS for the image slider -->
-<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-</body>
 <script>
     $(document).ready(function () {
         var stickyTab = $('#sticky-tab');
@@ -580,54 +575,6 @@
             $('.carousel-item img').css('height', cardBodyHeight + 'px').css('object-fit','contain');
         }
 
-        // 문의하기 모달 내부의 폼 제출 이벤트 처리
-        $("#inquiryForm").submit(function(e) {
-            e.preventDefault(); // 기본 제출 이벤트 방지
-
-            var productID = $("#inquiryModal").attr("data-product-id"); // 모달에서 productID 가져오기
-            var inquiryContent = $("#inquiryContent").val(); // 입력된 문의 내용 가져오기
-
-            $.ajax({
-                url: `/product/${productID}/inquiry/add`, // 서버에 문의 추가 요청을 보낼 URL
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({ inquiryContent: inquiryContent }), // 요청 본문에 JSON 형태로 데이터 전송
-                success: function(response) {
-                    // 문의 추가에 성공한 경우
-                    alert("문의가 성공적으로 제출되었습니다.");
-                    $('#inquiryModal').modal('hide'); // 모달 창 닫기
-
-/*                    // 새 문의를 문의 목록에 추가
-                    var newInquiryHtml = `
-                                            <div class="inquiry">
-                                                <div class="inquiry-question">
-                                                    <strong>${response.userName}</strong> -
-                                                    <span>방금전</span>
-                                                    <p>${response.inquiryContent}</p>
-                                                </div>
-                                                ${response.replyContent ?  `<div class="inquiry-answer">
-                                                        <strong>판매자 답변:</strong>
-                                                        <p>${response.replyContent}</p>
-                                                    </div>` : `<div class="text-muted">답변 대기중...</div>`
-                                                        }
-                                            </div>`;
-                    $("#inquiryList").append(newInquiryHtml); // 문의 목록에 새 문의 추가*/
-/*                    $("#inquiryContent").val(''); // 입력 필드 초기화*/
-                },
-                error: function(xhr, status, error) {
-                    // 문의 추가에 실패한 경우
-                    alert("문의를 제출하는데 실패했습니다.");
-                }
-            });
-        });
-
-        // 모달이 열릴 때 productID 설정
-        $('#inquiryModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // 모달을 열기 위한 버튼
-            var productID = button.data('product-id'); // 버튼의 data-product-id 속성에서 productID 추출
-            $(this).attr("data-product-id", productID); // 모달에 productID 저장
-        });
-
         /* 리뷰 & 문의 더보기 버튼 */
         const initialItemsToShow = 5;
         let currentReviewsToShow = initialItemsToShow;
@@ -658,13 +605,61 @@
         if ($('.inquiry').length <= initialItemsToShow) {
             $('#inquiriesLoadMore').hide();
         }
+
+        /* 좋아요 싫어요 ajax처리 */
+
+        $('.btn-like').click(function() {
+            var reviewId = $(this).data('review-id');
+            var likeCountSelector = '#like-count-' + reviewId;
+            var dislikeCountSelector = '#dislike-count-' + reviewId;
+
+            $.ajax({
+                type: "POST",
+                url: "/review/" + reviewId + "/feedback",
+                data: JSON.stringify({ feedbackType: 'LIKE' }),
+                contentType: "application/json",
+                success: function(response) {
+                    $(likeCountSelector).text(response.likesCount);
+                    $(dislikeCountSelector).text(response.dislikesCount);
+                },
+                error: function(xhr, status, error) {
+                    alert("좋아요 수 업데이트에 실패했습니다: " + error);
+                }
+            });
+        });
+
+        $('.btn-dislike').click(function() {
+            var reviewId = $(this).data('review-id');
+            var likeCountSelector = '#like-count-' + reviewId;
+            var dislikeCountSelector = '#dislike-count-' + reviewId;
+
+            $.ajax({
+                type: "POST",
+                url: "/review/" + reviewId + "/feedback",
+                data: JSON.stringify({ feedbackType: 'DISLIKE' }),
+                contentType: "application/json",
+                success: function(response) {
+                    $(likeCountSelector).text(response.likesCount);
+                    $(dislikeCountSelector).text(response.dislikesCount);
+                },
+                error: function(xhr, status, error) {
+                    alert("싫어요 수 업데이트에 실패했습니다: " + error);
+                }
+            });
+        });
+
     });
 
 </script>
-<!-- Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="/js/dropdown.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 
+<!-- Swiper JS for the image slider -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+</body>
 </html>
