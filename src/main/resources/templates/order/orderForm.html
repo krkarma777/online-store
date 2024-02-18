@@ -5,6 +5,39 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        body {
+            padding-top: 60px;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .total-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
@@ -17,7 +50,6 @@
                 <thead>
                 <tr>
                     <th>제품명</th>
-                    <th>설명</th>
                     <th>가격</th>
                     <th>수량 선택</th>
                 </tr>
@@ -25,7 +57,6 @@
                 <tbody>
                 <tr th:each="item, itemStat : ${items}">
                     <td th:text="${item.product.productName}"></td>
-                    <td th:text="${item.product.description}"></td>
                     <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '원'" th:data-price="${item.product.price}"></td>
                     <td>
                         <label>

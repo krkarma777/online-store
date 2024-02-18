@@ -1,5 +1,13 @@
 
 function submitFormWithCartId() {
+    var subtotal = parseFloat($("#subtotal").text().replace('원', '').replace(',', ''));
+
+    // 합계가 0원인지 확인합니다.
+    if (subtotal === 0) {
+        // 사용자에게 메시지를 표시하고 함수를 종료합니다.
+        alert('선택하신 상품이 없습니다.');
+        return;
+    }
 
     var cartId = document.getElementById('cartId').value;
     var form = document.querySelector('form');
