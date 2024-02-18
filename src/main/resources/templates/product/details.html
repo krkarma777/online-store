@@ -6,7 +6,8 @@
     <!-- Swiper CSS for the image slider -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.css" />
+
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
         body {
@@ -229,6 +230,11 @@
         }
 
 
+         .filled-star {
+             color: #ffd700;
+         }
+    </style>
+
     </style>
 </head>
 <body>
@@ -297,7 +303,15 @@
                         <span class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'">₩100,000</span>
                     </p>
 
-                    <p class="card-text"><span class="rating-stars">★★★★☆ </span>2,848개의 상품평</p><!-- 기능 추가 해야됨 -->
+                    <p class="card-text">
+                        <span class="rating-stars">
+                            <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                                <i class="fas fa-star" th:class="${i <= averageRating} ? 'fas fa-star' : 'far fa-star'"></i>
+                            </th:block>
+                        </span>
+                        <span th:text="${reviewCount}"></span>개의 상품평
+                    </p>
+
                     <p class="card-text"><strong>재고:</strong> <span th:text="${product.stock}">재고 수량</span></p>
                     <div class="buttons mt-4">
 
@@ -340,7 +354,7 @@
                         <div class="review-rating">
                             평점:
                             <span th:each="star : ${#numbers.sequence(1,5)}">
-                        <i class="fa" th:class="${star <= reviewDetail.review.rating} ? 'fa-star' : 'fa-star-o'"></i>
+                        <i class="fa" th:class="${star <= reviewDetail.review.rating} ? 'fas fa-star filled-star' : 'far fa-star'"></i>
                     </span>
                         </div>
                         <div class="review-content">

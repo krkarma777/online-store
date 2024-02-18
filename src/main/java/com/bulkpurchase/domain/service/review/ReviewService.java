@@ -51,4 +51,12 @@ public class ReviewService {
                 (Long) result[2]
         )).collect(Collectors.toList());
     }
+
+    public long countByProductID(Long productID) {
+        return reviewRepository.countByProductID(productID);
+    }
+
+    public Double findAverageRatingByProductID(Long productID) {
+        return reviewRepository.findAverageRatingByProductID(productID);
+    }
 }

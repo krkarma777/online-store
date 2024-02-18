@@ -28,9 +28,9 @@ public class ProductController {
 
 
 
-    @GetMapping("/product/{productId}")
-    public String productDetail(@PathVariable(value = "productId") Long productId, Model model, Principal principal) {
-        Optional<Product> productOpt = productService.findById(productId);
+    @GetMapping("/product/{productID}")
+    public String productDetail(@PathVariable(value = "productID") Long productID, Model model, Principal principal) {
+        Optional<Product> productOpt = productService.findById(productID);
         if (productOpt.isEmpty()) {
             //오류
         } else {
@@ -51,6 +51,12 @@ public class ProductController {
 
             List<ReviewDetailDTO> reviews = reviewService.reviewDetailsByProduct(product);
             model.addAttribute("reviews", reviews);
+
+            long reviewCount = reviewService.countByProductID(productID);
+            model.addAttribute("reviewCount", reviewCount);
+
+            Double averageRating = reviewService.findAverageRatingByProductID(productID);
+            model.addAttribute("averageRating", averageRating);
         }
         return "product/details";
     }
