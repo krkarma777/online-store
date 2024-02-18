@@ -374,6 +374,9 @@
                     <div th:if="${reviews.isEmpty()}" class="text-center">
                         <p>아직 리뷰가 없습니다.</p>
                     </div>
+                    <div id="reviewsLoadMore" class="text-center mt-4">
+                        <button class="btn btn-primary" onclick="loadMoreReviews()">리뷰 더보기</button>
+                    </div>
                 </div>
 
             </div>
@@ -408,7 +411,9 @@
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inquiryModal" id="openInquiryModal" th:data-product-id="${product.productID}">
                         상품 문의하기
                     </button>
-
+                    <div id="inquiriesLoadMore" class="text-center mt-4">
+                        <button class="btn btn-primary" onclick="loadMoreInquiries()">문의 더보기</button>
+                    </div>
 
                     <!-- 문의하기 모달 -->
                     <div class="modal fade" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryModalLabel" aria-hidden="true">
@@ -622,6 +627,37 @@
             var productID = button.data('product-id'); // 버튼의 data-product-id 속성에서 productID 추출
             $(this).attr("data-product-id", productID); // 모달에 productID 저장
         });
+
+        /* 리뷰 & 문의 더보기 버튼 */
+        const initialItemsToShow = 5;
+        let currentReviewsToShow = initialItemsToShow;
+        let currentInquiriesToShow = initialItemsToShow;
+
+        $('.review').slice(initialItemsToShow).hide();
+        $('.inquiry').slice(initialItemsToShow).hide();
+
+        window.loadMoreReviews = function() {
+            $('.review').slice(0, currentReviewsToShow + initialItemsToShow).show();
+            currentReviewsToShow += initialItemsToShow;
+            if ($('.review:hidden').length == 0) {
+                $('#reviewsLoadMore').hide();
+            }
+        };
+
+        window.loadMoreInquiries = function() {
+            $('.inquiry').slice(0, currentInquiriesToShow + initialItemsToShow).show();
+            currentInquiriesToShow += initialItemsToShow;
+            if ($('.inquiry:hidden').length == 0) {
+                $('#inquiriesLoadMore').hide();
+            }
+        };
+
+        if ($('.review').length <= initialItemsToShow) {
+            $('#reviewsLoadMore').hide();
+        }
+        if ($('.inquiry').length <= initialItemsToShow) {
+            $('#inquiriesLoadMore').hide();
+        }
     });
 
 </script>
