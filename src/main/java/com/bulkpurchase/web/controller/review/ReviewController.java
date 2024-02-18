@@ -1,5 +1,6 @@
-package com.bulkpurchase.web.controller.users;
+package com.bulkpurchase.web.controller.review;
 
+import com.bulkpurchase.domain.dto.ReviewDetailDTO;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.review.Review;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Date;
-import java.util.Optional;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -71,13 +72,8 @@ public class ReviewController {
 
     @GetMapping("/review/{reviewID}")
     private String reviewDetail(@PathVariable("reviewID") Long reviewID, Model model ) {
-        Optional<Review> reviewOpt = reviewService.findById(reviewID);
-        if (reviewOpt.isPresent()) {
-            Review review = reviewOpt.get();
-            model.addAttribute("review", review);
-        } else {
-            return "error/404";
-        }
+        List<ReviewDetailDTO> reviews = reviewService.reviewDetailsByUserID(reviewID);
+        model.addAttribute("reviews", reviews);
         return "review/reviewDetail";
     }
 }

@@ -33,10 +33,9 @@ public class RegisterController {
 
     @PostMapping("/registerProc")
     public String registerProcess(@ModelAttribute@Validated(RegisterCheck.class) User user, BindingResult bindingResult, Model model) {
-        System.out.println("user = " + user);
+
         if (bindingResult.hasErrors()) {
             log.info("bindingResult = {}", bindingResult);
-            System.out.println("user = " + user);
             model.addAttribute("user", user);
             return "/users/register";
         }

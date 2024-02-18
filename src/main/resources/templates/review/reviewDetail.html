@@ -60,42 +60,46 @@
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
 <div class="container mt-5">
-    <div class="card">
-        <div class="card-body">
-            <p class="card-text"><span class="username-masked" th:text="${review.user.realName.charAt(0) + '*' + review.user.realName.charAt(review.user.realName.length() - 1)}">사용자명</span></p>
-            <div style="display: flex; align-items: center;">
-                <div class="star-rating" th:attr="data-rating=${review.rating}">
-                    <span th:each="star, iterStat : ${#numbers.sequence(1,5)}">
-                        <i th:class="${iterStat.count <= review.rating} ? 'bi bi-star-fill' : 'bi bi-star'"></i>
-                    </span>
-                </div>
-                <p class="card-text" style="margin-left: 10px;"><span th:text="${#dates.format(review.creationDate, 'yyyy-MM-dd')}">작성일</span></p>
-            </div>
-            <h5 class="card-subtitle mb-2 product-name">상품명: <span th:text="${review.product.productName}">상품명</span></h5>
-            <div th:if="${!review.imageUrls.isEmpty()}" class="image-slider-container">
-                <div class="swiper-container">
-                    <div class="swiper-wrapper">
-                        <div th:each="url : ${review.imageUrls}" class="swiper-slide">
-                            <img th:src="${url}" class="img-fluid" alt="리뷰 이미지">
-                        </div>
+    <div th:each="reviewDetail : ${reviews}">
+        <div class="card mb-3">
+            <div class="card-body">
+                <p class="card-text"><span class="username-masked" th:text="${reviewDetail.review.user.realName.charAt(0) + '*' + reviewDetail.review.user.realName.charAt(reviewDetail.review.user.realName.length() - 1)}">사용자명</span></p>
+                <div style="display: flex; align-items: center;">
+                    <div class="star-rating" th:attr="data-rating=${reviewDetail.review.rating}">
+                        <span th:each="star, iterStat : ${#numbers.sequence(1,5)}">
+                            <i th:class="${iterStat.count <= reviewDetail.review.rating} ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+                        </span>
                     </div>
-                    <div class="swiper-pagination"></div>
+                    <p class="card-text" style="margin-left: 10px;"><span th:text="${#dates.format(reviewDetail.review.creationDate, 'yyyy-MM-dd')}">작성일</span></p>
                 </div>
-            </div>
-            <div class="review-content">
-                <p><span th:text="${review.content}">리뷰 내용...</span></p>
-            </div>
-            <div class="like-dislike-buttons">
-                <button type="button" class="btn btn-outline-success">좋아요 <span class="badge bg-success">42</span></button>
-                <button type="button" class="btn btn-outline-danger">싫어요 <span class="badge bg-danger">3</span></button>
-                <span class="report-link" onclick="reportReview()">신고하기</span>
-            </div>
-            <div class="center">
-                <a href="/reviews" class="btn btn-primary">리뷰 목록으로 돌아가기</a>
+                <h5 class="card-subtitle mb-2 product-name">상품명: <span th:text="${reviewDetail.review.product.productName}">상품명</span></h5>
+                <!-- 이미지 슬라이더 (리뷰 이미지가 있는 경우에만 표시) -->
+                <div th:if="${!reviewDetail.review.imageUrls.isEmpty()}" class="image-slider-container">
+                    <div class="swiper-container">
+                        <div class="swiper-wrapper">
+                            <div th:each="url : ${reviewDetail.review.imageUrls}" class="swiper-slide">
+                                <img th:src="${url}" class="img-fluid" alt="리뷰 이미지">
+                            </div>
+                        </div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+                <div class="review-content">
+                    <p><span th:text="${reviewDetail.review.content}">리뷰 내용...</span></p>
+                </div>
+                <div class="like-dislike-buttons">
+                    <button type="button" class="btn btn-outline-success btn-like" th:data-review-id="${reviewDetail.review.reviewID}">좋아요 <span class="badge bg-success like-count" th:text="${reviewDetail.likeCount}">42</span></button>
+                    <button type="button" class="btn btn-outline-danger btn-dislike" th:data-review-id="${reviewDetail.review.reviewID}">싫어요 <span class="badge bg-danger dislike-count" th:text="${reviewDetail.dislikeCount}">3</span></button>
+                    <span class="report-link" onclick="reportReview()">신고하기</span>
+                </div>
             </div>
         </div>
     </div>
+    <div class="center">
+        <a href="/reviews" class="btn btn-primary">리뷰 목록으로 돌아가기</a>
+    </div>
 </div>
+
 
 <!-- Bootstrap JS, Popper.js, and jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -104,6 +108,43 @@
 <!-- Swiper JS for the image slider -->
 <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 <script>
+    $(document).ready(function() {
+        $('.btn-like').click(function() {
+            var reviewId = $(this).data('review-id');
+            $.ajax({
+                type: "POST",
+                url: "/review/" + reviewId + "/feedback",
+                data: JSON.stringify({ feedbackType: 'LIKE' }),
+                contentType: "application/json",
+                success: function(response) {
+                    $('.like-count').text(response.likesCount);
+                    $('.dislike-count').text(response.dislikesCount);
+                },
+                error: function(xhr, status, error) {
+                    // 실패 시 오류 메시지 표시
+                    alert("좋아요 수 업데이트에 실패했습니다: " + error);
+                }
+            });
+        });
+
+        $('.btn-dislike').click(function() {
+            var reviewId = $(this).data('review-id');
+            $.ajax({
+                type: "POST",
+                url: "/review/" + reviewId + "/feedback",
+                data: JSON.stringify({ feedbackType: 'DISLIKE' }),
+                contentType: "application/json",
+                success: function(response) {
+                    $('.like-count').text(response.likesCount);
+                    $('.dislike-count').text(response.dislikesCount);
+                },
+                error: function(xhr, status, error) {
+                    // 실패 시 오류 메시지 표시
+                    alert("싫어요 수 업데이트에 실패했습니다: " + error);
+                }
+            });
+        });
+    });
     var swiper = new Swiper('.swiper-container', {
         loop: true,
         pagination: {

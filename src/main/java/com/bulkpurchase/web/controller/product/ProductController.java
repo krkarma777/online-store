@@ -1,20 +1,17 @@
 package com.bulkpurchase.web.controller.product;
 
+import com.bulkpurchase.domain.dto.ReviewDetailDTO;
 import com.bulkpurchase.domain.entity.product.*;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.enums.ProductStatus;
-import com.bulkpurchase.domain.enums.SalesRegion;
-import com.bulkpurchase.domain.service.product.CategoryService;
 import com.bulkpurchase.domain.service.product.ProductService;
+import com.bulkpurchase.domain.service.review.ReviewFeedbackService;
+import com.bulkpurchase.domain.service.review.ReviewService;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.*;
@@ -26,11 +23,13 @@ public class ProductController {
 
     private final ProductService productService;
     private final UserService userService;
+    private final ReviewFeedbackService reviewFeedbackService;
+    private final ReviewService reviewService;
 
 
 
     @GetMapping("/product/{productId}")
-    public String productDetail(@PathVariable(value = "productId") Long productId, Model model) {
+    public String productDetail(@PathVariable(value = "productId") Long productId, Model model, Principal principal) {
         Optional<Product> productOpt = productService.findById(productId);
         if (productOpt.isEmpty()) {
             //오류
@@ -48,6 +47,10 @@ public class ProductController {
 
             Collections.reverse(parentCategories);
             model.addAttribute("parentCategories", parentCategories);
+
+
+            List<ReviewDetailDTO> reviews = reviewService.reviewDetailsByProduct(product);
+            model.addAttribute("reviews", reviews);
         }
         return "product/details";
     }

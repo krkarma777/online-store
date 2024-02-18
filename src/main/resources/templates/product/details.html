@@ -3,6 +3,8 @@
 <head>
     <title>Product Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Swiper CSS for the image slider -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="/css/common.css">
@@ -330,20 +332,38 @@
             <div class="reviews-section">
                 <h4 class="section-title">고객 리뷰</h4>
                 <div class="section-content">
-                    <div class="review">
+                    <div th:each="reviewDetail : ${reviews}" class="review">
                         <div class="review-author">
-                            <strong>홍길동</strong> - 2024년 2월 14일
+                            <strong th:text="${reviewDetail.review.user.realName}">리뷰 작성자</strong> -
+                            <span th:text="${#dates.format(reviewDetail.review.creationDate, 'yyyy년 MM월 dd일')}">리뷰 작성일</span>
                         </div>
                         <div class="review-rating">
-                            평점: ★★★★★
+                            평점:
+                            <span th:each="star : ${#numbers.sequence(1,5)}">
+                        <i class="fa" th:class="${star <= reviewDetail.review.rating} ? 'fa-star' : 'fa-star-o'"></i>
+                    </span>
                         </div>
                         <div class="review-content">
-                            <p>이 제품은 정말 훌륭해요! 사용해 본 제품 중 최고입니다.</p>
+                            <p th:text="${reviewDetail.review.content}">리뷰 내용</p>
                         </div>
+                        <div class="like-dislike-buttons">
+                            <button type="button" class="btn btn-outline-success btn-like">
+                                좋아요
+                                <span class="badge bg-success" th:text="${reviewDetail.likeCount}">0</span>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-dislike">
+                                싫어요
+                                <span class="badge bg-danger" th:text="${reviewDetail.dislikeCount}">0</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div th:if="${reviews.isEmpty()}" class="text-center">
+                        <p>아직 리뷰가 없습니다.</p>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <div id="inquiries" class="tab-pane" role="tabpanel" aria-labelledby="inquiries-tab">
             <div class="inquiries-section">
@@ -428,6 +448,12 @@
 </div>
 <div th:replace="~{common/footer :: footer1}"></div>
 <div th:replace="~{common/footer2 :: footer2}"></div>
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
+<!-- Swiper JS for the image slider -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 </body>
 <script>
     $(document).ready(function () {
