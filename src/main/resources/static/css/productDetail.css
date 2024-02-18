@@ -1,0 +1,223 @@
+body {
+    background-color: #f4f4f4;
+    margin-top: 20px;
+}
+
+.card, .content-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.price {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 1.4em;
+}
+
+.product-description p {
+    margin-bottom: 10px;
+}
+
+.description-section {
+    text-align: center;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #007bff;
+    margin-right: 5px;
+}
+
+
+.tab-content > .tab-pane {
+    padding: 20px;
+    border: 1px solid #e3e3e3;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+}
+.tab-pane {
+    margin-bottom: 50px;
+}
+
+/* 섹션 제목 */
+.section-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* 각 섹션의 배경색 및 여백 설정 */
+.section-content {
+    background-color: #ffffff; /* 배경색을 흰색으로 설정 */
+    padding: 20px; /* 콘텐츠 주변에 여백 추가 */
+    margin-top: 20px; /* 섹션 간 간격 설정 */
+    border-radius: 10px; /* 섹션의 테두리를 둥글게 설정 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1); /* 섹션에 그림자 효과 추가 */
+}
+
+/* 각 섹션의 콘텐츠 텍스트 스타일 */
+.section-content p {
+    font-size: 1.2em;
+    color: #333333; /* 텍스트 색상을 어두운 회색으로 설정 */
+    margin-bottom: 10px;
+}
+/* 추가된 스타일 */
+#sticky-tab {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    max-width: calc(100% - 10px); /* container의 폭에서 좌우 여백을 뺀 값 */
+    /* 오른쪽 정렬을 위해 왼쪽 여백을 자동 조절 */
+    margin: 30px auto 100px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.nav-link {
+    text-align: center; /* 탭 내비게이션 텍스트 중앙 정렬 */
+}
+
+.card-body {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.card-text {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.card-text strong {
+    color: #333;
+}
+
+.btn-group .btn {
+    margin-right: 5px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #007bff;
+}
+
+.icon-button:hover {
+    color: #0056b3;
+}
+
+.rating-stars {
+    color: #ffd700;
+}
+.btn-custom-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.btn-custom-primary:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.btn-custom-secondary {
+    background-color: #6c757d;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.btn-custom-secondary:hover {
+    background-color: #545b62;
+    color: white;
+}
+
+.btn-custom-success {
+    background-color: #28a745;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.btn-custom-success:hover {
+    background-color: #218838;
+    color: white;
+}
+
+.icon-button {
+    font-size: 24px;
+    color: #007bff;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+.icon-button:hover {
+    color: #0056b3;
+}
+
+/* 이미지 슬라이더의 커스텀 스타일 */
+.carousel-indicators [data-bs-target] {
+    background-color: #007bff; /* 인디케이터 색상을 설정합니다 */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #007bff; /* 화살표 버튼의 배경 색상을 설정합니다 */
+    border-radius: 50%; /* 화살표 버튼을 원형으로 만듭니다 */
+    padding: 10px; /* 버튼 크기를 조절합니다 */
+}
+
+.product-seller {
+    color: #007bff;
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+.text-no-decoration {
+    text-decoration: none;
+    color: black;
+}
+
+.category {
+    margin-bottom: 10px;
+}
+
+
+.filled-star {
+    color: #ffd700;
+}

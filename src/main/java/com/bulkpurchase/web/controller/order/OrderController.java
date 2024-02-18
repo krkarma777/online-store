@@ -38,18 +38,30 @@ public class OrderController {
     private final PaymentService paymentService;
 
     @GetMapping("/{cartID}")
-    public String orderForm(@PathVariable(value = "cartID") Long cartID, Model model, HttpServletResponse response) {
+    public String orderForm(@PathVariable(value = "cartID") Long cartID, Model model, HttpServletResponse response, @RequestParam("itemId") List<Long> itemIds) {
         Optional<Cart> cartOpt = cartService.findById(cartID);
         if (cartOpt.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 에러 설정
             return "error/400";
         }
-
         Cart cart = cartOpt.get();
         Set<CartItem> items = cart.getItems();
+        List<CartItem> buyItems = new ArrayList<>();
+        Iterator<CartItem> iterator = items.iterator();
+        while (iterator.hasNext()) {
+            CartItem item = iterator.next();
+            for (Long itemId : itemIds) {
+                if (item.getCartItemID().equals(itemId)) {
+                    buyItems.add(item);
+                    iterator.remove();
+                }
+            }
+        }
+        cart.setItems(items);
+        cartService.save(cart);
 
         model.addAttribute("cartID", cartID);
-        model.addAttribute("items", items);
+        model.addAttribute("items", buyItems);
         return "order/orderForm";
     }
 
@@ -57,8 +69,6 @@ public class OrderController {
     public String orderProcess(HttpServletRequest request,
                                @RequestParam("totalPrice") Double totalPrice,
                                @RequestParam("paymentMethod") String paymentMethod,
-                               @RequestParam("cartID") Long cartID,
-                               @RequestParam("quantity") List<Integer> quantitys,
                                Principal principal, Model model) {
 
         // 주문 생성
@@ -81,9 +91,6 @@ public class OrderController {
         // 결제 정보 저장
         Payment savedPayment = paymentService.save(payment);
         model.addAttribute("savedPayment", savedPayment);
-
-        // 카트 삭제
-        cartService.deleteById(cartID);
 
         return "order/orderSuccess";
     }

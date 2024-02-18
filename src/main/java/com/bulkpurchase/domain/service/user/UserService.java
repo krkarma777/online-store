@@ -22,6 +22,9 @@ public class UserService {
         Optional<User> userOpt = userRepository.findByUsername(username);
         return userOpt.orElse(null);
     }
+    public Optional<User> findByUsernameOpt(String username) {
+        return userRepository.findByUsername(username);
+    }
 
 
     public void save(User user) {

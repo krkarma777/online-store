@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
@@ -27,11 +26,12 @@ public class ProductInquiryController {
 
     @PostMapping("/inquiry/add")
     public String productInquiryAdd(@RequestParam("productID") Long productID, Principal principal, @ModelAttribute ProductInquiry productInquiry) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
         User user = userService.findByUsername(principal.getName());
         Product product = productService.findById(productID).orElse(null);
-        if (user == null) {
-            return "error/403";
-        }
+
 
         if (product == null) {
             return "error/400";
@@ -41,6 +41,6 @@ public class ProductInquiryController {
         productInquiry.setProduct(product);
         productInquiryService.save(productInquiry);
 
-        return "redirect:/product/" + productID;
+        return "redirect:/product/" + productID + "#inquiries";
     }
 }

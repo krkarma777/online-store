@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.service.user;
 
-import com.bulkpurchase.security.CustomUserDetails;
+import com.bulkpurchase.security.user.CustomUserDetails;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

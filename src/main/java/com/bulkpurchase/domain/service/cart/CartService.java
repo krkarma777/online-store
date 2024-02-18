@@ -38,4 +38,8 @@ public class CartService {
     public void deleteById(Long id) {
         cartRepository.deleteById(id);
     }
+
+    public void save(Cart cart) {
+        cartRepository.save(cart);
+    }
 }
