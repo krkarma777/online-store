@@ -49,7 +49,6 @@ public class SellerPageController {
 
         BigDecimal dailySales = orderService.calculateDailySalesBySeller(user.getUserID());
         model.addAttribute("dailySales", dailySales);
-        System.out.println("dailySales = " + dailySales);
 
         return "seller/sellerPage";
     }
@@ -79,7 +78,6 @@ public class SellerPageController {
             orderDetailList.addAll(orderDetailIDDesc);
         }
         model.addAttribute("orderDetailList", orderDetailList);
-        System.out.println("orderDetailList = " + orderDetailList);
 
         return "/seller/orders";
     }

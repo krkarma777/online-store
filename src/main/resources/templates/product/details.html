@@ -375,6 +375,7 @@
                         <p>아직 리뷰가 없습니다.</p>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -382,21 +383,57 @@
         <div id="inquiries" class="tab-pane" role="tabpanel" aria-labelledby="inquiries-tab">
             <div class="inquiries-section">
                 <h4 class="section-title">상품 문의</h4>
-                <!-- 문의사항 예시 -->
                 <div class="section-content">
-                    <div class="inquiry">
-                        <div class="inquiry-question">
-                            <strong>김철수</strong> - 2024년 2월 15일
-                            <p>이 제품의 배송 기간은 얼마나 걸리나요?</p>
+                    <!-- 문의 목록이 존재하는 경우 -->
+                    <div th:if="${not #lists.isEmpty(inquiries)}">
+                        <div th:each="inquiry : ${inquiries}" class="inquiry" id="inquiryList">
+                            <div class="inquiry-question" >
+                                <strong th:text="${inquiry.user.realName}">김철수</strong> -
+                                <span th:text="${#dates.format(inquiry.inquiryDate, 'yyyy년 MM월 dd일')}">2024년 2월 15일</span>
+                                <p th:text="${inquiry.inquiryContent}">이 제품의 배송 기간은 얼마나 걸리나요?</p>
+                            </div>
+                            <div th:if="${inquiry.replyContent != null}" class="inquiry-answer">
+                                <strong>판매자 답변:</strong>
+                                <p th:text="${inquiry.replyContent}">주문 후 보통 3~5일 내에 배송됩니다.</p>
+                            </div>
+                            <div th:if="${inquiry.replyContent == null}" class="text-muted">답변 대기중...</div>
                         </div>
-                        <div class="inquiry-answer">
-                            <strong>판매자 답변:</strong>
-                            <p>주문 후 보통 3~5일 내에 배송됩니다.</p>
+                    </div>
+                    <!-- 문의 목록이 존재하지 않는 경우 -->
+                    <div th:if="${#lists.isEmpty(inquiries)}" class="text-center">
+                        <p>아직 문의사항이 존재하지 않습니다.</p>
+                    </div>
+                    <!-- 상품 문의하기 버튼 -->
+
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inquiryModal" id="openInquiryModal" th:data-product-id="${product.productID}">
+                        상품 문의하기
+                    </button>
+
+
+                    <!-- 문의하기 모달 -->
+                    <div class="modal fade" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="inquiryModalLabel">상품 문의하기</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="inquiryForm">
+                                        <div class="mb-3">
+                                            <label for="inquiryContent" class="form-label">문의 내용</label>
+                                            <textarea class="form-control" id="inquiryContent" name="inquiryContent" required></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">문의하기</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
 
 
         <div id="shipping-info" class="tab-pane" role="tabpanel" aria-labelledby="shipping-info-tab">
@@ -537,6 +574,54 @@
             $('.carousel-inner').height(cardBodyHeight);
             $('.carousel-item img').css('height', cardBodyHeight + 'px').css('object-fit','contain');
         }
+
+        // 문의하기 모달 내부의 폼 제출 이벤트 처리
+        $("#inquiryForm").submit(function(e) {
+            e.preventDefault(); // 기본 제출 이벤트 방지
+
+            var productID = $("#inquiryModal").attr("data-product-id"); // 모달에서 productID 가져오기
+            var inquiryContent = $("#inquiryContent").val(); // 입력된 문의 내용 가져오기
+
+            $.ajax({
+                url: `/product/${productID}/inquiry/add`, // 서버에 문의 추가 요청을 보낼 URL
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ inquiryContent: inquiryContent }), // 요청 본문에 JSON 형태로 데이터 전송
+                success: function(response) {
+                    // 문의 추가에 성공한 경우
+                    alert("문의가 성공적으로 제출되었습니다.");
+                    $('#inquiryModal').modal('hide'); // 모달 창 닫기
+
+/*                    // 새 문의를 문의 목록에 추가
+                    var newInquiryHtml = `
+                                            <div class="inquiry">
+                                                <div class="inquiry-question">
+                                                    <strong>${response.userName}</strong> -
+                                                    <span>방금전</span>
+                                                    <p>${response.inquiryContent}</p>
+                                                </div>
+                                                ${response.replyContent ?  `<div class="inquiry-answer">
+                                                        <strong>판매자 답변:</strong>
+                                                        <p>${response.replyContent}</p>
+                                                    </div>` : `<div class="text-muted">답변 대기중...</div>`
+                                                        }
+                                            </div>`;
+                    $("#inquiryList").append(newInquiryHtml); // 문의 목록에 새 문의 추가*/
+/*                    $("#inquiryContent").val(''); // 입력 필드 초기화*/
+                },
+                error: function(xhr, status, error) {
+                    // 문의 추가에 실패한 경우
+                    alert("문의를 제출하는데 실패했습니다.");
+                }
+            });
+        });
+
+        // 모달이 열릴 때 productID 설정
+        $('#inquiryModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget); // 모달을 열기 위한 버튼
+            var productID = button.data('product-id'); // 버튼의 data-product-id 속성에서 productID 추출
+            $(this).attr("data-product-id", productID); // 모달에 productID 저장
+        });
     });
 
 </script>

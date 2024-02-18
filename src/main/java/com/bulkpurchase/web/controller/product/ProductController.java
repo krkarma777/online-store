@@ -3,6 +3,7 @@ package com.bulkpurchase.web.controller.product;
 import com.bulkpurchase.domain.dto.ReviewDetailDTO;
 import com.bulkpurchase.domain.entity.product.*;
 import com.bulkpurchase.domain.entity.user.User;
+import com.bulkpurchase.domain.service.product.ProductInquiryService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.review.ReviewFeedbackService;
 import com.bulkpurchase.domain.service.review.ReviewService;
@@ -25,6 +26,7 @@ public class ProductController {
     private final UserService userService;
     private final ReviewFeedbackService reviewFeedbackService;
     private final ReviewService reviewService;
+    private final ProductInquiryService productInquiryService;
 
 
 
@@ -57,6 +59,9 @@ public class ProductController {
 
             Double averageRating = reviewService.findAverageRatingByProductID(productID);
             model.addAttribute("averageRating", averageRating);
+
+            List<ProductInquiry> inquiries = productInquiryService.findByProductProductID(productID);
+            model.addAttribute("inquiries", inquiries);
         }
         return "product/details";
     }
@@ -81,5 +86,14 @@ public class ProductController {
         return "product/productsByUser";
     }
 
+    @GetMapping("/product/{productID}/inquiry")
+    public String productInquiry(@PathVariable("productID")@ModelAttribute Long productID, Model model) {
+        List<ProductInquiry> inquiries = productInquiryService.findByProductProductID(productID);
+        model.addAttribute("inquiries", inquiries);
 
+        ProductInquiry productInquiry = new ProductInquiry();
+        model.addAttribute("productInquiry", productInquiry);
+
+        return "product/ProductInquiry";
+    }
 }
