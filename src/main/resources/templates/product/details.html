@@ -90,12 +90,13 @@
                     <p class="card-text"><strong>재고:</strong> <span th:text="${product.stock}">재고 수량</span></p>
                     <div class="buttons mt-4">
 
-                        <form id="add-to-cart-form" class="d-inline" action="/cart/add" method="post">
+                        <form id="add-to-cart-form" action="/cart/add" method="post">
                             <input type="number" name="quantity" value="1" class="form-control w-auto d-inline-block"/>
                             <input type="hidden" name="productID" th:value="${product.productID}"/>
-                            <a href="#" type="button" class="btn btn-custom-primary">바로 주문하기</a>
                             <button type="submit" class="btn btn-custom-success">장바구니에 추가</button>
+                            <button id="order-button" type="button" class="btn btn-custom-primary">바로 주문하기</button>
                         </form>
+
                     </div>
                 </div>
             </div>
@@ -422,6 +423,11 @@
                     alert("싫어요 수 업데이트에 실패했습니다: " + error);
                 }
             });
+        });
+
+        document.getElementById("order-button").addEventListener("click", function() {
+            document.getElementById("add-to-cart-form").action = "/order/item/one";
+            document.getElementById("add-to-cart-form").submit();
         });
 
     });

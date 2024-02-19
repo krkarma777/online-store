@@ -37,6 +37,24 @@ public class OrderController {
     private final OrderDetailService orderDetailService;
     private final PaymentService paymentService;
 
+    @PostMapping("/item/one")
+    public String oneItemOrder(@RequestParam("productID") Long productID,
+                               @RequestParam("quantity") Integer quantity,
+                               Model model) {
+        List<CartItem> buyItems = new ArrayList<>();
+        Product product = productService.findById(productID).orElse(null);
+        if (product == null) {
+            return "error/403";
+        }
+        Cart cart = new Cart();
+        CartItem cartItem = new CartItem(cart, product, quantity);
+
+        buyItems.add(cartItem);
+        model.addAttribute("items", buyItems);
+        return "order/orderForm";
+    }
+
+
     @GetMapping("/{cartID}")
     public String orderForm(@PathVariable(value = "cartID") Long cartID, Model model, HttpServletResponse response, @RequestParam("itemId") List<Long> itemIds) {
         Optional<Cart> cartOpt = cartService.findById(cartID);
@@ -60,7 +78,6 @@ public class OrderController {
         cart.setItems(items);
         cartService.save(cart);
 
-        model.addAttribute("cartID", cartID);
         model.addAttribute("items", buyItems);
         return "order/orderForm";
     }
