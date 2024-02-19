@@ -70,23 +70,23 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     /* 판매자별 판매액 */
 
     // 총 판매액
-    @Query("SELECT SUM(od.price * od.quantity) FROM OrderDetail od WHERE od.product.user.userID = :userID")
+    @Query("SELECT SUM(od.price) FROM OrderDetail od WHERE od.product.user.userID = :userID")
     BigDecimal calculateTotalSalesBySeller(@Param("userID") Long userID);
 
     // 연 판매액
-    @Query(value = "SELECT SUM(od.price * od.quantity) FROM order_details od JOIN orders o ON od.orderid = o.orderid JOIN products p ON od.productid = p.productid WHERE EXTRACT(YEAR FROM o.order_date) = :year AND p.userid = :userID", nativeQuery = true)
+    @Query(value = "SELECT SUM(od.price) FROM order_details od JOIN orders o ON od.orderid = o.orderid JOIN products p ON od.productid = p.productid WHERE EXTRACT(YEAR FROM o.order_date) = :year AND p.userid = :userID", nativeQuery = true)
     BigDecimal calculateYearlySalesBySeller(@Param("year") int year, @Param("userID") Long userID);
 
     // 한달 판매액
-    @Query(value = "SELECT SUM(od.price * od.quantity) FROM order_details od JOIN orders o ON od.orderid = o.orderid JOIN products p ON od.productid = p.productid WHERE EXTRACT(YEAR FROM o.order_date) = :year AND EXTRACT(MONTH FROM o.order_date) = :month AND p.userid = :userID", nativeQuery = true)
+    @Query(value = "SELECT SUM(od.price) FROM order_details od JOIN orders o ON od.orderid = o.orderid JOIN products p ON od.productid = p.productid WHERE EXTRACT(YEAR FROM o.order_date) = :year AND EXTRACT(MONTH FROM o.order_date) = :month AND p.userid = :userID", nativeQuery = true)
     BigDecimal calculateMonthlySalesBySeller(@Param("year") int year, @Param("month") int month, @Param("userID") Long userID);
 
     // 하루 판매액 (TRUNC 사용)
-    @Query(value = "SELECT SUM(od.price * od.quantity) FROM ORDER_DETAILS od JOIN orders o ON od.OrderID = o.OrderID JOIN products p ON od.ProductID = p.ProductID WHERE TRUNC(o.order_date) = TRUNC(:date) AND p.userID = :userID", nativeQuery = true)
+    @Query(value = "SELECT SUM(od.price) FROM ORDER_DETAILS od JOIN orders o ON od.OrderID = o.OrderID JOIN products p ON od.ProductID = p.ProductID WHERE TRUNC(o.order_date) = TRUNC(:date) AND p.userID = :userID", nativeQuery = true)
     BigDecimal calculateDailySalesBySeller(@Param("date") LocalDate date, @Param("userID") Long userID);
 
     // 최근 30일간 판매액
-    @Query(value = "SELECT TO_CHAR(o.order_date, 'YYYY-MM-DD') as day, SUM(od.price * od.quantity) as total_sales " +
+    @Query(value = "SELECT TO_CHAR(o.order_date, 'YYYY-MM-DD') as day, SUM(od.price) as total_sales " +
             "FROM order_details od " +
             "JOIN orders o ON od.orderid = o.orderid " +
             "JOIN products p ON od.productid = p.productid " +
@@ -97,7 +97,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Object[]> calculateSalesLast30DaysBySeller(@Param("userID") Long userID, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     // 최근 12개월간 판매액
-    @Query(value = "SELECT TO_CHAR(o.order_date, 'YYYY-MM') as month, SUM(od.price * od.quantity) as total_sales " +
+    @Query(value = "SELECT TO_CHAR(o.order_date, 'YYYY-MM') as month, SUM(od.price) as total_sales " +
             "FROM order_details od " +
             "JOIN orders o ON od.orderid = o.orderid " +
             "JOIN products p ON od.productid = p.productid " +
@@ -108,7 +108,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Object[]> calculateSalesLast12MonthsBySeller(@Param("userID") Long userID);
 
     // 최근 3년간 판매액
-    @Query(value = "SELECT EXTRACT(YEAR FROM o.order_date) as year, SUM(od.price * od.quantity) as total_sales " +
+    @Query(value = "SELECT EXTRACT(YEAR FROM o.order_date) as year, SUM(od.price) as total_sales " +
             "FROM order_details od " +
             "JOIN orders o ON od.orderid = o.orderid " +
             "JOIN products p ON od.productid = p.productid " +

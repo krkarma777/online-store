@@ -165,17 +165,28 @@
                 <div class="section-content">
                     <!-- 문의 목록이 존재하는 경우 -->
                     <div th:if="${not #lists.isEmpty(inquiries)}">
-                        <div th:each="inquiry : ${inquiries}" class="inquiry" id="inquiryList">
-                            <div class="inquiry-question" >
-                                <strong th:text="${inquiry.user.realName}">김철수</strong> -
-                                <span th:text="${#dates.format(inquiry.inquiryDate, 'yyyy년 MM월 dd일')}">2024년 2월 15일</span>
-                                <p th:text="${inquiry.inquiryContent}">이 제품의 배송 기간은 얼마나 걸리나요?</p>
+                        <div th:each="inquiry : ${inquiries}" class="inquiry mb-3 p-3 border rounded" id="inquiryList">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="inquiry-question">
+                                        <strong th:text="${inquiry.user.realName}">김철수</strong> -
+                                        <span th:text="${#dates.format(inquiry.inquiryDate, 'yyyy년 MM월 dd일')}">2024년 2월 15일</span>
+                                        <p th:text="${inquiry.inquiryContent}">이 제품의 배송 기간은 얼마나 걸리나요?</p>
+                                    </div>
+                                    <div th:if="${inquiry.replyContent != null}" class="inquiry-answer mt-2">
+                                        <strong>판매자 답변:</strong>
+                                        <p th:text="${inquiry.replyContent}">주문 후 보통 3~5일 내에 배송됩니다.</p>
+                                    </div>
+                                    <div th:if="${inquiry.replyContent == null}" class="text-muted">답변 대기중...</div>
+                                </div>
+                                <!-- 판매자에게만 보이는 버튼들 -->
+                                <div th:if="${isSeller}" class="align-self-center">
+                                    <!-- 답변하기 버튼, 모달 창을 열도록 설정 -->
+                                    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#answerModal" th:data-inquiry-id="${inquiry.inquiryID}">
+                                        답변하기
+                                    </button>
+                                </div>
                             </div>
-                            <div th:if="${inquiry.replyContent != null}" class="inquiry-answer">
-                                <strong>판매자 답변:</strong>
-                                <p th:text="${inquiry.replyContent}">주문 후 보통 3~5일 내에 배송됩니다.</p>
-                            </div>
-                            <div th:if="${inquiry.replyContent == null}" class="text-muted">답변 대기중...</div>
                         </div>
                     </div>
                     <!-- 문의 목록이 존재하지 않는 경우 -->
@@ -183,8 +194,7 @@
                         <p>아직 문의사항이 존재하지 않습니다.</p>
                     </div>
                     <!-- 상품 문의하기 버튼 -->
-
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inquiryModal" id="openInquiryModal" th:data-product-id="${product.productID}">
+                    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#inquiryModal" id="openInquiryModal" th:data-product-id="${product.productID}">
                         상품 문의하기
                     </button>
                     <div id="inquiriesLoadMore" class="text-center mt-4">
@@ -193,7 +203,7 @@
 
                     <!-- 문의하기 모달 -->
                     <div class="modal fade" id="inquiryModal" tabindex="-1" aria-labelledby="inquiryModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="inquiryModalLabel">상품 문의하기</h5>
@@ -209,10 +219,35 @@
                                         <input type="hidden" name="productID" id="modalProductID" th:value="${productID}">
                                         <button type="submit" class="btn btn-primary">문의하기</button>
                                     </form>
+
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <!-- 답변하기 모달 창 -->
+                    <div class="modal fade" id="answerModal" tabindex="-1" aria-labelledby="answerModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="answerModalLabel">문의에 답변하기</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- 답변하기 폼 -->
+                                    <form id="answerForm" action="/inquiry/answer" method="POST">
+                                        <div class="mb-3">
+                                            <label for="replyContent" class="form-label">답변 내용</label>
+                                            <textarea class="form-control" id="replyContent" name="replyContent" required></textarea>
+                                        </div>
+                                        <input type="hidden" name="inquiryID" id="modalInquiryID">
+                                        <input type="hidden" name="productID" th:value="${productID}">
+                                        <button type="submit" class="btn btn-primary">답변하기</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -428,6 +463,14 @@
         document.getElementById("order-button").addEventListener("click", function() {
             document.getElementById("add-to-cart-form").action = "/order/item/one";
             document.getElementById("add-to-cart-form").submit();
+        });
+
+        $('#answerModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // 이벤트를 발생시킨 버튼
+            var inquiryId = button.data('inquiry-id'); // data-inquiry-id 값 추출
+
+            var modal = $(this);
+            modal.find('#modalInquiryID').val(inquiryId); // Hidden input에 inquiryID 설정
         });
 
     });

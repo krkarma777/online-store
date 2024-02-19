@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,5 +20,9 @@ public class ProductInquiryService {
 
     public void save(ProductInquiry productInquiry) {
         productInquiryRepository.save(productInquiry);
+    }
+
+    public Optional<ProductInquiry> findById(Long inquiryID) {
+        return productInquiryRepository.findById(inquiryID);
     }
 }

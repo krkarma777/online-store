@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -91,10 +93,15 @@ public class SellerPageController {
 
         // 최근 30일 판매 데이터
         List<SalesDataDTO> last30DaysSales = orderService.calculateSalesLast30DaysBySeller(userID, startDate, endDate);
+        // 날짜순으로 정렬
+        Collections.sort(last30DaysSales, Comparator.comparing(SalesDataDTO::getPeriod));
+        System.out.println("last30DaysSales = " + last30DaysSales);
         // 지난 12개월 판매 데이터
         List<SalesDataDTO> last12MonthsSales = orderService.calculateSalesLast12MonthsBySeller(userID);
+        System.out.println("last12MonthsSales = " + last12MonthsSales);
         // 최근 3년 판매 데이터
         List<SalesDataDTO> last3YearsSales = orderService.calculateSalesLast3YearsBySeller(userID);
+        System.out.println("last3YearsSales = " + last3YearsSales);
 
 
         // 모델에 데이터 추가

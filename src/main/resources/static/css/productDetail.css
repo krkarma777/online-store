@@ -221,3 +221,29 @@ body {
 .filled-star {
     color: #ffd700;
 }
+
+.inquiry {
+     background-color: #f9f9f9;
+ }
+
+.inquiry-question strong, .inquiry-answer strong {
+    color: #007bff;
+}
+
+.inquiry-answer {
+    padding-left: 20px;
+    border-left: 3px solid #007bff;
+}
+
+.section-content {
+    margin-top: 20px;
+}
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - (.5rem * 2));
+}
+
+.modal-dialog-centered {
+    margin: 0 auto;
+}

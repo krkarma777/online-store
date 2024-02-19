@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.Date;
 
 @Controller
 @RequiredArgsConstructor
@@ -40,6 +41,33 @@ public class ProductInquiryController {
         productInquiry.setUser(user);
         productInquiry.setProduct(product);
         productInquiryService.save(productInquiry);
+
+        return "redirect:/product/" + productID + "#inquiries";
+    }
+    @PostMapping("/inquiry/answer")
+    public String productInquiryAnswer(@RequestParam("inquiryID") Long inquiryID,@RequestParam("productID") Long productID,@RequestParam("replyContent") String replyContent,  Principal principal) {
+        Product product = productService.findById(productID).orElse(null);
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        if (product == null) {
+            return "error/403";
+        }
+
+        if (!product.getUser().equals(userService.findByUsername(principal.getName()))) {
+            return "error/403";
+        }
+
+        ProductInquiry inquiry = productInquiryService.findById(inquiryID).orElse(null);
+        if (inquiry==null) {
+            return "error/400";
+        }
+
+        inquiry.setReplyContent(replyContent);
+        inquiry.setReplyDate(new Date());
+        productInquiryService.save(inquiry);
 
         return "redirect:/product/" + productID + "#inquiries";
     }

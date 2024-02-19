@@ -62,6 +62,12 @@ public class ProductController {
 
             List<ProductInquiry> inquiries = productInquiryService.findByProductProductID(productID);
             model.addAttribute("inquiries", inquiries);
+            if (principal != null) {
+                if (product.getUser().equals(userService.findByUsername(principal.getName()))) {
+                    model.addAttribute("isSeller", true);
+                }
+            }
+
         }
         return "product/details";
     }
