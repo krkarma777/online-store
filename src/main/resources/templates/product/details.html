@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.css" />
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+
 
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <link rel="stylesheet" type="text/css" href="/css/productDetail.css">
@@ -64,13 +66,32 @@
                             <p class="card-text product-seller">
                                  <a href="" class="text-no-decoration"><span th:text="${product.user.realName}">0</span></a>
                             </p>
-                            <h5 class="card-title" th:text="${product.productName}">상품 이름</h5>
+                            <h5 class="card-title" id="productName" th:text="${product.productName}">상품 이름</h5>
                         </div>
                         <div class="col-md-6">
                             <!-- 동그란 아이콘 -->
                             <div class="btn-group float-end" role="group" aria-label="Basic mixed styles example">
                                 <button type="button" class="icon-button" title="찜하기" style="color: red"><i class="far fa-heart"></i></button>
                                 <button type="button" class="icon-button" title="공유하기" style="margin-left: 10px; color: black"><i class="far fa-share-square"></i></button>
+                                <!-- 공유하기 모달 -->
+                                <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="shareModalLabel">공유하기</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- 공유 옵션 버튼들 -->
+                                                <button id="copyUrlBtn" class="btn btn-outline-primary w-100 mb-2">URL 복사하기</button>
+                                                <button id="shareViaEmail" class="btn btn-outline-secondary w-100 mb-2">메일로 공유하기</button>
+                                                <button id="shareOnTwitter" class="btn btn-outline-info w-100 mb-2">트위터로 공유하기</button>
+                                                <button id="shareOnKakao" class="btn btn-outline-warning w-100 mb-2">카카오톡으로 공유하기</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -473,14 +494,54 @@
             modal.find('#modalInquiryID').val(inquiryId); // Hidden input에 inquiryID 설정
         });
 
+        /* 공유하기 모달 관련 스크립트 */
+        $('[title="공유하기"]').on('click', function() {
+            var shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
+            shareModal.show();
+        });
+
+        $("#shareViaEmail").on("click", function() {
+            var subject = encodeURIComponent("공유하고 싶은 페이지 제목");
+            var body = encodeURIComponent(window.location.href + "\n\n이 페이지를 확인해보세요!");
+            window.location.href = "mailto:?subject=" + subject + "&body=" + body;
+        });
+
+        $("#shareOnTwitter").on("click", function() {
+            var tweetText = encodeURIComponent("이 페이지를 확인해보세요! " + window.location.href);
+            var twitterUrl = "https://twitter.com/intent/tweet?text=" + tweetText;
+            window.open(twitterUrl, '_blank');
+        });
+
+        Kakao.init('6c425453999d11bfcea69dfc490785d3');
+
+        var productName = $("#productName").text();
+        $("#shareOnKakao").on("click", function() {
+            Kakao.Link.sendDefault({
+                objectType: 'feed',
+                content: {
+                    title: productName,
+                    description: '페이지 설명',
+                    imageUrl: 'http://localhost:9090/img/logo.png',
+                    link: {
+                        mobileWebUrl: window.location.href,
+                        webUrl: window.location.href
+                    }
+                }
+            });
+        });
+
+        $("#copyUrlBtn").on("click", function() {
+            var url = window.location.href; // 현재 페이지의 URL
+            navigator.clipboard.writeText(url).then(() => {
+                alert("URL이 클립보드에 복사되었습니다.");
+            });
+        });
     });
 
 </script>
 <!-- Bootstrap JS, Popper.js, and jQuery -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="/js/dropdown.js"></script>
 
