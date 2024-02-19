@@ -11,9 +11,9 @@ import java.time.format.DateTimeFormatter;
 @Setter
 public class ProductInquiryDTO {
     private Long inquiryID;
-    private Long productID; // 상품 ID만 포함
+    private Long productID;
     private String productName;
-    private Long userID; // 사용자 ID만 포함
+    private Long userID;
     private String realName;
     private String inquiryContent;
     private String replyContent;
