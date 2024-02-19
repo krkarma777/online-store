@@ -1,6 +1,7 @@
 package com.bulkpurchase.domain.entity.product;
 
 
+import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.enums.SalesRegion;
@@ -69,6 +70,7 @@ public class Product {
     private Category category;
 
 
-
+    @OneToMany(mappedBy = "product")
+    private List<FavoriteProduct> favoritedByUsers;
 }
 
