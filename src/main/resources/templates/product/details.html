@@ -134,9 +134,14 @@
 
     <!-- 탭 콘텐츠 -->
     <div id="detailTabsContent">
-        <div class="tab-pane" id="description" role="tabpanel" aria-labelledby="description-tab">
-            <h2 class="section-title">상품설명</h2>
-            <div class="section-content description-section" th:utext="${product.description}">상품 설명</div>
+        <div class="product-description-container">
+            <div class="tab-pane product-description" id="description" role="tabpanel" aria-labelledby="description-tab">
+                <h2 class="section-title">상품설명</h2>
+                <div class="section-content description-section" th:utext="${product.description}">상품 설명</div>
+            </div>
+            <div class="more-content">
+                <button id="toggleDescription" class="btn btn-primary">상품정보 더보기</button>
+            </div>
         </div>
 
         <div id="reviews" class="tab-pane" role="tabpanel" aria-labelledby="reviews-tab">
@@ -535,6 +540,23 @@
             navigator.clipboard.writeText(url).then(() => {
                 alert("URL이 클립보드에 복사되었습니다.");
             });
+        });
+
+        /* 상품 설명 더보기 */
+        var isExpanded = false; // 상태 플래그
+
+        $('#toggleDescription').click(function() {
+            if (!isExpanded) {
+                // 상품 설명을 확장하여 전체 내용을 보여줌
+                $('#description').css('max-height', 'none');
+                $(this).text('상품정보 접기'); // 버튼 텍스트 변경
+                isExpanded = true;
+            } else {
+                // 상품 설명을 다시 접음
+                $('#description').css('max-height', '1000px');
+                $(this).text('상품정보 더보기'); // 버튼 텍스트 변경
+                isExpanded = false;
+            }
         });
     });
 
