@@ -21,7 +21,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .requestMatchers("/", "/api/v1/auth/**", "/oauth2/**").permitAll()
+                                .requestMatchers("/", "/api/v1/auth/**", "/oauth2/**", "/inquiries/load-more").permitAll()
                                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll() // 정적 리소스 허용
                                 .requestMatchers("/register/**", "/registerProc", "/login/**", "/loginProc", "/").permitAll()
                                 .requestMatchers("/mypage/**", "/cart/**", "/review/write", "/product/inquiry/add/**", "/review/*/feedback", "/order/**").authenticated()

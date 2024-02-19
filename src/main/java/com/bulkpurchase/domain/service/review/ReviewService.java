@@ -59,4 +59,13 @@ public class ReviewService {
     public Double findAverageRatingByProductID(Long productID) {
         return reviewRepository.findAverageRatingByProductID(productID);
     }
+
+    public List<ReviewDetailDTO> findAllReviewDetailsWithFeedbackCountsBySeller(Long userID) {
+        List<Object[]> results = reviewRepository.findAllReviewDetailsWithFeedbackCountsByUserId(userID);
+        return results.stream().map(result -> new ReviewDetailDTO(
+                (Review) result[0],
+                (Long) result[1],
+                (Long) result[2]
+        )).collect(Collectors.toList());
+    }
 }

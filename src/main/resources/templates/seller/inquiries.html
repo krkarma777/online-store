@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>문의사항 관리</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        .inquiry-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f9f9fa;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        .inquiry-item:hover {
+            transform: translateY(-5px);
+        }
+        .inquiry-section, .reply-section {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 80px; /* 내용과 레이블 사이의 간격을 늘림 */
+        }
+        .inquiry-section {
+            background-color: #e9ecef;
+        }
+        .reply-section {
+            background-color: #fff;
+        }
+        .inquiry-section::before, .reply-section::before {
+            content: attr(data-label);
+            position: absolute;
+            top: 10px;
+            left: 20px; /* 레이블을 오른쪽으로 조금 더 이동 */
+            font-weight: bold;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: #fff;
+        }
+        .inquiry-section::before {
+            background-color: #17a2b8;
+        }
+        .reply-section::before {
+            background-color: #28a745;
+        }
+        .reply-awaiting {
+            font-style: italic;
+            color: #6c757d;
+        }
+        .modal-textarea {
+            min-height: 150px;
+            margin-top: 15px;
+        }
+        .btn-reply {
+            font-weight: 600;
+        }
+        #loadMore {
+            font-weight: 600;
+            background-color: #007bff; /* 기본 배경색 */
+            color: #ffffff; /* 글자색 */
+            border: none; /* 테두리 제거 */
+            padding: 10px 20px; /* 패딩 조정 */
+            border-radius: 5px; /* 모서리 둥글게 */
+            transition: all 0.3s ease; /* 부드러운 전환 효과 */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* 그림자 효과 */
+        }
+        #loadMore:hover {
+            background-color: #0056b3; /* 호버 시 배경색 */
+            color: #fff; /* 호버 시 글자색 */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* 호버 시 그림자 효과 */
+            transform: translateY(-2px); /* 호버 시 약간 위로 움직임 */
+
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{seller/common/navBar :: content}"></div>
+
+<div class="container mt-5">
+    <h2 class="mb-4">문의사항 관리</h2>
+    <div id="inquiryList" class="list-group">
+        <!-- 문의 사항 들어오는 곳 -->
+    </div>
+</div>
+<div class="d-flex justify-content-center mt-3">
+    <button id="loadMore" class="btn btn-primary">더보기</button>
+</div>
+
+
+<!-- 답변하기 모달 -->
+<div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replyModalLabel">답변하기</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="replyContent" class="form-control modal-textarea" rows="3" placeholder="답변을 입력하세요."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" id="submitReply">답변 전송</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var selectedInquiryId; // 선택된 문의 ID를 저장할 변수
+
+        // "답변하기" 버튼에 대한 이벤트 위임
+        $('#inquiryList').on('click', '.btn-reply', function() {
+            selectedInquiryId = $(this).data('inquiry-id'); // 문의 ID를 전역 변수에 저장
+        });
+        // "답변 전송" 버튼 클릭 이벤트
+        $('#submitReply').on('click', function() {
+            var replyContent = $('#replyContent').val(); // 답변 내용을 입력 필드에서 가져옵니다.
+
+            // AJAX 요청 설정
+            $.ajax({
+                url: '/inquiries/reply', // 서버의 답변 처리 URL
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ inquiryID: selectedInquiryId, replyContent: replyContent }), // 서버로 전송할 데이터
+                success: function(response) {
+                    alert('답변이 등록되었습니다.');
+                    $('#replyModal').modal('hide'); // 모달 창 닫기
+                    // 필요한 경우 페이지 새로고침 등의 추가적인 UI 업데이트 수행
+                },
+                error: function(xhr, status, error) {
+                    alert('답변 등록에 실패하였습니다. 오류: ' + error);
+                }
+            });
+        });
+
+        let currentPage = 1;
+        const inquiriesPerPage = 10;
+
+        function loadInquiries() {
+            $.ajax({
+                url: '/inquiries/load-more',
+                type: 'GET',
+                data: {
+                    page: currentPage,
+                    size: inquiriesPerPage
+                },
+                success: function(data) {
+                    if (data.length > 0) {
+                        data.forEach(function(inquiry) {
+                            const inquiryHtml = `
+                                                    <div class="list-group-item inquiry-item">
+                                                        <div class="product-name" style="margin-bottom: 10px;">
+                                                            <a href="/product/${inquiry.productID}" style="text-decoration: none; color: #007bff;">상품명: ${inquiry.productName}</a>
+                                                        </div>
+                                                        <div class="inquiry-section" data-label="문의">
+                                                            <p class="mb-1">문의한 사용자: ${inquiry.realName}</p>
+                                                            <p>${inquiry.inquiryContent}</p>
+                                                            <small>문의 날짜: ${inquiry.inquiryDate}</small>
+                                                        </div>
+                                                        ${inquiry.replyContent ? `
+                                                        <div class="reply-section" data-label="답변">
+                                                            <p>${inquiry.replyContent}</p>
+                                                            <small>답변 날짜: ${inquiry.replyDate}</small>
+                                                        </div>` : `
+                                                        <div class="reply-awaiting">답변 대기중...</div>
+                                                        <button class="btn btn-primary btn-reply" data-bs-toggle="modal" data-bs-target="#replyModal" data-inquiry-id="${inquiry.inquiryID}">답변하기</button>
+                                                        `}
+                                                    </div>`;
+                            $('#inquiryList').append(inquiryHtml);
+                        });
+                        currentPage++;
+                    } else {
+                        $('#loadMore').hide();
+                    }
+                },
+
+                error: function(xhr, status, error) {
+                    console.error("Error loading more inquiries:", error);
+                }
+            });
+        }
+
+        loadInquiries();
+
+        $('#loadMore').click(function() {
+            loadInquiries();
+        });
+    });
+</script>
+
+
+</body>
+</html>

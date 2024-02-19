@@ -1,13 +1,17 @@
 package com.bulkpurchase.web.controller.seller;
 
+import com.bulkpurchase.domain.dto.ReviewDetailDTO;
 import com.bulkpurchase.domain.dto.SalesDataDTO;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
+import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.enums.ProductStatus;
+import com.bulkpurchase.domain.service.product.ProductInquiryService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.order.OrderService;
+import com.bulkpurchase.domain.service.review.ReviewService;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +38,8 @@ public class SellerPageController {
     private final UserService userService;
     private final OrderDetailService orderDetailService;
     private final OrderService orderService;
+    private final ReviewService reviewService;
+    private final ProductInquiryService productInquiryService;
 
     @GetMapping
     public String sellerPageForm(Model model, Principal principal) {
@@ -94,15 +100,11 @@ public class SellerPageController {
         // 최근 30일 판매 데이터
         List<SalesDataDTO> last30DaysSales = orderService.calculateSalesLast30DaysBySeller(userID, startDate, endDate);
         // 날짜순으로 정렬
-        Collections.sort(last30DaysSales, Comparator.comparing(SalesDataDTO::getPeriod));
-        System.out.println("last30DaysSales = " + last30DaysSales);
+        last30DaysSales.sort(Comparator.comparing(SalesDataDTO::getPeriod));
         // 지난 12개월 판매 데이터
         List<SalesDataDTO> last12MonthsSales = orderService.calculateSalesLast12MonthsBySeller(userID);
-        System.out.println("last12MonthsSales = " + last12MonthsSales);
         // 최근 3년 판매 데이터
         List<SalesDataDTO> last3YearsSales = orderService.calculateSalesLast3YearsBySeller(userID);
-        System.out.println("last3YearsSales = " + last3YearsSales);
-
 
         // 모델에 데이터 추가
         model.addAttribute("last30DaysSales", last30DaysSales);
@@ -113,8 +115,13 @@ public class SellerPageController {
     }
 
     @GetMapping("/reviews")
-    public String reviews() {
-        return "seller/reviews";
+    public String reviewManage(Principal principal, Model model) {
+        User user = userService.findByUsername(principal.getName());
+        List<ReviewDetailDTO> reviews = reviewService.findAllReviewDetailsWithFeedbackCountsBySeller(user.getUserID());
+        model.addAttribute("reviews", reviews);
+        return "/seller/reviews";
     }
+
+
 
 }
