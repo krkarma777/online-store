@@ -24,7 +24,8 @@ public class SecurityConfig {
                                 .requestMatchers("/", "/api/v1/auth/**", "/oauth2/**", "/inquiries/load-more").permitAll()
                                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll() // 정적 리소스 허용
                                 .requestMatchers("/register/**", "/registerProc", "/login/**", "/loginProc", "/").permitAll()
-                                .requestMatchers("/mypage/**", "/cart/**", "/review/write", "/product/inquiry/add/**", "/review/*/feedback", "/order/**").authenticated()
+                                .requestMatchers("/mypage/**", "/cart/**", "/review/write", "/product/inquiry/add/**", "/review/*/feedback", "/order/**",
+                                                    "/favorite/**").authenticated()
                                 .requestMatchers("/product/add", "/seller/**").hasAnyRole("판매자", "관리자")
                                 .requestMatchers("/admin/**").hasRole("관리자")
 /*                                .requestMatchers("/*").permitAll()*/

@@ -9,7 +9,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-        /* 기존 스타일은 유지 */
+        /* 기존 스타일 유지 */
         .user-info, .sales-regions, .order-history, .favorite-products, .benefits {
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
@@ -25,7 +25,7 @@
             padding-bottom: 10px;
         }
 
-        /* 추가된 섹션의 스타일 */
+        /* 개선된 섹션 스타일 */
         .order-history ul, .favorite-products ul, .benefits ul {
             list-style-type: none;
             padding-left: 0;
@@ -39,7 +39,41 @@
             width: 1em;
             margin-left: -1em;
         }
+
+        .favorite-products ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .favorite-products ul li {
+            flex: 1 0 21%; /* Grid layout */
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .favorite-products ul li img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 0.25rem;
+        }
+
+        .btn-custom-light {
+            background-color: #f8f9fa;
+            color: #0d6efd;
+            border: 1px solid #0d6efd;
+        }
+
+        .btn-custom-light:hover {
+            background-color: #e2e6ea;
+            color: #0a58ca;
+        }
     </style>
+
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
@@ -69,14 +103,20 @@
 
 
     <!-- 좋아하는 상품 섹션 -->
-    <div class="favorite-products" >
+    <div class="favorite-products">
         <h3 class="favorite-products-title">좋아하는 상품</h3>
-        <ul th:each="favoriteProduct : ${favoriteProducts}">
-            <li th:text="${favoriteProduct.product.productName}">상품 A</li>
-            <a th:href="@{'/product/' + ${favoriteProduct.product.productID}}" class="btn btn-primary">자세히 보기</a>
+        <ul>
+            <li th:each="favoriteProduct : ${favoriteProducts}">
+                <img th:src="${favoriteProduct.product.imageUrls != null and !favoriteProduct.product.imageUrls.isEmpty() ?
+                                  '/images/' + favoriteProduct.product.imageUrls[0] :
+                                  '/images/default.jpg'}" alt="상품 이미지" class="img-fluid">
+                <p th:text="${favoriteProduct.product.productName}">상품 이름</p>
+                <a th:href="@{'/product/' + ${favoriteProduct.product.productID}}" class="btn btn-custom-light">자세히 보기</a>
+            </li>
         </ul>
-        <a href="/favorite" class="btn btn-secondary">좋아하는 상품 보기</a>
+        <a href="/favorite" class="btn btn-secondary mt-4">좋아하는 상품 더 보기</a>
     </div>
+
 
     <!-- 회원 등급에 따른 혜택 섹션 -->
     <div class="benefits">
