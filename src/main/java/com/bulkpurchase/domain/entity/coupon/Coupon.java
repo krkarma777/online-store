@@ -1,11 +1,14 @@
 package com.bulkpurchase.domain.entity.coupon;
 
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.CouponType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -35,4 +38,29 @@ public class Coupon {
 
     @Column(name = "minimum_order_amount", nullable = false)
     private Double minimumOrderAmount;
+
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
+
+    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CouponApplicableProduct> applicableProducts = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_user_id", nullable = false)
+    private User createdBy;
+
+    @Override
+    public String toString() {
+        return "Coupon{" +
+                "CouponID=" + CouponID +
+                ", code='" + code + '\'' +
+                ", type=" + type +
+                ", discount=" + discount +
+                ", validFrom=" + validFrom +
+                ", validUntil=" + validUntil +
+                ", minimumOrderAmount=" + minimumOrderAmount +
+                ", applicableProducts=" + applicableProducts +
+                ", createdBy=" + createdBy +
+                '}';
+    }
 }

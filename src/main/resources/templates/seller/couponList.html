@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쿠폰 목록</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+</head>
+<body>
+<div th:replace="~{seller/common/navBar :: content}"></div>
+<div class="container mt-4">
+    <h2>쿠폰 목록</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>쿠폰 코드</th>
+            <th>유형</th>
+            <th>할인 금액/비율</th>
+            <th>유효 시작일</th>
+            <th>유효 종료일</th>
+            <th>개수</th>
+            <th>최소 주문 금액</th>
+            <th>작업</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="coupon : ${couponList}">
+            <td th:text="${coupon.code}"></td>
+            <td th:text="${coupon.type.getDescription()}"></td>
+            <td th:text="${coupon.discount}"></td>
+            <td th:text="${#temporals.format(coupon.validFrom, 'yyyy년 MM월 dd일 hh시 mm분')}"></td>
+            <td th:text="${#temporals.format(coupon.validUntil, 'yyyy년 MM월 dd일 hh시 mm분')}"></td>
+            <td th:text="${coupon.quantity}"></td>
+            <td th:text="${coupon.minimumOrderAmount}"></td>
+            <td>
+                <a th:href="@{'/coupon/edit/' + ${coupon.couponID}}" class="btn btn-primary btn-sm">수정</a>
+                <a th:href="@{'/coupon/delete/' + ${coupon.couponID}}" class="btn btn-danger btn-sm">삭제</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

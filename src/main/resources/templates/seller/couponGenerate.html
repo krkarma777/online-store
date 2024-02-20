@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>쿠폰 발행 페이지</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/css/common.css">
+  <style>
+    .container {
+      margin-top: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+<div th:replace="~{seller/common/navBar :: content}"></div>
+<div class="container">
+  <h2>쿠폰 발행</h2>
+  <form th:object="${coupon}" method="post">
+    <div class="form-group">
+      <label for="couponType">쿠폰 유형</label>
+      <select class="form-control" id="couponType" th:field="${coupon.type}" required>
+        <option th:value="AMOUNT_DISCOUNT">할인 금액</option>
+        <option th:value="PERCENTAGE_DISCOUNT">할인 비율</option>
+        <option th:value="FREE_SHIPPING">무료 배송</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="discountValue">할인 값</label>
+      <input type="text" class="form-control" id="discountValue" placeholder="할인 금액 또는 비율 입력" th:field="${coupon.discount}" required>
+    </div>
+    <div class="form-group">
+      <label for="validFromDate">유효 시작일</label>
+      <input type="date" class="form-control" id="validFromDate" name="validFromDate" required>
+      <input type="time" class="form-control" id="validFromTime" name="validFromTime" required>
+    </div>
+    <div class="form-group">
+      <label for="validUntilDate">유효 종료일</label>
+      <input type="date" class="form-control" id="validUntilDate" name="validUntilDate" required>
+      <input type="time" class="form-control" id="validUntilTime" name="validUntilTime" required>
+    </div>
+    <div class="form-group">
+      <label for="quantity">쿠폰 수량</label>
+      <input type="number" class="form-control" id="quantity" placeholder="쿠폰 수량 입력" th:field="${coupon.quantity}" required>
+    </div>
+    <div class="form-group">
+      <label for="minimumOrderAmount">최소 주문 금액</label>
+      <input type="text" class="form-control" id="minimumOrderAmount" placeholder="최소 주문 금액 입력" th:field="${coupon.minimumOrderAmount}" required>
+    </div>
+    <button type="submit" class="btn btn-primary">쿠폰 발행</button>
+  </form>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</body>
+</html>
