@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.users;
 
-import com.bulkpurchase.domain.dto.Response;
+import com.bulkpurchase.domain.dto.FavoriteResponse;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductService;
@@ -21,12 +21,12 @@ public class FavoriteProductController {
     private final UserService userService;
 
     @PostMapping("/toggle")
-    public Response toggleFavorite(@RequestParam(value = "productID") Long productID, Principal principal) {
+    public FavoriteResponse toggleFavorite(@RequestParam(value = "productID") Long productID, Principal principal) {
         Product product = productService.findById(productID).orElse(null);
         User user = userService.findByUsername(principal.getName());
 
         boolean isFavorited = favoriteProductService.toggleFavorite(user, product);
-        return new Response(isFavorited);
+        return new FavoriteResponse(isFavorited);
     }
 
 }
