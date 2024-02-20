@@ -17,7 +17,6 @@ public class CouponService {
     private final CouponRepository couponRepository;
 
     public Coupon save(Coupon coupon) {
-
         return couponRepository.save(coupon);
     }
 
@@ -27,5 +26,9 @@ public class CouponService {
 
     public Optional<Coupon> findById(Long couponID) {
         return couponRepository.findById(couponID);
+    }
+
+    public void delete(Coupon coupon) {
+        couponRepository.delete(coupon);
     }
 }

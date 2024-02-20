@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -54,8 +55,6 @@ public class CouponManageController {
 
         Coupon savedCoupon = couponService.save(coupon);
 
-        System.out.println("savedCoupon = " + savedCoupon);
-
         return "redirect:/coupon/list";
     }
 
@@ -87,6 +86,19 @@ public class CouponManageController {
         coupon.setQuantity(quantity);
 
         couponService.save(coupon);
+        return "redirect:/coupon/list";
+    }
+
+    @GetMapping("/coupon/delete/{couponID}")
+    public String couponDelete(@PathVariable("couponID") Long couponID, Principal principal) {
+        Coupon coupon = couponService.findById(couponID).orElse(null);
+        if (coupon == null || principal == null) {
+            return "error/403";
+        }
+        if (!coupon.getCreatedBy().equals(userService.findByUsername(principal.getName()))) {
+            return "error/400";
+        }
+        couponService.delete(coupon);
         return "redirect:/coupon/list";
     }
 }
