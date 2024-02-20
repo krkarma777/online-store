@@ -575,6 +575,7 @@
                     } else {
                         $("#favorite").html('<i class="far fa-heart"></i>'); // 찜하지 않은 상태
                     }
+                    alert(response.message);
                 },
                 error: function(xhr, status, error) {
                     alert("찜하기 상태 변경에 실패했습니다: " + error);
