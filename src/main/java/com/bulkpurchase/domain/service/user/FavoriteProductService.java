@@ -30,7 +30,7 @@ public class FavoriteProductService {
         return favoriteProductRepository.findById(id);
     }
 
-    public Optional<FavoriteProduct> findByUser(User user) {
+    public List<FavoriteProduct> findByUser(User user) {
         return favoriteProductRepository.findByUser(user);
     }
 

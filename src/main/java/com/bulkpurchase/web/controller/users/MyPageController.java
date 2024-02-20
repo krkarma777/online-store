@@ -1,11 +1,13 @@
 package com.bulkpurchase.web.controller.users;
 
 import com.bulkpurchase.domain.dto.OrderViewDTO;
+import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.order.OrderService;
+import com.bulkpurchase.domain.service.user.FavoriteProductService;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,8 @@ public class MyPageController {
 
     private final OrderDetailService orderDetailService;
 
+    private final FavoriteProductService favoriteProductService;
+
     @GetMapping("/mypage")
     public String myPageForm(Model model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
@@ -47,6 +51,9 @@ public class MyPageController {
 
         List<OrderViewDTO> orders = orderService.getOrderViewModelsByUser(user);
         model.addAttribute("orders", orders);
+
+        List<FavoriteProduct> favoriteProducts = favoriteProductService.findByUser(user);
+        model.addAttribute("favoriteProducts", favoriteProducts);
 
         return "users/myPage";
     }

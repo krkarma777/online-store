@@ -69,14 +69,13 @@
 
 
     <!-- 좋아하는 상품 섹션 -->
-    <div class="favorite-products">
+    <div class="favorite-products" >
         <h3 class="favorite-products-title">좋아하는 상품</h3>
-        <ul>
-            <li>상품 A</li>
-            <li>상품 B</li>
-            <!-- 더 많은 좋아하는 상품 -->
+        <ul th:each="favoriteProduct : ${favoriteProducts}">
+            <li th:text="${favoriteProduct.product.productName}">상품 A</li>
+            <a th:href="@{'/product/' + ${favoriteProduct.product.productID}}" class="btn btn-primary">자세히 보기</a>
         </ul>
-        <a href="/favorites" class="btn btn-secondary">좋아하는 상품 보기</a>
+        <a href="/favorite" class="btn btn-secondary">좋아하는 상품 보기</a>
     </div>
 
     <!-- 회원 등급에 따른 혜택 섹션 -->
