@@ -1,4 +1,4 @@
-package com.bulkpurchase.domain.repository;
+package com.bulkpurchase.domain.repository.user;
 
 import com.bulkpurchase.domain.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;

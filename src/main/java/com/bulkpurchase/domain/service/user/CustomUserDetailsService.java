@@ -2,7 +2,7 @@ package com.bulkpurchase.domain.service.user;
 
 import com.bulkpurchase.security.user.CustomUserDetails;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.repository.UserRepository;
+import com.bulkpurchase.domain.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -2,11 +2,13 @@ package com.bulkpurchase.web.controller.product;
 
 import com.bulkpurchase.domain.dto.ReviewDetailDTO;
 import com.bulkpurchase.domain.entity.product.*;
+import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductInquiryService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.review.ReviewFeedbackService;
 import com.bulkpurchase.domain.service.review.ReviewService;
+import com.bulkpurchase.domain.service.user.FavoriteProductService;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ public class ProductController {
     private final ReviewFeedbackService reviewFeedbackService;
     private final ReviewService reviewService;
     private final ProductInquiryService productInquiryService;
+    private final FavoriteProductService favoriteProductService;
 
 
 
@@ -63,10 +66,14 @@ public class ProductController {
             List<ProductInquiry> inquiries = productInquiryService.findByProductProductID(productID);
             model.addAttribute("inquiries", inquiries);
             if (principal != null) {
-                if (product.getUser().equals(userService.findByUsername(principal.getName()))) {
+                User user = userService.findByUsername(principal.getName());
+                FavoriteProduct favoriteProduct = favoriteProductService.findByUserAndProduct(user, product);
+                model.addAttribute("favoriteProduct", favoriteProduct);
+                if (product.getUser().equals(user)) {
                     model.addAttribute("isSeller", true);
                 }
             }
+
 
         }
         return "product/details";

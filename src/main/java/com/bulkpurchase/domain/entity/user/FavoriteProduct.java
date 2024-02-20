@@ -25,5 +25,5 @@ public class FavoriteProduct {
     @JoinColumn(name = "productID")
     private Product product;
 
-    private LocalDateTime favoritedAt;
+    private LocalDateTime favoritedAt = LocalDateTime.now();
 }

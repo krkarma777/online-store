@@ -1,7 +1,7 @@
 package com.bulkpurchase.domain.service.user;
 
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.repository.UserRepository;
+import com.bulkpurchase.domain.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
