@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,14 +34,78 @@
             <td th:text="${coupon.quantity}"></td>
             <td th:text="${coupon.minimumOrderAmount}"></td>
             <td>
-                <a th:href="@{'/coupon/edit/' + ${coupon.couponID}}" class="btn btn-primary btn-sm">수정</a>
+                <!-- 수정 버튼, 모달 창 트리거 -->
+                <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editCouponModal"
+                   th:data-coupon-id="${coupon.couponID}"
+                   th:data-coupon-valid-until-date="${#temporals.format(coupon.validUntil, 'yyyy-MM-dd')}"
+                   th:data-coupon-valid-until-time="${#temporals.format(coupon.validUntil, 'HH:mm')}"
+                   th:data-coupon-quantity="${coupon.quantity}"
+                   th:data-coupon-minimum-order-amount="${coupon.minimumOrderAmount}">
+                    수정
+                </a>
+
                 <a th:href="@{'/coupon/delete/' + ${coupon.couponID}}" class="btn btn-danger btn-sm">삭제</a>
             </td>
         </tr>
         </tbody>
     </table>
+
+    <!-- 수정을 위한 모달 창 -->
+    <div class="modal fade" id="editCouponModal" tabindex="-1" aria-labelledby="editCouponModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCouponModalLabel">쿠폰 수정</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/coupon/edit}" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="couponID" id="editCouponID" required>
+                        <!-- 유효 종료일 -->
+                        <div class="mb-3">
+                            <label for="editValidUntilDate" class="form-label">유효 종료일</label>
+                            <input type="date" class="form-control" id="editValidUntilDate" name="validUntilDate" required>
+                            <input type="time" class="form-control" id="editValidUntilTime" name="validUntilTime" required>
+                        </div>
+                        <!-- 개수 -->
+                        <div class="mb-3">
+                            <label for="editQuantity" class="form-label">개수</label>
+                            <input type="number" class="form-control" id="editQuantity" name="quantity" required>
+                        </div>
+                        <!-- 최소 주문 금액 -->
+                        <div class="mb-3">
+                            <label for="editMinimumOrderAmount" class="form-label">최소 주문 금액</label>
+                            <input type="text" class="form-control" id="editMinimumOrderAmount" name="minimumOrderAmount" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button type="submit" class="btn btn-primary">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $('#editCouponModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // 모달을 열기 위해 클릭된 버튼
+        var couponId = button.data('coupon-id');
+        var validUntilDate = button.data('coupon-valid-until-date');
+        var validUntilTime = button.data('coupon-valid-until-time');
+        var quantity = button.data('coupon-quantity');
+        var minimumOrderAmount = button.data('coupon-minimum-order-amount');
+
+        var modal = $(this);
+        modal.find('.modal-body #editCouponID').val(couponId);
+        modal.find('.modal-body #editValidUntilDate').val(validUntilDate);
+        modal.find('.modal-body #editValidUntilTime').val(validUntilTime);
+        modal.find('.modal-body #editQuantity').val(quantity);
+        modal.find('.modal-body #editMinimumOrderAmount').val(minimumOrderAmount);
+    });
+
+</script>
 </body>
 </html>

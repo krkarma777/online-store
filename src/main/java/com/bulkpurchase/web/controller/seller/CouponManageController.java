@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -49,6 +50,7 @@ public class CouponManageController {
         coupon.setValidFrom(validFrom);
         coupon.setValidUntil(validUntil);
         coupon.setCreatedBy(user);
+        coupon.setCode(UUID.randomUUID().toString());
 
         Coupon savedCoupon = couponService.save(coupon);
 
@@ -63,5 +65,28 @@ public class CouponManageController {
         List<Coupon> couponList = couponService.findByUser(user);
         model.addAttribute("couponList", couponList);
         return "/seller/couponList";
+    }
+
+    @PostMapping("/coupon/edit")
+    public String couponEdit(@RequestParam("validUntilDate") String validUntilDate,
+                             @RequestParam("validUntilTime") String validUntilTime,
+                             @RequestParam("minimumOrderAmount") Double minimumOrderAmount,
+                             @RequestParam("quantity") Integer quantity,
+                             @RequestParam("couponID") Long couponID) {
+        Coupon coupon = couponService.findById(couponID).orElse(null);
+        if (coupon == null) {
+            return "error/403";
+        }
+
+        LocalDate endDate = LocalDate.parse(validUntilDate);
+        LocalTime endTime = LocalTime.parse(validUntilTime);
+        LocalDateTime validUntil = LocalDateTime.of(endDate, endTime);
+
+        coupon.setValidUntil(validUntil);
+        coupon.setMinimumOrderAmount(minimumOrderAmount);
+        coupon.setQuantity(quantity);
+
+        couponService.save(coupon);
+        return "redirect:/coupon/list";
     }
 }
