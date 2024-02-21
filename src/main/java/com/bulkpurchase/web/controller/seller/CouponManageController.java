@@ -138,7 +138,7 @@ public class CouponManageController {
         return "seller/couponManage/couponSelectProduct";
     }
     @PostMapping("/coupon/select")
-    public String selectProductForCoupon(@RequestParam("couponID") Long couponID, @RequestParam("productIDs") List<Long> productIDs) {
+    public String selectProductForCoupon(@RequestParam("couponID") Long couponID, @RequestParam(value = "productIDs", required = false) List<Long> productIDs) {
         Coupon coupon = couponService.findById(couponID).orElse(null);
         if (coupon == null) {
             return "error/403";

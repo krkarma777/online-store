@@ -161,8 +161,11 @@
         // 적용된 상품들을 UI에 추가합니다.
         appliedProducts.forEach(function(product) {
             addSelectedProduct(product.productID, product.productName);
+            // 초기에 적용된 상품들에 대한 hidden input을 폼에 추가합니다.
+            $('#couponForm').append('<input type="hidden" name="productIDs" value="' + product.productID + '">');
         });
     });
+
     /*]]>*/
     function searchProduct() {
         var searchQuery = $('#searchQuery').val(); // 사용자가 입력한 검색 쿼리를 가져옵니다.
@@ -193,6 +196,18 @@
     }
 
     function addSelectedProduct(productId, productName) {
+        // 현재 선택된 모든 상품의 ID를 배열로 가져옵니다.
+        var existingProductIds = $('#couponForm input[name="productIDs"]').map(function() {
+            return $(this).val();
+        }).get();
+
+        // 현재 추가하려는 상품의 ID가 이미 존재하는지 체크합니다.
+        if (existingProductIds.indexOf(String(productId)) !== -1) {
+            // 이미 존재하는 경우, 추가하지 않고 경고 메시지를 출력하거나 사용자에게 알림
+            alert("이미 추가된 상품입니다.");
+            return; // 함수 실행 종료
+        }
+
         // UI에 선택된 상품 표시
         $('#selectedProductsList').append('<div>' + productName + ' <button type="button" onclick="removeSelectedProduct(' + productId + ', this)">x</button></div>');
 
