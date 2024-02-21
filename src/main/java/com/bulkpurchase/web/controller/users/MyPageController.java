@@ -1,9 +1,13 @@
 package com.bulkpurchase.web.controller.users;
 
 import com.bulkpurchase.domain.dto.OrderViewDTO;
+import com.bulkpurchase.domain.entity.order.Order;
+import com.bulkpurchase.domain.entity.order.OrderDetail;
+import com.bulkpurchase.domain.entity.order.Payment;
 import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
+import com.bulkpurchase.domain.service.order.PaymentService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.order.OrderService;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
@@ -37,6 +42,8 @@ public class MyPageController {
     private final OrderDetailService orderDetailService;
 
     private final FavoriteProductService favoriteProductService;
+
+    private final PaymentService paymentService;
 
     @GetMapping("/mypage")
     public String myPageForm(Model model, Principal principal) {
@@ -91,7 +98,17 @@ public class MyPageController {
         return "redirect:/mypage";
     }
 
+    @GetMapping("/orders/detail/{orderID}")
+    public String orderDetailInfoForSeller(@PathVariable("orderID") Long orderID , Model model) {
+        Order order = orderService.findById(orderID).orElse(null);
+        Payment payment = paymentService.findByOrder(order);
+        List<OrderDetail> orderDetailList = orderDetailService.findByOrder(order);
 
+        model.addAttribute("orderDetailList", orderDetailList);
+        model.addAttribute("order", order);
+        model.addAttribute("payment", payment);
+        return "/users/orderDetailForUser";
+    }
 
 
 

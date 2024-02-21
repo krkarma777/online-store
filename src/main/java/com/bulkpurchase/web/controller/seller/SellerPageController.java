@@ -2,11 +2,13 @@ package com.bulkpurchase.web.controller.seller;
 
 import com.bulkpurchase.domain.dto.ReviewDetailDTO;
 import com.bulkpurchase.domain.dto.SalesDataDTO;
+import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
-import com.bulkpurchase.domain.entity.product.ProductInquiry;
+import com.bulkpurchase.domain.entity.order.Payment;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.enums.ProductStatus;
+import com.bulkpurchase.domain.service.order.PaymentService;
 import com.bulkpurchase.domain.service.product.ProductInquiryService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
@@ -18,13 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -39,7 +41,7 @@ public class SellerPageController {
     private final OrderDetailService orderDetailService;
     private final OrderService orderService;
     private final ReviewService reviewService;
-    private final ProductInquiryService productInquiryService;
+    private final PaymentService paymentService;
 
     @GetMapping
     public String sellerPageForm(Model model, Principal principal) {
@@ -70,7 +72,7 @@ public class SellerPageController {
         for (Product product : products) {
             ProductStatus status = product.getStatus();
         }
-        return "/seller/products";
+        return "/seller/productManage/products";
     }
 
     @GetMapping("/orders")
@@ -85,9 +87,10 @@ public class SellerPageController {
             List<OrderDetail> orderDetailIDDesc = orderDetailService.findByProductOrderByOrderDetailIDDesc(product);
             orderDetailList.addAll(orderDetailIDDesc);
         }
+        orderDetailList.sort(Comparator.comparing(OrderDetail::getOrderDetailID).reversed());
         model.addAttribute("orderDetailList", orderDetailList);
 
-        return "/seller/orders";
+        return "/seller/orderManage/orders";
     }
 
     @GetMapping("/sales")
@@ -119,9 +122,22 @@ public class SellerPageController {
         User user = userService.findByUsername(principal.getName());
         List<ReviewDetailDTO> reviews = reviewService.findAllReviewDetailsWithFeedbackCountsBySeller(user.getUserID());
         model.addAttribute("reviews", reviews);
-        return "/seller/reviews";
+        return "/seller/productManage/reviews";
     }
 
+    @GetMapping("/orders/detail/{orderDetailID}")
+    public String orderDetailInfoForSeller(@PathVariable("orderDetailID") Long orderDetailID, Model model) {
+        OrderDetail orderDetail = orderDetailService.findByID(orderDetailID).orElse(null);
+        if (orderDetail == null) {
+            return "error/403";
+        }
+        Order order = orderDetail.getOrder();
+        Payment payment = paymentService.findByOrder(order);
 
+        model.addAttribute("orderDetail", orderDetail);
+        model.addAttribute("order", order);
+        model.addAttribute("payment", payment);
+        return "/seller/orderManage/orderDetailForSeller";
+    }
 
 }

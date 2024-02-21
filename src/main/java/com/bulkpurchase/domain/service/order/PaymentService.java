@@ -1,5 +1,6 @@
 package com.bulkpurchase.domain.service.order;
 
+import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.Payment;
 import com.bulkpurchase.domain.repository.order.PaymentRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,5 +13,9 @@ public class PaymentService {
 
     public Payment save(Payment payment) {
         return paymentRepository.save(payment);
+    }
+
+    public Payment findByOrder(Order order) {
+        return paymentRepository.findByOrder(order);
     }
 }

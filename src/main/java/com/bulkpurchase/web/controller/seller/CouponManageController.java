@@ -30,7 +30,7 @@ public class CouponManageController {
     public String generateCouponForm(Model model) {
         Coupon coupon = new Coupon();
         model.addAttribute("coupon", coupon);
-        return "seller/couponGenerate";
+        return "seller/couponManage/couponGenerate";
     }
 
     @PostMapping("/coupon/generate")
@@ -63,7 +63,7 @@ public class CouponManageController {
         User user = userService.findByUsername(principal.getName());
         List<Coupon> couponList = couponService.findByUser(user);
         model.addAttribute("couponList", couponList);
-        return "/seller/couponList";
+        return "/seller/couponManage/couponList";
     }
 
     @PostMapping("/coupon/edit")

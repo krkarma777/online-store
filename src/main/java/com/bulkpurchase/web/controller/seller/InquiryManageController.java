@@ -6,13 +6,10 @@ import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductInquiryService;
 import com.bulkpurchase.domain.service.user.UserService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,7 +33,7 @@ public class InquiryManageController {
         User user = userService.findByUsername(principal.getName());
         List<ProductInquiry> inquiries = productInquiryService.findByProductUser(user);
         model.addAttribute("inquiries", inquiries);
-        return "/seller/inquiries";
+        return "/seller/productManage/inquiries";
     }
 
     @PostMapping("/inquiries/reply")

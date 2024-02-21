@@ -40,7 +40,7 @@
         <div th:each="review : ${reviews}" class="review-item">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <div class="review-heading">상품명: <span th:text="${review.review.product.productName}">상품명</span></div>
+                    <div class="review-heading">상품명: <a href="/product/${inquiry.productID}" style="text-decoration: none; color: #007bff;"><span th:text="${review.review.product.productName}">상품명</span></a></div>
                     <div class="review-date">리뷰 작성일: <span th:text="${#dates.format(review.review.creationDate, 'yyyy-MM-dd')}">작성일</span></div>
                 </div>
                 <div>

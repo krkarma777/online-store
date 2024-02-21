@@ -48,8 +48,8 @@
             </thead>
             <tbody>
             <tr th:each="orderDetail : ${orderDetailList}">
-                <td th:text="${orderDetail.order.orderID}"></td>
-                <td th:text="${orderDetail.product.productName}"></td>
+                <td><a th:href="'/seller/orders/detail/'+${orderDetail.orderDetailID}" style="text-decoration: none; color: black;"><span th:text="${orderDetail.order.orderID}"></span></a></td>
+                <td><a th:href="'/product/'+${orderDetail.product.productID}" style="text-decoration: none; color: black;"><span th:text="${orderDetail.product.productName}"></span></a></td>
                 <td th:text="${orderDetail.quantity}"></td>
                 <td th:text="${orderDetail.order.status.getDescription()}"></td>
                 <td th:text="${#dates.format(orderDetail.order.orderDate, 'yyyy-MM-dd')}"></td>

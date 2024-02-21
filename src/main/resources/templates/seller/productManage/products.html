@@ -53,7 +53,7 @@
             <tr th:each="product : ${products}">
                 <td th:text="${product.productID}"></td>
                 <td th:text="${product.category != null ? product.category.name : '없음'}"></td>
-                <td th:text="${product.productName}"></td>
+                <td><a th:href="'/product/'+${product.productID}" style="text-decoration: none; color: black;"><span th:text="${product.productName}"></span></a></td>
                 <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
                 <td th:text="${product.stock}"></td>
                 <td>
