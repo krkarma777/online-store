@@ -49,18 +49,4 @@ public class Coupon {
     @JoinColumn(name = "created_by_user_id", nullable = false)
     private User createdBy;
 
-    @Override
-    public String toString() {
-        return "Coupon{" +
-                "CouponID=" + CouponID +
-                ", code='" + code + '\'' +
-                ", type=" + type +
-                ", discount=" + discount +
-                ", validFrom=" + validFrom +
-                ", validUntil=" + validUntil +
-                ", minimumOrderAmount=" + minimumOrderAmount +
-                ", applicableProducts=" + applicableProducts +
-                ", createdBy=" + createdBy +
-                '}';
-    }
 }

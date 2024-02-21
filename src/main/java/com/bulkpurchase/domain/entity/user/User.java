@@ -3,6 +3,7 @@ import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import com.bulkpurchase.domain.enums.UserRole;
 import com.bulkpurchase.domain.enums.UserStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -85,6 +86,7 @@ public class User {
     private Set<SalesRegion> salesRegions = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Set<Product> products = new HashSet<>();
 
     @Enumerated(EnumType.STRING)

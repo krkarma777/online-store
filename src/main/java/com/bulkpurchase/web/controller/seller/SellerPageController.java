@@ -62,6 +62,7 @@ public class SellerPageController {
 
         return "seller/sellerPage";
     }
+
     @GetMapping("/products")
     public String manageProducts(Principal principal, Model model) {
 
@@ -139,5 +140,6 @@ public class SellerPageController {
         model.addAttribute("payment", payment);
         return "/seller/orderManage/orderDetailForSeller";
     }
+
 
 }

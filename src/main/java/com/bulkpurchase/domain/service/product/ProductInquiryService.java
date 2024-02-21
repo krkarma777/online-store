@@ -47,6 +47,6 @@ public class ProductInquiryService {
 
     public Page<ProductInquiryDTO> findAllDTO(Pageable pageable) {
         Page<ProductInquiry> inquiriesPage = productInquiryRepository.findAll(pageable);
-        return inquiriesPage.map(ProductInquiryDTO::new); // 람다 표현식 사용
+        return inquiriesPage.map(ProductInquiryDTO::new);
     }
 }

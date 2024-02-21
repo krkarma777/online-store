@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.service.product;
 
-import com.bulkpurchase.domain.dto.PopularProductDTO;
+import com.bulkpurchase.domain.dto.ProductForCouponDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ import com.bulkpurchase.domain.repository.product.ProductRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +23,11 @@ public class ProductService {
     public List<Product> findPopularProductsByCategory(Long categoryID) {
         return productRepository.findPopularProductsByCategory(categoryID);
     }
+
     public List<Product> findPopularProducts() {
         return productRepository.findPopularProducts();
     }
+
     public Product saveProduct(Product product) {
         return productRepository.save(product);
     }
@@ -32,7 +35,8 @@ public class ProductService {
     public List<Product> findAllProducts() {
         return productRepository.findAll();
     }
-    public List<Product> findActiveProduct(ProductStatus status ) {
+
+    public List<Product> findActiveProduct(ProductStatus status) {
         return productRepository.findActiveProduct(status);
     }
 
@@ -62,5 +66,16 @@ public class ProductService {
 
     public List<Product> findByCategoryCategoryID(Long categoryID) {
         return productRepository.findByCategoryCategoryID(categoryID);
+    }
+
+    public List<ProductForCouponDTO> findByProductNameContaining(String productName, User user) {
+        List<Product> productList = productRepository.findByProductNameContainingAndUser(productName, user);
+        return productList.stream()
+                .map(ProductForCouponDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public String findProductNameById(Long productId) {
+        return productRepository.findProductNameById(productId);
     }
 }
