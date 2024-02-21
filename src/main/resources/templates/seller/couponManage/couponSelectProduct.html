@@ -161,8 +161,6 @@
         // 적용된 상품들을 UI에 추가합니다.
         appliedProducts.forEach(function(product) {
             addSelectedProduct(product.productID, product.productName);
-            // 초기에 적용된 상품들에 대한 hidden input을 폼에 추가합니다.
-            $('#couponForm').append('<input type="hidden" name="productIDs" value="' + product.productID + '">');
         });
     });
 
