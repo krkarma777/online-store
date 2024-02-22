@@ -90,7 +90,7 @@ public class MyPageController {
 
         String password = user.getPassword();
         String email = user.getEmail();
-        User existingUser = userService.findByUsername(principal.getName());
+        User existingUser = userService.findByUsername(principal.getName()).orElse(null);
 
         // 비밀번호가 비어 있지 않으면 해시 처리
         if (password != null && !password.isEmpty()) {
