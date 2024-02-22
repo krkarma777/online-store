@@ -27,7 +27,7 @@ public class OrderManageController {
     @PostMapping("/orders/edit/{orderDetailID}")
     public String orderStatusChange(@PathVariable(value = "orderDetailID") Long orderDetailID, Principal principal,
                                     @RequestParam(value = "orderStatus") OrderStatus status) {
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         Optional<OrderDetail> orderDetailOpt = orderDetailService.findByID(orderDetailID);
 
         if (orderDetailOpt.isPresent()) {

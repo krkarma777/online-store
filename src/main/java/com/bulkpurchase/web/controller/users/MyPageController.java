@@ -51,7 +51,8 @@ public class MyPageController {
 
     @GetMapping("/mypage")
     public String myPageForm(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
+
         if (user == null) return "error/403";
 
         List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
@@ -76,7 +77,7 @@ public class MyPageController {
 
     @GetMapping("/mypage/edit")
     public String userEditForm(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         model.addAttribute("user", user);
         return "users/edit";
     }

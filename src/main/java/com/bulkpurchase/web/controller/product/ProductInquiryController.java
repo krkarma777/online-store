@@ -30,7 +30,7 @@ public class ProductInquiryController {
         if (principal == null) {
             return "redirect:/login";
         }
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         Product product = productService.findById(productID).orElse(null);
 
 

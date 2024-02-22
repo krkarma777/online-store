@@ -28,14 +28,14 @@ public class FavoriteProductController {
     @ResponseBody
     public FavoriteResponse toggleFavorite(@RequestParam(value = "productID") Long productID, Principal principal) {
         Product product = productService.findById(productID).orElse(null);
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
 
         boolean isFavorited = favoriteProductService.toggleFavorite(user, product);
         return new FavoriteResponse(isFavorited);
     }
     @GetMapping
     private String favorites(Principal principal, Model model) {
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         List<FavoriteProduct> favoriteProducts = favoriteProductService.findByUser(user);
         model.addAttribute("favoriteProducts", favoriteProducts);
 

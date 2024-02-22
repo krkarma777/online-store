@@ -45,7 +45,7 @@ public class SellerPageController {
 
     @GetMapping
     public String sellerPageForm(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         model.addAttribute("user", user);
 
         List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
@@ -66,7 +66,7 @@ public class SellerPageController {
     @GetMapping("/products")
     public String manageProducts(Principal principal, Model model) {
 
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         List<Product> products = productService.findByUserOrderByProductIDDesc(user);
         model.addAttribute("products", products);
 
@@ -79,7 +79,7 @@ public class SellerPageController {
     @GetMapping("/orders")
     public String manageOrders(Principal principal, Model model) {
 
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
         model.addAttribute("products", productsList);
 
@@ -96,7 +96,7 @@ public class SellerPageController {
 
     @GetMapping("/sales")
     public String salesView(Model model, Principal principal) {
-        Long userID = userService.findByUsername(principal.getName()).getUserID();
+        Long userID = userService.findByUsername(principal.getName()).orElse(null).getUserID();
 
         LocalDate endDate = LocalDate.now().plusDays(1);
         LocalDate startDate = endDate.minusDays(30);
@@ -120,7 +120,7 @@ public class SellerPageController {
 
     @GetMapping("/reviews")
     public String reviewManage(Principal principal, Model model) {
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         List<ReviewDetailDTO> reviews = reviewService.findAllReviewDetailsWithFeedbackCountsBySeller(user.getUserID());
         model.addAttribute("reviews", reviews);
         return "/seller/productManage/reviews";

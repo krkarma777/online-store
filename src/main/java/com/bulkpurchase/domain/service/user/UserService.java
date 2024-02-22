@@ -18,9 +18,8 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User findByUsername(String username) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
-        return userOpt.orElse(null);
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
     public Optional<User> findByUsernameOpt(String username) {
         return userRepository.findByUsername(username);
@@ -51,5 +50,9 @@ public class UserService {
         } else {
             return false;
         }
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

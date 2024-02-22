@@ -66,7 +66,7 @@ public class ProductController {
             List<ProductInquiry> inquiries = productInquiryService.findByProductProductID(productID);
             model.addAttribute("inquiries", inquiries);
             if (principal != null) {
-                User user = userService.findByUsername(principal.getName());
+                User user = userService.findByUsername(principal.getName()).orElse(null);
                 FavoriteProduct favoriteProduct = favoriteProductService.findByUserAndProduct(user, product);
                 model.addAttribute("favoriteProduct", favoriteProduct);
                 if (product.getUser().equals(user)) {

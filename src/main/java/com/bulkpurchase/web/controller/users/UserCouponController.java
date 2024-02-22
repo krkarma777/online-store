@@ -44,7 +44,7 @@ public class UserCouponController {
             return "error/403";
         }
 
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         Coupon coupon = couponService.findByCode(code);
 
         if (coupon == null) {
@@ -62,7 +62,7 @@ public class UserCouponController {
     @GetMapping("/user/coupon/list")
     public String userCoupons(Principal principal, Model model) {
 
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         List<UserCoupon> userCoupons = userCouponService.findByUser(user);
 
         model.addAttribute("userCoupons", userCoupons);

@@ -30,7 +30,7 @@ public class InquiryManageController {
 
     @GetMapping("/seller/inquiries")
     public String inquiriesManage(Principal principal, Model model) {
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         List<ProductInquiry> inquiries = productInquiryService.findByProductUser(user);
         model.addAttribute("inquiries", inquiries);
         return "/seller/productManage/inquiries";

@@ -37,7 +37,7 @@ public class CouponManageController {
 
     @GetMapping("/coupon/list")
     public String couponList(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         List<Coupon> couponList = couponService.findByUser(user);
         model.addAttribute("couponList", couponList);
 
@@ -65,7 +65,7 @@ public class CouponManageController {
         LocalTime endTime = LocalTime.parse(validUntilTime);
         LocalDateTime validUntil = LocalDateTime.of(endDate, endTime);
 
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
 
         coupon.setValidFrom(validFrom);
         coupon.setValidUntil(validUntil);

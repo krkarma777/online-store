@@ -89,7 +89,7 @@ public class OrderController {
                                Principal principal, Model model) {
 
         // 주문 생성
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         Order order = orderService.saveOrder(user, totalPrice);
         model.addAttribute("order", order);
 
@@ -115,7 +115,7 @@ public class OrderController {
     @GetMapping("list")
     public String orderList(Model model, Principal principal) {
         try {
-            User user = userService.findByUsername(principal.getName());
+            User user = userService.findByUsername(principal.getName()).orElse(null);
             List<OrderViewDTO> orderViewDTOS = orderService.getOrderViewModelsByUser(user);
             model.addAttribute("orderViewDTOS", orderViewDTOS);
             return "order/orders";

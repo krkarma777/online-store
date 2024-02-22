@@ -34,7 +34,7 @@ public class AdminPageController {
 
     @GetMapping
     public String adminPageForm(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
 
         List<Product> productsList = productService.findAllProducts();
         model.addAttribute("products", productsList);

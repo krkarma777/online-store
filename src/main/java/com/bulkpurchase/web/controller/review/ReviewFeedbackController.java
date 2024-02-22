@@ -38,7 +38,7 @@ public class ReviewFeedbackController {
         }
 
         try {
-            User user = userService.findByUsername(principal.getName());
+            User user = userService.findByUsername(principal.getName()).orElse(null);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
             }

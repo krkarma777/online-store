@@ -25,7 +25,7 @@ public class ProductStatusController {
     @GetMapping("/delete/{productID}")
     public String deleteProduct(@PathVariable(value = "productID") Long productID, Principal principal) {
         Optional<Product> byId = productService.findById(productID);
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         if (byId.isPresent()) {
             Product product = byId.get();
             if (product.getUser().equals(user)) {
@@ -43,7 +43,7 @@ public class ProductStatusController {
     @GetMapping("/reactivate/{productID}")
     public String reactiveProduct(@PathVariable(value = "productID") Long productID, Principal principal) {
         Optional<Product> byId = productService.findById(productID);
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         if (byId.isPresent()) {
             Product product = byId.get();
             if (product.getUser().equals(user)) {

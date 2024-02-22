@@ -23,7 +23,8 @@ public class CartViewController {
     @GetMapping("")
     public String cartForm(Principal principal, Model model) {
 
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
+
 
         Cart cart = cartService.cartFindOrCreate(user);
 

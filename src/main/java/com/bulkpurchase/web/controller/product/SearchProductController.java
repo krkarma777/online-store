@@ -23,7 +23,7 @@ public class SearchProductController {
 
     @GetMapping("/searchProduct")
     public ResponseEntity<List<ProductForCouponDTO>> searchProduct(@RequestParam("query") String productName, Principal principal) {
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         if (user == null) {
             return ResponseEntity.status(403).body(null);
         }

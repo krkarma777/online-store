@@ -41,7 +41,7 @@ public class CartController {
             return createErrorResponse(HttpStatus.NOT_FOUND, "해당 상품이 존재하지 않습니다.");
         }
 
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         Cart cart = cartService.cartFindOrCreate(user);
 
         // 장바구니에서 해당 상품 검색
@@ -63,8 +63,7 @@ public class CartController {
             return createErrorResponse(HttpStatus.UNAUTHORIZED, "사용자 인증이 필요합니다.");
         }
 
-        String username = principal.getName();
-        User user = userService.findByUsername(username); // 사용자 이름을 통해 사용자 객체를 가져옵니다.
+        User user = userService.findByUsername(principal.getName()).orElse(null); // 사용자 이름을 통해 사용자 객체를 가져옵니다.
         if (user == null) {
             return createErrorResponse(HttpStatus.UNAUTHORIZED, "사용자를 찾을 수 없습니다.");
         }

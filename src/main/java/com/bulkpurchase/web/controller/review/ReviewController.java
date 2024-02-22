@@ -32,7 +32,7 @@ public class ReviewController {
                                   @RequestParam(value = "orderDetailID") Long orderDetailID,
                                   Principal principal, Model model) {
 
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         Product product = productService.findById(productID).orElse(null);
         OrderDetail orderDetail = orderDetailService.findByID(orderDetailID).orElse(null);
 
@@ -55,7 +55,7 @@ public class ReviewController {
     public String reviewWrite(@ModelAttribute Review review, Principal principal,
                               @RequestParam(value = "productID") Long productID,
                               @RequestParam(value = "orderDetailID") Long orderDetailID) {
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.findByUsername(principal.getName()).orElse(null);
         review.setUser(user);
         Product product = productService.findById(productID).orElse(null);
         OrderDetail orderDetail = orderDetailService.findByID(orderDetailID).orElse(null);
