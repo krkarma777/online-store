@@ -1,12 +1,14 @@
 package com.bulkpurchase.web.controller.users;
 
 import com.bulkpurchase.domain.dto.OrderViewDTO;
+import com.bulkpurchase.domain.entity.coupon.UserCoupon;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.order.Payment;
 import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
+import com.bulkpurchase.domain.service.coupon.UserCouponService;
 import com.bulkpurchase.domain.service.order.PaymentService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
@@ -45,6 +47,8 @@ public class MyPageController {
 
     private final PaymentService paymentService;
 
+    private final UserCouponService userCouponService;
+
     @GetMapping("/mypage")
     public String myPageForm(Model model, Principal principal) {
         User user = userService.findByUsername(principal.getName());
@@ -61,6 +65,9 @@ public class MyPageController {
 
         List<FavoriteProduct> favoriteProducts = favoriteProductService.findByUser(user);
         model.addAttribute("favoriteProducts", favoriteProducts);
+
+        List<UserCoupon> userCoupons = userCouponService.findByUser(user);
+        model.addAttribute("userCoupons", userCoupons);
 
         return "users/myPage";
     }

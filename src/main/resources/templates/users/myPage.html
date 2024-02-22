@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
         /* 기존 스타일 유지 */
-        .user-info, .sales-regions, .order-history, .favorite-products, .benefits {
+        .user-info, .order-history, .favorite-products, .benefits, .coupon-section {
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 0.25rem;
@@ -18,17 +18,54 @@
             margin-bottom: 20px;
         }
 
-        .user-info-title, .sales-regions-title, .order-history-title, .favorite-products-title, .benefits-title {
+        .user-info-title, .order-history-title, .favorite-products-title, .benefits-title, .coupon-title {
             color: #495057;
             margin-bottom: 15px;
             border-bottom: 2px solid #0d6efd;
             padding-bottom: 10px;
         }
 
-        /* 개선된 섹션 스타일 */
-        .order-history ul, .favorite-products ul, .benefits ul {
+        /* 쿠폰 섹션 스타일 */
+        .coupon-section ul {
             list-style-type: none;
             padding-left: 0;
+        }
+
+        .coupon-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .coupon-section ul li:before {
+            content: "\2022";
+            color: #198754; /* Bootstrap's success color */
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .btn-add-coupon {
+            background-color: #198754; /* Bootstrap's success color */
+            color: #fff;
+        }
+
+        .btn-add-coupon:hover {
+            background-color: #157347; /* Darker green */
+            color: #fff;
+        }
+
+        .favorite-products ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+
+        .favorite-products ul li img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 0.25rem;
         }
 
         .order-history ul li:before, .favorite-products ul li:before, .benefits ul li:before {
@@ -39,41 +76,7 @@
             width: 1em;
             margin-left: -1em;
         }
-
-        .favorite-products ul {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .favorite-products ul li {
-            flex: 1 0 21%; /* Grid layout */
-            background-color: #ffffff;
-            border: 1px solid #dee2e6;
-            border-radius: 0.25rem;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .favorite-products ul li img {
-            width: 100%;
-            height: auto;
-            margin-bottom: 10px;
-            border-radius: 0.25rem;
-        }
-
-        .btn-custom-light {
-            background-color: #f8f9fa;
-            color: #0d6efd;
-            border: 1px solid #0d6efd;
-        }
-
-        .btn-custom-light:hover {
-            background-color: #e2e6ea;
-            color: #0a58ca;
-        }
     </style>
-
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
@@ -88,6 +91,15 @@
         <p><strong>사용자 등급:</strong> <span th:text="${user.userGrade}"></span></p>
         <p><strong>계정 생성일:</strong> <span th:text="${#dates.format(user.createDate, 'yyyy-MM-dd')}"></span></p>
         <a href="/mypage/edit" class="btn btn-primary">정보 수정</a>
+    </div>
+
+    <!-- 쿠폰 리스트 섹션 -->
+    <div class="coupon-section">
+        <h3 class="coupon-title">내 쿠폰</h3>
+        <ul>
+            <li th:each="userCoupon : ${userCoupons}" th:text="${.userCoupon.coupon.name} + ' - ' + ${userCoupon.coupon.description}">쿠폰 이름 - 쿠폰 설명</li>
+        </ul>
+        <a href="/coupons/add" class="btn btn-add-coupon">쿠폰 추가</a>
     </div>
 
     <!-- 주문 내역 섹션 -->

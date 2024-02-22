@@ -49,4 +49,17 @@ public class Coupon {
     @JoinColumn(name = "created_by_user_id", nullable = false)
     private User createdBy;
 
+    @Column(nullable = false, length = 100)
+    private String name; // 쿠폰 이름
+
+    @Column(nullable = true, length = 255)
+    private String description; // 쿠폰 설명
+
+    @Column(nullable = false)
+    private Boolean isActive = true; // 사용 가능 상태
+
+    // 최대 할인 금액 - 필요에 따라
+    @Column(name = "max_discount_amount", nullable = true)
+    private Double maxDiscountAmount;
+
 }
