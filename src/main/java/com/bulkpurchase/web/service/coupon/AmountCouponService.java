@@ -18,6 +18,6 @@ public class AmountCouponService implements CouponDiscountService {
         if (!itValidCoupon) {
             return 0.0;
         }
-        return totalPrice * coupon.getDiscount() / 100;
+        return Math.max(0, totalPrice - coupon.getDiscount());
     }
 }

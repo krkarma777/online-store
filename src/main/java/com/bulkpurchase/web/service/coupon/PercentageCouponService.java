@@ -18,6 +18,6 @@ public class PercentageCouponService implements CouponDiscountService{
         if (!itValidCoupon) {
             return 0.0;
         }
-        return coupon.getDiscount();
+        return totalPrice * (1 - coupon.getDiscount() / 100);
     }
 }
