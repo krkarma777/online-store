@@ -18,20 +18,18 @@ public class RegisterDuplicationController {
 
     private final UserService userService;
 
-
     @PostMapping("/check-username")
-    public ResponseEntity<?> checkUsernameAvailability(@RequestBody Map<String, String> request) {
-        String username = request.get("username");
-        boolean isAvailable = !userService.existsByUsername(username);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("isAvailable", isAvailable);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String, Boolean>> checkUsernameAvailability(@RequestBody Map<String, String> request) {
+        return checkAvailability(request.get("username"), userService::existsByUsername);
     }
 
     @PostMapping("/check-email")
-    public ResponseEntity<?> checkEmailAvailability(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        boolean isAvailable = !userService.existsByEmail(email);
+    public ResponseEntity<Map<String, Boolean>> checkEmailAvailability(@RequestBody Map<String, String> request) {
+        return checkAvailability(request.get("email"), userService::existsByEmail);
+    }
+
+    private ResponseEntity<Map<String, Boolean>> checkAvailability(String value, java.util.function.Predicate<String> existsByPredicate) {
+        boolean isAvailable = !existsByPredicate.test(value);
         Map<String, Boolean> response = new HashMap<>();
         response.put("isAvailable", isAvailable);
         return ResponseEntity.ok(response);

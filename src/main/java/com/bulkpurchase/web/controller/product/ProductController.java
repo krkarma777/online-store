@@ -22,91 +22,67 @@ import java.util.*;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/product")
 public class ProductController {
 
     private final ProductService productService;
     private final UserService userService;
-    private final ReviewFeedbackService reviewFeedbackService;
     private final ReviewService reviewService;
     private final ProductInquiryService productInquiryService;
     private final FavoriteProductService favoriteProductService;
 
-
-
-    @GetMapping("/product/{productID}")
-    public String productDetail(@PathVariable(value = "productID") Long productID, Model model, Principal principal) {
-        Optional<Product> productOpt = productService.findById(productID);
-        if (productOpt.isEmpty()) {
-            //오류
-        } else {
-            Product product = productOpt.get();
-            model.addAttribute("product", product);
-
-            Category category = product.getCategory();
-            List<Category> parentCategories = new ArrayList<>();
-
-            while (category != null) {
-                parentCategories.add(category);
-                category = category.getParent();
-            }
-
-            Collections.reverse(parentCategories);
-            model.addAttribute("parentCategories", parentCategories);
-
-
-            List<ReviewDetailDTO> reviews = reviewService.reviewDetailsByProduct(product);
-            model.addAttribute("reviews", reviews);
-
-            long reviewCount = reviewService.countByProductID(productID);
-            model.addAttribute("reviewCount", reviewCount);
-
-            Double averageRating = reviewService.findAverageRatingByProductID(productID);
-            model.addAttribute("averageRating", averageRating);
-
-            List<ProductInquiry> inquiries = productInquiryService.findByProductProductID(productID);
-            model.addAttribute("inquiries", inquiries);
-            if (principal != null) {
-                User user = userService.findByUsername(principal.getName()).orElse(null);
-                FavoriteProduct favoriteProduct = favoriteProductService.findByUserAndProduct(user, product);
-                model.addAttribute("favoriteProduct", favoriteProduct);
-                if (product.getUser().equals(user)) {
-                    model.addAttribute("isSeller", true);
-                }
-            }
-
-
-        }
-        return "product/details";
+    @GetMapping("/{productID}")
+    public String productDetail(@PathVariable("productID") Long productID, Model model, Principal principal) {
+        System.out.println("productID = " + productID);
+        return productService.findById(productID)
+                .map(product -> {
+                    populateProductDetails(model, principal, product);
+                    return "product/details";
+                })
+                .orElse("redirect:/error"); // 예제 에러 페이지 리디렉션
     }
 
+    private void populateProductDetails(Model model, Principal principal, Product product) {
+        model.addAttribute("product", product);
+        model.addAttribute("parentCategories", getParentCategories(product.getCategory()));
+        model.addAttribute("reviews", reviewService.reviewDetailsByProduct(product));
+        model.addAttribute("reviewCount", reviewService.countByProductID(product.getProductID()));
+        model.addAttribute("averageRating", reviewService.findAverageRatingByProductID(product.getProductID()));
+        model.addAttribute("inquiries", productInquiryService.findByProductProductID(product.getProductID()));
+        if (principal != null) {
+            userService.findByUsername(principal.getName()).ifPresent(user -> {
+                model.addAttribute("favoriteProduct", favoriteProductService.findByUserAndProduct(user, product));
+                model.addAttribute("isSeller", product.getUser().equals(user));
+            });
+        }
+    }
 
-    @GetMapping("/product/list")
+    private List<Category> getParentCategories(Category category) {
+        List<Category> parentCategories = new ArrayList<>();
+        while (category != null) {
+            parentCategories.add(0, category);
+            category = category.getParent();
+        }
+        return parentCategories;
+    }
+
+    @GetMapping("/list")
     public String showProductList(Model model) {
-        List<Product> products = productService.findAllProducts();
-        model.addAttribute("products", products);
+        model.addAttribute("products", productService.findAllProducts());
         return "product/products";
     }
 
-    @GetMapping("/products/{userId}")
-    public String productsByUser(@PathVariable(value = "userId") Long userId, Model model) {
-        Optional<User> byUserid = userService.findByUserid(userId);
-        User user = null;
-        if (byUserid.isPresent()) {
-            user = byUserid.get();
-        }
-        List<Product> products = productService.findByUserOrderByProductIDDesc(user);
-        model.addAttribute("products", products);
+    @GetMapping("/user/{userId}")
+    public String productsByUser(@PathVariable("userId") Long userId, Model model) {
+        userService.findByUserid(userId)
+                .ifPresent(user -> model.addAttribute("products", productService.findByUserOrderByProductIDDesc(user)));
         return "product/productsByUser";
     }
 
-    @GetMapping("/product/{productID}/inquiry")
-    public String productInquiry(@PathVariable("productID")@ModelAttribute Long productID, Model model) {
-        List<ProductInquiry> inquiries = productInquiryService.findByProductProductID(productID);
-        model.addAttribute("inquiries", inquiries);
-
-        ProductInquiry productInquiry = new ProductInquiry();
-        model.addAttribute("productInquiry", productInquiry);
-
+    @GetMapping("/{productID}/inquiry")
+    public String productInquiry(@PathVariable("productID") Long productID, Model model) {
+        model.addAttribute("inquiries", productInquiryService.findByProductProductID(productID));
+        model.addAttribute("productInquiry", new ProductInquiry());
         return "product/ProductInquiry";
     }
 }

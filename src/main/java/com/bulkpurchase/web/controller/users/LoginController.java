@@ -13,15 +13,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 @AllArgsConstructor
 public class LoginController {
 
-    UserService userService;
+    private static final String LOGIN_ERROR_FLAG = "loginError";
+    private static final String ERROR_MESSAGE = "errorMessage";
 
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error,
-                        @RequestParam(value = "exception", required = false) String exception,
+                        @RequestParam(value = "exception", required = false) String exceptionMessage,
                         Model model) {
         if (error != null) {
-            model.addAttribute("loginError", true);
-            model.addAttribute("errorMessage", exception);
+            model.addAttribute(LOGIN_ERROR_FLAG, true);
+            model.addAttribute(ERROR_MESSAGE, exceptionMessage);
         }
         return "/users/login";
     }
