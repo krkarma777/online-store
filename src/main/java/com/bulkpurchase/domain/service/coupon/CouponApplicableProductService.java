@@ -2,6 +2,7 @@ package com.bulkpurchase.domain.service.coupon;
 
 import com.bulkpurchase.domain.entity.coupon.Coupon;
 import com.bulkpurchase.domain.entity.coupon.CouponApplicableProduct;
+import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.repository.coupon.CouponApplicableProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,5 +30,9 @@ public class CouponApplicableProductService {
 
     public List<CouponApplicableProduct> findByCouponCouponID(Long couponID) {
         return couponApplicableProductRepository.findByCouponCouponID(couponID);
+    }
+
+    public Optional<CouponApplicableProduct> findByCouponAndProductId(Coupon coupon, Long productID) {
+        return couponApplicableProductRepository.findByCouponAndProductId(coupon, productID);
     }
 }

@@ -97,9 +97,9 @@
     <div class="coupon-section">
         <h3 class="coupon-title">내 쿠폰</h3>
         <ul>
-            <li th:each="userCoupon : ${userCoupons}" th:text="${.userCoupon.coupon.name} + ' - ' + ${userCoupon.coupon.description}">쿠폰 이름 - 쿠폰 설명</li>
+            <li th:each="userCoupon : ${userCoupons}" th:text="${userCoupon.coupon.name} + ' - ' + ${userCoupon.coupon.description}">쿠폰 이름 - 쿠폰 설명</li>
         </ul>
-        <a href="/coupons/add" class="btn btn-add-coupon">쿠폰 추가</a>
+        <a href="/user/coupon/redeem" class="btn btn-add-coupon">쿠폰 추가</a>
     </div>
 
     <!-- 주문 내역 섹션 -->

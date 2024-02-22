@@ -1,11 +1,13 @@
 package com.bulkpurchase.domain.service.coupon;
 
+import com.bulkpurchase.domain.entity.coupon.Coupon;
 import com.bulkpurchase.domain.entity.coupon.UserCoupon;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.coupon.UserCouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,5 +33,9 @@ public class UserCouponService {
 
     public List<UserCoupon> findAll() {
         return userCouponRepository.findAll();
+    }
+
+    public Optional<UserCoupon> findByUserAndCoupon(User user, Coupon coupon) {
+        return userCouponRepository.findByUserAndCoupon(user, coupon);
     }
 }

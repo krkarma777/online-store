@@ -10,12 +10,9 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-        body {
-            padding-top: 20px;
-            background-color: #f7f7f7;
-        }
-        .container {
+        .coupon-section {
             background: white;
+            margin-top: 200px;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -52,8 +49,8 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <div th:replace="~{common/navBar :: content}"></div>
+<div th:replace="~{common/navBar :: content}"></div>
+<div class="container coupon-section">
     <h2>쿠폰 코드 입력</h2>
     <form th:action="@{/user/coupon/redeem}" method="post">
         <div class="mb-3">
