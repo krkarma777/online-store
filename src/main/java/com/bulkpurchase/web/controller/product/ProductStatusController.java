@@ -24,37 +24,28 @@ public class ProductStatusController {
 
     @GetMapping("/delete/{productID}")
     public String deleteProduct(@PathVariable(value = "productID") Long productID, Principal principal) {
-        Optional<Product> byId = productService.findById(productID);
-        User user = userService.findByUsername(principal.getName()).orElse(null);
-        if (byId.isPresent()) {
-            Product product = byId.get();
-            if (product.getUser().equals(user)) {
-                product.setStatus(ProductStatus.INACTIVE);
-                productService.saveProduct(product);
-                return "redirect:/seller/products";
-            } else {
-                return "error/403";
-            }
-        } else {
-            return "error/403";
-        }
+        return updateProductStatus(productID, principal, ProductStatus.INACTIVE);
     }
 
     @GetMapping("/reactivate/{productID}")
     public String reactiveProduct(@PathVariable(value = "productID") Long productID, Principal principal) {
-        Optional<Product> byId = productService.findById(productID);
-        User user = userService.findByUsername(principal.getName()).orElse(null);
-        if (byId.isPresent()) {
-            Product product = byId.get();
-            if (product.getUser().equals(user)) {
-                product.setStatus(ProductStatus.ACTIVE);
-                productService.saveProduct(product);
-                return "redirect:/seller/products";
-            } else {
-                return "error/403";
-            }
-        } else {
-            return "error/403";
-        }
+        return updateProductStatus(productID, principal, ProductStatus.ACTIVE);
+    }
+
+    private String updateProductStatus(Long productID, Principal principal, ProductStatus status) {
+        return productService.findById(productID)
+                .filter(product -> isOwner(principal, product))
+                .map(product -> {
+                    product.setStatus(status);
+                    productService.saveProduct(product);
+                    return "redirect:/seller/products";
+                })
+                .orElse("error/403");
+    }
+
+    private boolean isOwner(Principal principal, Product product) {
+        return userService.findByUsername(principal.getName())
+                .map(user -> product.getUser().equals(user))
+                .orElse(false);
     }
 }

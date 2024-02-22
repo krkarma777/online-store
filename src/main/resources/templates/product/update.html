@@ -161,7 +161,7 @@
 
 <div class="container mt-5">
     <h2>Edit Product</h2>
-    <form th:action="@{/product/update/{productId}(productId=${product.productID})}" th:object="${product}" method="post" enctype="multipart/form-data">
+    <form action="/product/update" th:object="${product}" method="post" enctype="multipart/form-data">
         <input type="hidden" name="productID" th:field="*{productID}" th:value="*{productID}">
         <input type="hidden" name="user" th:field="*{user}" th:value="*{user}">
         <input type="hidden" name="salesRegions" th:field="*{salesRegions}" th:value="*{salesRegions}">

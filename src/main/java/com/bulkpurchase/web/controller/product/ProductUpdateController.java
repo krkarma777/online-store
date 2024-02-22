@@ -23,30 +23,24 @@ public class ProductUpdateController {
     private final ProductService productService;
 
     @GetMapping("/update/{productId}")
-    public String editForm(@PathVariable(value = "productId") Long productId, Model model) {
+    public String editForm(@PathVariable Long productId, Model model) {
         Optional<Product> product = productService.findById(productId);
-        if (product.isEmpty()) {
-            //오류
-        } else {
-            model.addAttribute("product", product.get());
-        }
-        return "product/update";
+        product.ifPresent(p -> model.addAttribute("product", p));
+        return product.isPresent() ? "product/update" : "error/404"; // 오류 처리 페이지로 리다이렉트 또는 다른 방식으로 처리
     }
 
-    @PostMapping("/update/{productId}")
+    @PostMapping("/update")
     public String updateSave(@ModelAttribute @Validated(UpdateCheck.class) Product product, BindingResult bindingResult,
-                             @PathVariable(value = "productId") Long productId, Model model) {
+                             Model model) {
 
         if (bindingResult.hasErrors()) {
-            List<SalesRegion> list = Arrays.asList(SalesRegion.values());
-            model.addAttribute("allSalesRegions", list);
-            model.addAttribute("product", product);
+            model.addAttribute("allSalesRegions", SalesRegion.values());
             return "product/update";
         }
 
         Product savedProduct = productService.saveProduct(product);
 
-        return "redirect:/product/" + productId;
+        return "redirect:/product/" + savedProduct.getProductID(); // 수정된 상품의 ID로 리다이렉트
     }
 
 }
