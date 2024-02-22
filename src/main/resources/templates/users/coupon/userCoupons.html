@@ -9,6 +9,17 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        .modal-dialog {
+            display: flex;
+            align-items: center;
+            min-height: calc(100% - (.5rem * 2));
+        }
+
+        .modal {
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
@@ -64,12 +75,12 @@
             var couponId = $(this).data('coupon-id');
             // AJAX 요청으로 쿠폰에 적용 가능한 상품 정보 가져오기
             $.ajax({
-                url: '/api/coupons/' + couponId + '/products',
+                url: '/user/coupons/' + couponId + '/products',
                 type: 'GET',
                 success: function(data) {
                     var productsHtml = '';
                     data.forEach(function(product) {
-                        productsHtml += '<p>' + product.name + ' - ' + product.description + '</p>';
+                        productsHtml += '<p><a href="/product/' + product.productID + '" target="_blank">' + product.productName + '</a></p>';
                     });
                     $('#productModal .modal-body').html(productsHtml);
                 }
@@ -77,5 +88,6 @@
         });
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

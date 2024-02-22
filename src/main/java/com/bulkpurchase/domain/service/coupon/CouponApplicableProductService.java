@@ -26,4 +26,8 @@ public class CouponApplicableProductService {
     public void delete(CouponApplicableProduct couponApplicableProduct) {
         couponApplicableProductRepository.delete(couponApplicableProduct);
     }
+
+    public List<CouponApplicableProduct> findByCouponCouponID(Long couponID) {
+        return couponApplicableProductRepository.findByCouponCouponID(couponID);
+    }
 }

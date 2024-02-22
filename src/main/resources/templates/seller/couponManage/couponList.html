@@ -184,30 +184,7 @@
         modal.find('.modal-body #editQuantity').val(quantity);
         modal.find('.modal-body #editMinimumOrderAmount').val(minimumOrderAmount);
     });
-    function searchProduct() {
-        var searchQuery = $('#searchQuery').val(); // 검색 쿼리
-        // AJAX 요청 로직은 동일하게 유지, 성공 콜백 내에서 처리 로직 변경
-        $.ajax({
-            // AJAX 설정...
-            success: function(response) {
-                var resultsHtml = '';
-                response.forEach(function(product) {
-                    resultsHtml += '<div class="search-result" data-id="' + product.productID + '">' + product.productName + '</div>';
-                });
-                var searchResultsDiv = $('#searchResults');
-                searchResultsDiv.html(resultsHtml).show(); // 검색 결과 영역을 활성화하고 결과를 표시
 
-                // 결과 클릭 이벤트 처리
-                $('.search-result').click(function() {
-                    // 선택 로직 처리...
-                    searchResultsDiv.hide(); // 처리 후 검색 결과 영역을 숨김
-                });
-            },
-            error: function() {
-                // 에러 처리...
-            }
-        });
-    }
 </script>
 </body>
 </html>

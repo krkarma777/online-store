@@ -11,4 +11,6 @@ public interface CouponApplicableProductRepository extends JpaRepository<CouponA
 
 
     List<CouponApplicableProduct> findByCoupon(Coupon coupon);
+
+    List<CouponApplicableProduct> findByCouponCouponID(Long couponID);
 }
