@@ -95,4 +95,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<FavoriteProduct> favoriteProducts;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<RewardPoint> rewardPoints = new HashSet<>();
 }
