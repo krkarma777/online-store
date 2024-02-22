@@ -31,4 +31,8 @@ public class CouponService {
     public void delete(Coupon coupon) {
         couponRepository.delete(coupon);
     }
+
+    public Coupon findByCode(String couponCode) {
+        return couponRepository.findByCode(couponCode);
+    }
 }

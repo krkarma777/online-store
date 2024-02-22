@@ -10,4 +10,6 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
 
     List<Coupon> findByCreatedBy(User user);
+
+    Coupon findByCode(String couponCode);
 }

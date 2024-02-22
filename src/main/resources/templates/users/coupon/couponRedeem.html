@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>쿠폰 코드 입력</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+<h2>쿠폰 코드 입력</h2>
+<form th:action="@{/user/coupon/redeem}" method="post">
+    <label for="code">쿠폰 코드:</label>
+    <input type="text" id="code" name="code" required>
+    <button type="submit">쿠폰 받기</button>
+</form>
+</body>
+</html>
