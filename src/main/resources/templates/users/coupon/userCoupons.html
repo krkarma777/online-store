@@ -12,26 +12,70 @@
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
-<h2>내 쿠폰 목록</h2>
-<table>
-    <thead>
-    <tr>
-        <th>쿠폰 코드</th>
-        <th>할인율</th>
-        <th>유효 기간</th>
-        <th>최소 주문 금액</th>
-        <th>사용 여부</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="userCoupon : ${userCoupons}">
-        <td th:text="${userCoupon.coupon.code}">코드</td>
-        <td th:text="${userCoupon.coupon.discount}">할인율</td>
-        <td th:text="${userCoupon.coupon.validFrom} + ' ~ ' + ${userCoupon.coupon.validUntil}">유효 기간</td>
-        <td th:text="${userCoupon.coupon.minimumOrderAmount}">최소 주문 금액</td>
-        <td th:text="${userCoupon.used ? '사용됨' : '미사용'}">사용 여부</td>
-    </tr>
-    </tbody>
-</table>
+
+<div class="container mt-4">
+    <h2 class="mb-3 text-center">내 쿠폰 목록</h2>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th scope="col">쿠폰 코드</th>
+                <th scope="col">할인율</th>
+                <th scope="col">유효 기간</th>
+                <th scope="col">최소 주문 금액</th>
+                <th scope="col">사용 여부</th>
+                <th scope="col">상품 보기</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="userCoupon : ${userCoupons}">
+                <td th:text="${userCoupon.coupon.code}">코드</td>
+                <td th:text="${userCoupon.coupon.discount}">할인율</td>
+                <td th:text="${userCoupon.coupon.validFrom} + ' ~ ' + ${userCoupon.coupon.validUntil}">유효 기간</td>
+                <td th:text="${userCoupon.coupon.minimumOrderAmount}">최소 주문 금액</td>
+                <td th:text="${userCoupon.used ? '사용됨' : '미사용'}">사용 여부</td>
+                <td>
+                    <button type="button" class="btn btn-info btn-sm view-products" data-bs-toggle="modal" data-bs-target="#productModal" th:data-coupon-id="${userCoupon.coupon.couponID}">상품 보기</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Product Modal -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">적용 가능 상품</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 상품 정보를 여기에 동적으로 삽입 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.view-products').click(function() {
+            var couponId = $(this).data('coupon-id');
+            // AJAX 요청으로 쿠폰에 적용 가능한 상품 정보 가져오기
+            $.ajax({
+                url: '/api/coupons/' + couponId + '/products',
+                type: 'GET',
+                success: function(data) {
+                    var productsHtml = '';
+                    data.forEach(function(product) {
+                        productsHtml += '<p>' + product.name + ' - ' + product.description + '</p>';
+                    });
+                    $('#productModal .modal-body').html(productsHtml);
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

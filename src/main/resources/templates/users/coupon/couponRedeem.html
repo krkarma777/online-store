@@ -9,14 +9,59 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f7f7f7;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"] {
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            padding: 10px;
+        }
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-<div th:replace="~{common/navBar :: content}"></div>
-<h2>쿠폰 코드 입력</h2>
-<form th:action="@{/user/coupon/redeem}" method="post">
-    <label for="code">쿠폰 코드:</label>
-    <input type="text" id="code" name="code" required>
-    <button type="submit">쿠폰 받기</button>
-</form>
+<div class="container">
+    <div th:replace="~{common/navBar :: content}"></div>
+    <h2>쿠폰 코드 입력</h2>
+    <form th:action="@{/user/coupon/redeem}" method="post">
+        <div class="mb-3">
+            <label for="code" class="form-label">쿠폰 코드:</label>
+            <input type="text" class="form-control" id="code" name="code" required>
+        </div>
+        <button type="submit" class="btn btn-primary">쿠폰 받기</button>
+    </form>
+</div>
 </body>
 </html>
