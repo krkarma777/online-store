@@ -166,7 +166,7 @@
                             </select>
                         </div>
                         <input type="hidden" id="zipCode" name="zipCode">
-                        <button type="submit" class="btn btn-primary btn-block">가입하기</button>
+                        <button type="submit" class="btn btn-primary btn-block" onclick="return validateRegisterForm()">가입하기</button>
                     </form>
                 </div>
             </div>
@@ -346,6 +346,89 @@
             element.innerHTML = '✖ ' + element.textContent.slice(2); // X 아이콘으로 변경
         }
     }
+
+    function validateRegisterForm() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const realName = document.getElementById('realName').value;
+        const email = document.getElementById('email').value;
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const address = document.getElementById('address').value;
+        const detailAddress = document.getElementById('detailAddress').value;
+
+        // 아이디 유효성 검사
+        if (!validateUsername(username)) {
+            alert('아이디는 영문자로 시작하는 6~20자의 영문자 또는 숫자여야 합니다.');
+            return false;
+        }
+
+        // 비밀번호 유효성 검사
+        if (!validatePasswordComplexity(password)) {
+            alert('비밀번호는 영문/숫자/특수문자 2가지 이상 조합의 8~20자여야 합니다.');
+            return false;
+        }
+
+        // 실명 유효성 검사
+        if (!validateRealName(realName)) {
+            alert('실명을 정확히 입력해주세요.');
+            return false;
+        }
+
+        // 이메일 유효성 검사
+        if (!validateEmail(email)) {
+            alert('유효한 이메일 주소를 입력해주세요.');
+            return false;
+        }
+
+        // 휴대폰 번호 유효성 검사
+        if (!validatePhoneNumber(phoneNumber)) {
+            alert('유효한 휴대폰 번호를 입력해주세요.');
+            return false;
+        }
+
+        // 주소 유효성 검사
+        if (!validateAddress(address) || !validateDetailAddress(detailAddress)) {
+            alert('주소를 정확히 입력해주세요.');
+            return false;
+        }
+
+        // 모든 검사를 통과했으면 true 반환
+        return true;
+    }
+
+    function validateUsername(username) {
+        const re = /^[a-zA-Z][a-zA-Z0-9]{5,19}$/;
+        return re.test(username);
+    }
+
+    function validatePasswordComplexity(password) {
+        const re = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W]).{8,20}$/;
+        return re.test(password);
+    }
+
+    function validateRealName(realName) {
+        const re = /^[가-힣a-zA-Z]+$/;
+        return re.test(realName) && realName.length >= 2;
+    }
+
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    function validatePhoneNumber(phoneNumber) {
+        const re = /^\d{10,11}$/;
+        return re.test(phoneNumber);
+    }
+
+    function validateAddress(address) {
+        return address.trim().length > 0;
+    }
+
+    function validateDetailAddress(detailAddress) {
+        return detailAddress.trim().length > 0;
+    }
+
 </script>
 </body>
 </html>
