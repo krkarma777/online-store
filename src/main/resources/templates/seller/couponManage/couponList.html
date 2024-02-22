@@ -17,6 +17,8 @@
     <table class="table table-hover">
         <thead class="table-dark">
         <tr>
+            <th>쿠폰 이름</th>
+            <th>쿠폰 설명</th>
             <th>쿠폰 코드</th>
             <th>유형</th>
             <th>할인 금액/비율</th>
@@ -29,6 +31,8 @@
         </thead>
         <tbody>
         <tr th:each="coupon : ${couponList}">
+            <td th:text="${coupon.name}"></td>
+            <td th:text="${coupon.description}"></td>
             <td th:text="${coupon.code}"></td>
             <td th:text="${coupon.type.getDescription()}"></td>
             <td th:text="${coupon.discount}"></td>
@@ -68,6 +72,22 @@
                             <option th:value="PERCENTAGE_DISCOUNT">할인 비율</option>
                             <option th:value="FREE_SHIPPING">무료 배송</option>
                         </select>
+                    </div>
+
+                    <!-- 이름 -->
+                    <div class="form-group">
+                        <label for="name">이름</label>
+                        <input type="text" id="name" name="name" th:field="${coupon.name}" placeholder="이름 입력" required>
+                    </div>
+                    <!-- 설명 -->
+                    <div class="form-group">
+                        <label for="description">설명</label>
+                        <input type="text" id="description" name="description" th:field="${coupon.description}" placeholder="설명 입력" required>
+                    </div>
+                    <!-- 최대할인금액 -->
+                    <div class="form-group">
+                        <label for="name">최대할인금액</label>
+                        <input type="number" id="maxDiscountAmount" name="maxDiscountAmount" th:field="${coupon.maxDiscountAmount}" placeholder="최대할인금액 입력" required>
                     </div>
                     <div class="form-group">
                         <label for="discountValue">할인 값</label>
@@ -138,6 +158,21 @@
                 <form th:action="@{/coupon/edit}" method="post">
                     <div class="modal-body">
                         <input type="hidden" name="couponID" id="editCouponID" required>
+                        <!-- 이름 -->
+                        <div class="mb-3">
+                            <label for="name">이름</label>
+                            <input type="text" name="name" th:field="${coupon.name}" placeholder="이름 입력" required>
+                        </div>
+                        <!-- 설명 -->
+                        <div class="mb-3">
+                            <label for="description">설명</label>
+                            <input type="text" name="description" th:field="${coupon.description}" placeholder="설명 입력" required>
+                        </div>
+                        <!-- 최대할인금액 -->
+                        <div class="mb-3">
+                            <label for="maxDiscountAmount">최대할인금액</label>
+                            <input type="number" name="maxDiscountAmount" th:field="${coupon.maxDiscountAmount}" placeholder="최대할인금액 입력" required>
+                        </div>
                         <!-- 유효 종료일 -->
                         <div class="mb-3">
                             <label for="editValidUntilDate" class="form-label">유효 종료일</label>

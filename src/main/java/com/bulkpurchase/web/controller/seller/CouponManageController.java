@@ -84,7 +84,10 @@ public class CouponManageController {
                              @RequestParam("validUntilTime") String validUntilTime,
                              @RequestParam("minimumOrderAmount") Double minimumOrderAmount,
                              @RequestParam("quantity") Integer quantity,
-                             @RequestParam("couponID") Long couponID) {
+                             @RequestParam("couponID") Long couponID,
+                             @RequestParam("name") String name,
+                             @RequestParam("description") String description,
+                             @RequestParam("maxDiscountAmount") Double maxDiscountAmount) {
         Coupon coupon = couponService.findById(couponID).orElse(null);
         if (coupon == null) {
             return "error/403";
@@ -97,6 +100,9 @@ public class CouponManageController {
         coupon.setValidUntil(validUntil);
         coupon.setMinimumOrderAmount(minimumOrderAmount);
         coupon.setQuantity(quantity);
+        coupon.setName(name);
+        coupon.setDescription(description);
+        coupon.setMaxDiscountAmount(maxDiscountAmount);
 
         couponService.save(coupon);
         return "redirect:/coupon/list";
