@@ -11,8 +11,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -37,7 +35,6 @@ public class ProductUpdateController {
             model.addAttribute("allSalesRegions", SalesRegion.values());
             return "product/update";
         }
-
         Product savedProduct = productService.saveProduct(product);
 
         return "redirect:/product/" + savedProduct.getProductID(); // 수정된 상품의 ID로 리다이렉트

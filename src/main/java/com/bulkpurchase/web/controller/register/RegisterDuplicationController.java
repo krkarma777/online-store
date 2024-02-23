@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 @RestController
 @RequestMapping("/register")
@@ -28,7 +29,7 @@ public class RegisterDuplicationController {
         return checkAvailability(request.get("email"), userService::existsByEmail);
     }
 
-    private ResponseEntity<Map<String, Boolean>> checkAvailability(String value, java.util.function.Predicate<String> existsByPredicate) {
+    private ResponseEntity<Map<String, Boolean>> checkAvailability(String value, Predicate<String> existsByPredicate) {
         boolean isAvailable = !existsByPredicate.test(value);
         Map<String, Boolean> response = new HashMap<>();
         response.put("isAvailable", isAvailable);

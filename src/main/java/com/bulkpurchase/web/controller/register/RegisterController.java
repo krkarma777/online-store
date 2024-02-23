@@ -28,6 +28,7 @@ public class RegisterController {
     protected void initBinder(WebDataBinder binder) {
         binder.addValidators(userRegisterValidator);
     }
+
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new User());
@@ -35,7 +36,7 @@ public class RegisterController {
     }
 
     @PostMapping("/registerProc")
-    public String registerProcess(@ModelAttribute@Validated(RegisterCheck.class) User user, BindingResult bindingResult, Model model) {
+    public String registerProcess(@ModelAttribute @Validated(RegisterCheck.class) User user, BindingResult bindingResult, Model model) {
 
         userRegisterValidator.validate(user, bindingResult);
 
@@ -44,7 +45,6 @@ public class RegisterController {
             return "/users/register";
         }
 
-        // server side validation 추가해야함
         registerService.registerProcess(user);
         return "redirect:/login";
     }

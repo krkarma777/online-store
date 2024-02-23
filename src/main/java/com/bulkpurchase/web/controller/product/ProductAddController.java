@@ -1,16 +1,12 @@
 package com.bulkpurchase.web.controller.product;
 
-import com.bulkpurchase.domain.entity.product.Category;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.product.SaveCheck;
-import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import com.bulkpurchase.domain.service.product.CategoryService;
 import com.bulkpurchase.domain.service.product.ProductService;
-import com.bulkpurchase.domain.service.user.UserService;
 import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.Arrays;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
