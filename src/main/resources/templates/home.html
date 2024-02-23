@@ -153,15 +153,17 @@
             <!-- Thymeleaf 반복문 사용하여 popularProductList에서 상품 정보 렌더링 -->
             <div class="col" th:each="popularProduct : ${popularProducts}">
                 <div class="card h-100 center center">
-                    <!-- 상품 이미지가 없을 경우 기본 이미지 표시를 위한 조건문 추가 -->
                     <a th:href="'product/'+${popularProduct.productID}">
-                    <img th:src="@{'uploaded-images/'+${popularProduct.imageUrls[0]}}" class="card-img-top product-image" alt="Product Image">
+                        <!-- 상품 이미지 표시 (상품 이미지가 있을 경우) -->
+                        <img th:if="${not #lists.isEmpty(popularProduct.imageUrls)}" th:src="@{'uploaded-images/'+${popularProduct.imageUrls[0]}}" class="card-img-top product-image" alt="Product Image">
+                        <!-- 기본 이미지 표시 (상품 이미지가 없을 경우) -->
+                        <img th:unless="${not #lists.isEmpty(popularProduct.imageUrls)}" src="/img/logo.png" class="card-img-top product-image" alt="Default Image">
                     </a>
                     <div class="card-body">
                         <a th:href="'product/'+${popularProduct.productID}">
                         <h5 class="card-title" th:text="${popularProduct.productName}">상품명</h5>
                         <p class="card-text" th:text="${#numbers.formatDecimal(popularProduct.price, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
-                        <a class="btn btn-primary">상세보기</a>
+                        <a class="btn btn-primary" th:href="'product/'+${popularProduct.productID}">상세보기</a>
                         </a>
                     </div>
                 </div>
@@ -177,13 +179,16 @@
                 <li class="col" th:each="product : ${activeProduct}">
                     <div class="card h-100 center">
                         <a th:href="'product/'+${product.productID}">
-                        <img th:src="@{'/uploaded-images/' + ${product.imageUrls[0]}}" class="card-img-top product-image" alt="Product Image">
+                            <!-- 상품 이미지 표시 (상품 이미지가 있을 경우) -->
+                            <img th:if="${not #lists.isEmpty(product.imageUrls)}" th:src="@{'uploaded-images/'+${product.imageUrls[0]}}" class="card-img-top product-image" alt="Product Image">
+                            <!-- 기본 이미지 표시 (상품 이미지가 없을 경우) -->
+                            <img th:unless="${not #lists.isEmpty(product.imageUrls)}" src="/img/logo.png" class="card-img-top product-image" alt="Default Image">
                         </a>
                         <div class="card-body">
                             <a th:href="'product/'+${product.productID}">
                             <h5 class="card-title" th:text="${product.productName}">상품 이름</h5>
                             <p th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
-                            <a class="btn btn-primary">상세보기</a>
+                            <a class="btn btn-primary" th:href="'product/'+${product.productID}">상세보기</a>
                             </a>
                         </div>
                     </div>
