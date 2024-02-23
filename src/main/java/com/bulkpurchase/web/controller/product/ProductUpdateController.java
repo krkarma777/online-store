@@ -2,6 +2,7 @@ package com.bulkpurchase.web.controller.product;
 
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.product.UpdateCheck;
+import com.bulkpurchase.domain.enums.ErrorPage;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import com.bulkpurchase.domain.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,13 @@ import java.util.Optional;
 public class ProductUpdateController {
 
     private final ProductService productService;
+    String NOT_FOUND = ErrorPage.NOT_FOUND.getViewName();
 
     @GetMapping("/update/{productId}")
     public String editForm(@PathVariable Long productId, Model model) {
         Optional<Product> product = productService.findById(productId);
         product.ifPresent(p -> model.addAttribute("product", p));
-        return product.isPresent() ? "product/update" : "error/404"; // 오류 처리 페이지로 리다이렉트 또는 다른 방식으로 처리
+        return product.isPresent() ? "product/update" : NOT_FOUND;
     }
 
     @PostMapping("/update")
