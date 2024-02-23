@@ -1,4 +1,4 @@
-package com.bulkpurchase.domain.dto;
+package com.bulkpurchase.domain.dto.order;
 
 import com.bulkpurchase.domain.enums.OrderStatus;
 

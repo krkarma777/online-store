@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.seller;
 
-import com.bulkpurchase.domain.dto.SalesDataDTO;
+import com.bulkpurchase.domain.dto.seller.SalesDataDTO;
 import com.bulkpurchase.domain.service.order.OrderService;
 import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;

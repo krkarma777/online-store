@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.review;
 
-import com.bulkpurchase.domain.dto.FeedbackRequestDTO;
+import com.bulkpurchase.domain.dto.user.FeedbackRequestDTO;
 import com.bulkpurchase.web.service.product.ProductFeedbackProcessService;
 import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;

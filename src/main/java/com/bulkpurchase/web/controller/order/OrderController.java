@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.order;
 
-import com.bulkpurchase.domain.dto.OrderViewDTO;
+import com.bulkpurchase.domain.dto.order.OrderViewDTO;
 import com.bulkpurchase.domain.entity.cart.Cart;
 import com.bulkpurchase.domain.entity.cart.CartItem;
 import com.bulkpurchase.domain.entity.order.Order;

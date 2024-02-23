@@ -1,4 +1,4 @@
-package com.bulkpurchase.domain.dto;
+package com.bulkpurchase.domain.dto.inquiry;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.bulkpurchase.domain.dto;
+package com.bulkpurchase.domain.dto.review;
 
 import com.bulkpurchase.domain.entity.review.Review;
 import lombok.Getter;

@@ -1,9 +1,7 @@
 package com.bulkpurchase.domain.repository.product;
 
-import com.bulkpurchase.domain.dto.PopularProductDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
-import com.bulkpurchase.domain.enums.OrderStatus;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

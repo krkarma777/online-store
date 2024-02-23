@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.service.product;
 
-import com.bulkpurchase.domain.dto.ProductInquiryDTO;
+import com.bulkpurchase.domain.dto.product.ProductInquiryDTO;
 import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.product.ProductInquiryRepository;

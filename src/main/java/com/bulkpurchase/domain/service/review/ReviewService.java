@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.service.review;
 
-import com.bulkpurchase.domain.dto.ReviewDetailDTO;
+import com.bulkpurchase.domain.dto.review.ReviewDetailDTO;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.review.Review;
 import com.bulkpurchase.domain.entity.user.User;

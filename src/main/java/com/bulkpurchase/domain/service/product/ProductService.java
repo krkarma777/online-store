@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.service.product;
 
-import com.bulkpurchase.domain.dto.ProductForCouponDTO;
+import com.bulkpurchase.domain.dto.product.ProductForCouponDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import lombok.RequiredArgsConstructor;

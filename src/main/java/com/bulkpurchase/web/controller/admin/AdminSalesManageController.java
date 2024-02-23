@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.admin;
 
-import com.bulkpurchase.domain.dto.SalesDataDTO;
+import com.bulkpurchase.domain.dto.seller.SalesDataDTO;
 import com.bulkpurchase.domain.service.AdminDashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

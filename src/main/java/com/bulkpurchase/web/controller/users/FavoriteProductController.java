@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.users;
 
-import com.bulkpurchase.domain.dto.FavoriteResponse;
+import com.bulkpurchase.domain.dto.user.FavoriteResponse;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;

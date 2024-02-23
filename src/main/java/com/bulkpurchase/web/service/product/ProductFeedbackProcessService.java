@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.service.product;
 
-import com.bulkpurchase.domain.dto.FeedbackRequestDTO;
+import com.bulkpurchase.domain.dto.user.FeedbackRequestDTO;
 import com.bulkpurchase.domain.entity.review.Review;
 import com.bulkpurchase.domain.entity.review.ReviewFeedback;
 import com.bulkpurchase.domain.entity.user.User;

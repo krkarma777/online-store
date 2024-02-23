@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.users;
 
-import com.bulkpurchase.domain.dto.OrderViewDTO;
+import com.bulkpurchase.domain.dto.order.OrderViewDTO;
 import com.bulkpurchase.domain.entity.coupon.UserCoupon;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;

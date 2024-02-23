@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.service;
 
-import com.bulkpurchase.domain.dto.SalesDataDTO;
+import com.bulkpurchase.domain.dto.seller.SalesDataDTO;
 import com.bulkpurchase.domain.enums.OrderStatus;
 import com.bulkpurchase.domain.repository.product.ProductRepository;
 import com.bulkpurchase.domain.repository.user.UserRepository;

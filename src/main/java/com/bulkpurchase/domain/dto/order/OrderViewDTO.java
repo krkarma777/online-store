@@ -1,5 +1,6 @@
-package com.bulkpurchase.domain.dto;
+package com.bulkpurchase.domain.dto.order;
 
+import com.bulkpurchase.domain.dto.orderdetail.OrderDetailViewDTO;
 import com.bulkpurchase.domain.enums.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;

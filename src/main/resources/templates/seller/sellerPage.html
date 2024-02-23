@@ -34,7 +34,7 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item" th:each="orderDetail : ${orderDetailList}">
-                        <span th:text="'주문 #' + ${orderDetail.order.orderID} + ' - ' + ${orderDetail.product.productName}"></span>
+                        <span th:text="'주문 #' + ${orderDetail.orderID} + ' - ' + ${orderDetail.productName}"></span>
                     </li>
                 </ul>
             </div>

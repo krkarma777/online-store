@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.review;
 
-import com.bulkpurchase.domain.dto.ReviewDetailDTO;
+import com.bulkpurchase.domain.dto.review.ReviewDetailDTO;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.review.Review;

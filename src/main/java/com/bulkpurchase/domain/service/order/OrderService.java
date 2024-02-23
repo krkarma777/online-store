@@ -1,9 +1,9 @@
 package com.bulkpurchase.domain.service.order;
 
-import com.bulkpurchase.domain.dto.OrderDetailViewDTO;
-import com.bulkpurchase.domain.dto.OrderViewDTO;
-import com.bulkpurchase.domain.dto.ProductViewDTO;
-import com.bulkpurchase.domain.dto.SalesDataDTO;
+import com.bulkpurchase.domain.dto.orderdetail.OrderDetailViewDTO;
+import com.bulkpurchase.domain.dto.order.OrderViewDTO;
+import com.bulkpurchase.domain.dto.product.ProductViewDTO;
+import com.bulkpurchase.domain.dto.seller.SalesDataDTO;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.user.User;

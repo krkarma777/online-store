@@ -1,10 +1,14 @@
 package com.bulkpurchase.domain.service.order;
 
+import com.bulkpurchase.domain.dto.orderdetail.OrderDetailNameAndIdDTO;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.order.OrderDetailRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +20,11 @@ public class OrderDetailService {
 
     private final OrderDetailRepository orderDetailRepository;
 
+
+
+    public List<OrderDetailNameAndIdDTO> findTop5RecentOrderDetailsByUser(User user) {
+        return orderDetailRepository.findOrderIDAndProductNameByUser(user, PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "orderDetailID")));
+    }
 
     public OrderDetail save(Order order, Product product, Integer quantity) {
         OrderDetail orderDetail = new OrderDetail();

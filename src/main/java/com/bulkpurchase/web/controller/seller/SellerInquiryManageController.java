@@ -1,7 +1,7 @@
 package com.bulkpurchase.web.controller.seller;
 
-import com.bulkpurchase.domain.dto.ProductInquiryDTO;
-import com.bulkpurchase.domain.dto.ReplyRequestDTO;
+import com.bulkpurchase.domain.dto.product.ProductInquiryDTO;
+import com.bulkpurchase.domain.dto.inquiry.ReplyRequestDTO;
 import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductInquiryService;

@@ -1,8 +1,7 @@
 package com.bulkpurchase.web.controller.product;
 
-import com.bulkpurchase.domain.dto.ProductForCouponDTO;
+import com.bulkpurchase.domain.dto.product.ProductForCouponDTO;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.enums.ErrorPage;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
