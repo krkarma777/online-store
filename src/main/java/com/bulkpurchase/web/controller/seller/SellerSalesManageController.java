@@ -2,7 +2,6 @@ package com.bulkpurchase.web.controller.seller;
 
 import com.bulkpurchase.domain.dto.SalesDataDTO;
 import com.bulkpurchase.domain.service.order.OrderService;
-import com.bulkpurchase.domain.service.user.UserService;
 import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -16,7 +15,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class SalesManageController {
+public class SellerSalesManageController {
 
     private final UserAuthValidator userAuthValidator;
     private final OrderService orderService;

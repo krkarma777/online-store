@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/seller/orders")
 @RequiredArgsConstructor
-public class OrderManageController {
+public class SellerOrderManageController {
 
     private final OrderDetailService orderDetailService;
     private final ProductService productService;

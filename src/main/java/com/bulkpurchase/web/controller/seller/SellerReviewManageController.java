@@ -3,7 +3,6 @@ package com.bulkpurchase.web.controller.seller;
 import com.bulkpurchase.domain.dto.ReviewDetailDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.review.ReviewService;
-import com.bulkpurchase.domain.service.user.UserService;
 import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,7 +14,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class ReviewManageController {
+public class SellerReviewManageController {
 
     private final ReviewService reviewService;
     private final UserAuthValidator userAuthValidator;

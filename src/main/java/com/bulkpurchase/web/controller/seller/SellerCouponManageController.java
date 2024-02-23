@@ -7,7 +7,6 @@ import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.coupon.CouponService;
 import com.bulkpurchase.domain.service.coupon.CouponApplicableProductService;
 import com.bulkpurchase.domain.service.product.ProductService;
-import com.bulkpurchase.domain.service.user.UserService;
 import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/seller/couponManage")
 @RequiredArgsConstructor
-public class CouponManageController {
+public class SellerCouponManageController {
 
     private final CouponService couponService;
     private final CouponApplicableProductService couponApplicableProductService;

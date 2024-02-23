@@ -2,7 +2,6 @@ package com.bulkpurchase.web.controller.seller;
 
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class ProductManageController {
+public class SellerProductManageController {
 
     private final UserService userService;
     private final ProductService productService;

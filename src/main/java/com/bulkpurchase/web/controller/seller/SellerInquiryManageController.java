@@ -24,7 +24,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class InquiryManageController {
+public class SellerInquiryManageController {
 
     private final UserService userService;
     private final ProductInquiryService productInquiryService;
