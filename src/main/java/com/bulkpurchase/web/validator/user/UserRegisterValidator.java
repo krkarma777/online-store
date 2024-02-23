@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.validator;
+package com.bulkpurchase.web.validator.user;
 
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.UserService;

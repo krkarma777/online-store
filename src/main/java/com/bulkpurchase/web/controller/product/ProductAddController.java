@@ -8,6 +8,7 @@ import com.bulkpurchase.domain.enums.SalesRegion;
 import com.bulkpurchase.domain.service.product.CategoryService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -30,7 +31,7 @@ import java.util.List;
 public class ProductAddController {
 
     private final ProductService productService;
-    private final UserService userService;
+    private final UserAuthValidator userAuthValidator;
     private final CategoryService categoryService;
 
     @GetMapping("/add")
@@ -47,15 +48,11 @@ public class ProductAddController {
             return "product/productAdd";
         }
 
-        product.setUser(getCurrentUser(principal));
+        product.setUser(userAuthValidator.getCurrentUser(principal));
         Product savedProduct = productService.saveProduct(product);
 
         redirectAttributes.addAttribute("productId", savedProduct.getProductID()).addAttribute("status", true);
         return "redirect:/product/{productId}";
-    }
-
-    private User getCurrentUser(Principal principal) {
-        return principal != null ? userService.findByUsername(principal.getName()).orElse(null) : null;
     }
 
     private void prepareModel(Model model, Product product) {
