@@ -54,7 +54,7 @@
                 <td th:text="${orderDetail.order.status.getDescription()}"></td>
                 <td th:text="${#dates.format(orderDetail.order.orderDate, 'yyyy-MM-dd')}"></td>
                 <td>
-                    <form th:action="@{/orders/edit/{orderDetailID}(orderDetailID=${orderDetail.orderDetailID})}" method="post">
+                    <form th:action="@{/seller/orders/edit/{orderDetailID}(orderDetailID=${orderDetail.orderDetailID})}" method="post">
                         <button th:if="${orderDetail.status.getDescription() == '처리 대기 중'}" type="submit" name="orderStatus" value="PROCESSING" class="btn btn-sm btn-info btn-status-update">처리 중</button>
                         <button th:if="${orderDetail.status.getDescription() == '처리 중'}" type="submit" name="orderStatus" value="SHIPPED" class="btn btn-sm btn-warning btn-status-update">배송 중</button>
                         <button th:if="${orderDetail.status.getDescription() == '배송 중'}" type="submit" name="orderStatus" value="DELIVERED" class="btn btn-sm btn-success btn-status-update">배송 완료</button>

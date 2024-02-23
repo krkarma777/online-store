@@ -1,10 +1,13 @@
 package com.bulkpurchase.web.validator.user;
 
+import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.Optional;
@@ -23,13 +26,20 @@ public class UserAuthValidator {
     }
 
     public User getCurrentUser(Principal principal) {
-        return principal != null ? userService.findByUsername(principal.getName()).orElse(null) : null;
+        return userService.findByUsername(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     public boolean isProductOwner(Principal principal, Product product) {
         return userService.findByUsername(principal.getName())
                 .map(user -> product.getUser().equals(user))
                 .orElse(false);
+    }
+
+    public void validateUserAccessOrderDetail(User user, OrderDetail orderDetail) {
+        if (!orderDetail.getProduct().getUser().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized to access this order detail");
+        }
     }
 
 }

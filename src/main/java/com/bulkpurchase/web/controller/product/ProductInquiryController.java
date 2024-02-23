@@ -28,6 +28,7 @@ public class ProductInquiryController {
     private static final String REDIRECT_LOGIN = "redirect:/login";
     private final String BAD_REQUEST = ErrorPage.BAD_REQUEST.getViewName();
 
+
     @PostMapping("/inquiry/add")
     public String productInquiryAdd(@RequestParam("productID") Long productID, Principal principal, @ModelAttribute ProductInquiry productInquiry) {
         if (principal == null) return REDIRECT_LOGIN;

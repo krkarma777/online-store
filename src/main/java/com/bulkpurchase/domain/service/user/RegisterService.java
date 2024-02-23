@@ -23,7 +23,6 @@ public class RegisterService {
 
     @Transactional
     public User registerProcess(User newUser) {
-        System.out.println("userRepository = " + userRepository);
         if (userRepository.existsByUsername(newUser.getUsername())) {
             throw new IllegalStateException("이미 사용중인 사용자명입니다.");
         }

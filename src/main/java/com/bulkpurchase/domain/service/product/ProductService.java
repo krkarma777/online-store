@@ -54,9 +54,6 @@ public class ProductService {
         for (Object[] record : popularProducts) {
             Product product = (Product) record[0];
             Long orderCount = (Long) record[1];
-
-            System.out.println("Product Name: " + product.getProductName() + ", Order Count: " + orderCount);
-            // 필요한 추가 작업을 여기에서 수행할 수 있습니다.
         }
     }
 

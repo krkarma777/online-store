@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-
 @Controller
 @RequiredArgsConstructor
 public class SellerPageController {
@@ -33,21 +32,27 @@ public class SellerPageController {
 
     @GetMapping("/seller")
     public String sellerPageForm(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName()).orElse(null);
+        User user = userService.findByUsername(principal.getName())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         model.addAttribute("user", user);
 
         List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);
         model.addAttribute("products", productsList);
 
-        List<OrderDetail> orderDetailList = new ArrayList<>();
-        for (Product product : productsList) {
-            orderDetailList = orderDetailService.findByProductOrderByOrderDetailIDDesc(product);
-        }
+        List<OrderDetail> orderDetailList = aggregateOrderDetails(productsList);
         model.addAttribute("orderDetailList", orderDetailList);
 
         BigDecimal dailySales = orderService.calculateDailySalesBySeller(user.getUserID());
         model.addAttribute("dailySales", dailySales);
 
         return "seller/sellerPage";
+    }
+
+    private List<OrderDetail> aggregateOrderDetails(List<Product> productsList) {
+        List<OrderDetail> orderDetailList = new ArrayList<>();
+        for (Product product : productsList) {
+            orderDetailList.addAll(orderDetailService.findByProductOrderByOrderDetailIDDesc(product));
+        }
+        return orderDetailList;
     }
 }

@@ -28,7 +28,6 @@ public class ProductController {
 
     @GetMapping("/{productID}")
     public String productDetail(@PathVariable("productID") Long productID, Model model, Principal principal) {
-        System.out.println("productID = " + productID);
         return productService.findById(productID)
                 .map(product -> {
                     productDetailService.populateProductDetails(model, principal, product);

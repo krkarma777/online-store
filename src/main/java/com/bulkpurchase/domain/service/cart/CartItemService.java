@@ -24,7 +24,6 @@ public class CartItemService {
 
     public void deleteCartItemById(Long itemId) {
         cartItemRepository.deleteById(itemId);
-        System.out.println("실행됨");
     }
 
     public void deleteCartItemsByIds(List<Long> itemIds) {
