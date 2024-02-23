@@ -20,4 +20,10 @@ public class CouponApplicableProduct {
 
     @Column(name = "ProductID", nullable = false)
     private Long productId;
+
+
+    public CouponApplicableProduct(Coupon coupon, Long productId) {
+        this.coupon = coupon;
+        this.productId = productId;
+    }
 }

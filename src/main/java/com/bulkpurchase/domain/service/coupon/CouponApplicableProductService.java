@@ -35,4 +35,8 @@ public class CouponApplicableProductService {
     public Optional<CouponApplicableProduct> findByCouponAndProductId(Coupon coupon, Long productID) {
         return couponApplicableProductRepository.findByCouponAndProductId(coupon, productID);
     }
+
+    public void deleteByCoupon(Coupon coupon) {
+        couponApplicableProductRepository.deleteByCoupon(coupon);
+    }
 }

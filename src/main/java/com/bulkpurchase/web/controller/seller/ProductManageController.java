@@ -27,9 +27,6 @@ public class ProductManageController {
         List<Product> products = productService.findByUserOrderByProductIDDesc(user);
         model.addAttribute("products", products);
 
-//        for (Product product : products) {
-//            ProductStatus status = product.getStatus();
-//        }
         return "/seller/productManage/products";
     }
 }

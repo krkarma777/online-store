@@ -31,7 +31,7 @@ public class ReviewService {
         return reviewRepository.findById(reviewID);
     }
 
-    public Review findByUserAndProduct(User user, Product product) {
+    public Optional<Review> findByUserAndProduct(User user, Product product) {
         return reviewRepository.findByUserAndProduct(user,product);
     }
 

@@ -62,4 +62,12 @@ public class Coupon {
     @Column(name = "max_discount_amount", nullable = true)
     private Double maxDiscountAmount;
 
+    public void updateDetails(LocalDateTime validUntil, Double minimumOrderAmount, Integer quantity, String name, String description, Double maxDiscountAmount) {
+        this.validUntil = validUntil;
+        this.minimumOrderAmount = minimumOrderAmount;
+        this.quantity = quantity;
+        this.name = name;
+        this.description = description;
+        this.maxDiscountAmount = maxDiscountAmount;
+    }
 }

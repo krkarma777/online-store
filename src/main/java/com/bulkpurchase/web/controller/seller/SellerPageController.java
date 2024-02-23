@@ -10,6 +10,7 @@ import com.bulkpurchase.domain.service.order.PaymentService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.review.ReviewService;
 import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -26,14 +27,13 @@ import java.util.List;
 public class SellerPageController {
 
     private final ProductService productService;
-    private final UserService userService;
     private final OrderDetailService orderDetailService;
     private final OrderService orderService;
+    private final UserAuthValidator userAuthValidator;
 
     @GetMapping("/seller")
     public String sellerPageForm(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userAuthValidator.getCurrentUser(principal);
         model.addAttribute("user", user);
 
         List<Product> productsList = productService.findByUserOrderByProductIDDesc(user);

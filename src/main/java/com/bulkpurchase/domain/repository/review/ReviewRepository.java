@@ -8,10 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    Review findByUserAndProduct(User user, Product product);
+    Optional<Review> findByUserAndProduct(User user, Product product);
     @Query("SELECT r, " +
             "(SELECT COUNT(f) FROM ReviewFeedback f WHERE f.review = r AND f.feedbackType = 'LIKE') AS likeCount, " +
             "(SELECT COUNT(f) FROM ReviewFeedback f WHERE f.review = r AND f.feedbackType = 'DISLIKE') AS dislikeCount " +

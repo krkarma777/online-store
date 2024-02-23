@@ -27,7 +27,7 @@ public class UserAuthValidator {
 
     public User getCurrentUser(Principal principal) {
         return userService.findByUsername(principal.getName())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
     }
 
     public boolean isProductOwner(Principal principal, Product product) {
@@ -38,7 +38,7 @@ public class UserAuthValidator {
 
     public void validateUserAccessOrderDetail(User user, OrderDetail orderDetail) {
         if (!orderDetail.getProduct().getUser().equals(user)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized to access this order detail");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "주문 정보에 접근할 권한이 없습니다.");
         }
     }
 

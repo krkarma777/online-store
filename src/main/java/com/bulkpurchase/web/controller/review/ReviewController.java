@@ -13,10 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Controller
@@ -28,52 +30,60 @@ public class ReviewController {
     private final OrderDetailService orderDetailService;
 
     @GetMapping("/review/write")
-    public String reviewWriteForm(@RequestParam(value = "productID") Long productID,
-                                  @RequestParam(value = "orderDetailID") Long orderDetailID,
+    public String reviewWriteForm(@RequestParam("productID") Long productID,
+                                  @RequestParam("orderDetailID") Long orderDetailID,
                                   Principal principal, Model model) {
+        User user = getCurrentUser(principal);
+        Product product = productService.findById(productID)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        OrderDetail orderDetail = orderDetailService.findByID(orderDetailID)
+                .orElseThrow(() -> new IllegalArgumentException("Order detail not found"));
 
-        User user = userService.findByUsername(principal.getName()).orElse(null);
-        Product product = productService.findById(productID).orElse(null);
-        OrderDetail orderDetail = orderDetailService.findByID(orderDetailID).orElse(null);
-
-        if (orderDetail == null || !orderDetail.getProduct().equals(product)) {
+        if (!orderDetail.getProduct().equals(product)) {
             return "error/403";
         }
 
-        Review existingReview = reviewService.findByUserAndProduct(user, product);
-        if (existingReview != null) {
-            return "redirect:/review/" + existingReview.getReviewID();
+        Optional<Review> existingReview = reviewService.findByUserAndProduct(user, product);
+        if (existingReview.isPresent()) {
+            return "redirect:/review/" + existingReview.get().getReviewID();
+        } else {
+            model.addAttribute("review", new Review());
+            return "review/reviewForm";
         }
-
-        Review review = new Review();
-        model.addAttribute("review", review);
-        return "review/reviewForm";
     }
 
 
     @PostMapping("/review/write")
     public String reviewWrite(@ModelAttribute Review review, Principal principal,
-                              @RequestParam(value = "productID") Long productID,
-                              @RequestParam(value = "orderDetailID") Long orderDetailID) {
-        User user = userService.findByUsername(principal.getName()).orElse(null);
-        review.setUser(user);
-        Product product = productService.findById(productID).orElse(null);
-        OrderDetail orderDetail = orderDetailService.findByID(orderDetailID).orElse(null);
+                              @RequestParam("productID") Long productID,
+                              @RequestParam("orderDetailID") Long orderDetailID,
+                              RedirectAttributes redirectAttributes) {
+        User user = getCurrentUser(principal);
+        Product product = productService.findById(productID)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        OrderDetail orderDetail = orderDetailService.findByID(orderDetailID)
+                .orElseThrow(() -> new IllegalArgumentException("Order detail not found"));
 
+        review.setUser(user);
         review.setProduct(product);
         review.setOrderDetail(orderDetail);
-
-        Date date = new Date();
-        review.setCreationDate(date);
+        review.setCreationDate(new Date());
 
         reviewService.save(review);
-        return "redirect:"+review.getReviewID();
+
+        redirectAttributes.addFlashAttribute("reviewID", review.getReviewID());
+        return "redirect:/review/" + review.getReviewID();
     }
 
     @GetMapping("/review/{reviewID}")
-    private String reviewDetail(@PathVariable("reviewID") Long reviewID, Model model ) {
+    public String reviewDetail(@PathVariable("reviewID") Long reviewID, Model model) {
         List<ReviewDetailDTO> reviews = reviewService.reviewDetailsByUserID(reviewID);
         model.addAttribute("reviews", reviews);
         return "review/reviewDetail";
+    }
+
+    private User getCurrentUser(Principal principal) {
+        return userService.findByUsername(principal.getName())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 }

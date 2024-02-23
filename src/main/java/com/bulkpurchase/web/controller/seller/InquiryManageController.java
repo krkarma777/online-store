@@ -6,6 +6,7 @@ import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductInquiryService;
 import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,10 +28,11 @@ public class InquiryManageController {
 
     private final UserService userService;
     private final ProductInquiryService productInquiryService;
+    private final UserAuthValidator userAuthValidator;
 
     @GetMapping("/seller/inquiries")
     public String inquiriesManage(Principal principal, Model model) {
-        User user = userService.findByUsername(principal.getName()).orElse(null);
+        User user = userAuthValidator.getCurrentUser(principal);
         List<ProductInquiry> inquiries = productInquiryService.findByProductUser(user);
         model.addAttribute("inquiries", inquiries);
         return "/seller/productManage/inquiries";
@@ -42,15 +44,14 @@ public class InquiryManageController {
             ProductInquiry inquiry = productInquiryService.replyToInquiry(replyRequest.getInquiryID(), replyRequest.getReplyContent());
             return ResponseEntity.ok().body("답변이 성공적으로 등록되었습니다.");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("답변 등록에 실패하였습니다.");
+            return ResponseEntity.badRequest().body("답변 등록에 실패하였습니다. 오류: " + e.getMessage());
         }
     }
 
     @GetMapping("/inquiries/load-more")
     public ResponseEntity<List<ProductInquiryDTO>> loadMoreInquiries(@RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page, size);
         Page<ProductInquiryDTO> inquiriesPage = productInquiryService.findAllDTO(pageable);
         return ResponseEntity.ok(inquiriesPage.getContent());
     }
-
 }

@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.service;
+package com.bulkpurchase.web.service.order;
 
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;

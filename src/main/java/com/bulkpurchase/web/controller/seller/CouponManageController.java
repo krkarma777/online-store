@@ -3,168 +3,130 @@ package com.bulkpurchase.web.controller.seller;
 import com.bulkpurchase.domain.dto.ProductIDandNameDTO;
 import com.bulkpurchase.domain.entity.coupon.Coupon;
 import com.bulkpurchase.domain.entity.coupon.CouponApplicableProduct;
-import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.enums.CouponType;
-import com.bulkpurchase.domain.service.coupon.CouponApplicableProductService;
 import com.bulkpurchase.domain.service.coupon.CouponService;
+import com.bulkpurchase.domain.service.coupon.CouponApplicableProductService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("/seller/couponManage")
 @RequiredArgsConstructor
 public class CouponManageController {
 
-    private final UserService userService;
     private final CouponService couponService;
     private final CouponApplicableProductService couponApplicableProductService;
     private final ProductService productService;
+    private final UserAuthValidator userAuthValidator;
 
-    @GetMapping("/coupon/list")
+    @GetMapping("/list")
     public String couponList(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName()).orElse(null);
+        User user = userAuthValidator.getCurrentUser(principal);
         List<Coupon> couponList = couponService.findByUser(user);
         model.addAttribute("couponList", couponList);
-
-        Coupon coupon = new Coupon();
-        model.addAttribute("coupon", coupon);
-
-        CouponApplicableProduct couponApplicableProduct = new CouponApplicableProduct();
-        model.addAttribute("couponApplicableProduct", couponApplicableProduct);
-
-        return "/seller/couponManage/couponList";
+        model.addAttribute("coupon", new Coupon());
+        return "seller/couponManage/couponList";
     }
 
-    @PostMapping("/coupon/generate")
+    @PostMapping("/generate")
     public String generateCoupon(@RequestParam("validFromDate") String validFromDate,
                                  @RequestParam("validFromTime") String validFromTime,
                                  @RequestParam("validUntilDate") String validUntilDate,
                                  @RequestParam("validUntilTime") String validUntilTime,
-                                 Coupon coupon,
-                                 Principal principal) {
-        LocalDate startDate = LocalDate.parse(validFromDate);
-        LocalTime startTime = LocalTime.parse(validFromTime);
-        LocalDateTime validFrom = LocalDateTime.of(startDate, startTime);
+                                 Coupon coupon, Principal principal) {
+        LocalDateTime validFrom = LocalDateTime.of(LocalDate.parse(validFromDate), LocalTime.parse(validFromTime));
+        LocalDateTime validUntil = LocalDateTime.of(LocalDate.parse(validUntilDate), LocalTime.parse(validUntilTime));
 
-        LocalDate endDate = LocalDate.parse(validUntilDate);
-        LocalTime endTime = LocalTime.parse(validUntilTime);
-        LocalDateTime validUntil = LocalDateTime.of(endDate, endTime);
-
-        User user = userService.findByUsername(principal.getName()).orElse(null);
-
+        User user = userAuthValidator.getCurrentUser(principal);
         coupon.setValidFrom(validFrom);
         coupon.setValidUntil(validUntil);
         coupon.setCreatedBy(user);
         coupon.setCode(UUID.randomUUID().toString());
 
         couponService.save(coupon);
-
-        return "redirect:/coupon/list";
+        return "redirect:/seller/couponManage/list";
     }
 
-
-
-    @PostMapping("/coupon/edit")
-    public String couponEdit(@RequestParam("validUntilDate") String validUntilDate,
+    @PostMapping("/edit")
+    public String couponEdit(@RequestParam("couponID") Long couponID,
+                             @RequestParam("validUntilDate") String validUntilDate,
                              @RequestParam("validUntilTime") String validUntilTime,
                              @RequestParam("minimumOrderAmount") Double minimumOrderAmount,
                              @RequestParam("quantity") Integer quantity,
-                             @RequestParam("couponID") Long couponID,
                              @RequestParam("name") String name,
                              @RequestParam("description") String description,
                              @RequestParam("maxDiscountAmount") Double maxDiscountAmount) {
-        Coupon coupon = couponService.findById(couponID).orElse(null);
-        if (coupon == null) {
-            return "error/403";
-        }
+        Coupon coupon = couponService.findById(couponID)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Coupon not found"));
 
-        LocalDate endDate = LocalDate.parse(validUntilDate);
-        LocalTime endTime = LocalTime.parse(validUntilTime);
-        LocalDateTime validUntil = LocalDateTime.of(endDate, endTime);
-
-        coupon.setValidUntil(validUntil);
-        coupon.setMinimumOrderAmount(minimumOrderAmount);
-        coupon.setQuantity(quantity);
-        coupon.setName(name);
-        coupon.setDescription(description);
-        coupon.setMaxDiscountAmount(maxDiscountAmount);
+        LocalDateTime validUntil = LocalDateTime.of(LocalDate.parse(validUntilDate), LocalTime.parse(validUntilTime));
+        coupon.updateDetails(validUntil, minimumOrderAmount, quantity, name, description, maxDiscountAmount);
 
         couponService.save(coupon);
-        return "redirect:/coupon/list";
+        return "redirect:/seller/couponManage/list";
     }
 
-    @GetMapping("/coupon/delete/{couponID}")
+    @GetMapping("/delete/{couponID}")
     public String couponDelete(@PathVariable("couponID") Long couponID, Principal principal) {
-        Coupon coupon = couponService.findById(couponID).orElse(null);
-        if (coupon == null || principal == null) {
-            return "error/403";
+        Coupon coupon = couponService.findById(couponID)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Coupon not found"));
+        User currentUser = userAuthValidator.getCurrentUser(principal);
+
+        if (!coupon.getCreatedBy().equals(currentUser)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not authorized to delete this coupon");
         }
-        if (!coupon.getCreatedBy().equals(userService.findByUsername(principal.getName()))) {
-            return "error/400";
-        }
+
         couponService.delete(coupon);
-        return "redirect:/coupon/list";
+        return "redirect:/seller/couponManage/list";
     }
 
-    @GetMapping("/coupon/select/{couponID}")
+    @GetMapping("/select/{couponID}")
     public String selectProductForCouponForm(@PathVariable("couponID") Long couponID, Model model) {
-        Coupon coupon = couponService.findById(couponID).orElse(null);
-        if (coupon == null) {
-            return "error/403";
-        }
+        Coupon coupon = couponService.findById(couponID)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Coupon not found"));
 
-        List<ProductIDandNameDTO> productDTOs = new ArrayList<>();
-
-        List<CouponApplicableProduct> list = couponApplicableProductService.findByCoupon(coupon);
-        for (CouponApplicableProduct couponApplicableProduct : list) {
-            Long productId = couponApplicableProduct.getProductId();
-            String productName = productService.findProductNameById(productId);
-            ProductIDandNameDTO productIDandNameDTO = new ProductIDandNameDTO(productId, productName);
-            productDTOs.add(productIDandNameDTO);
-        }
+        List<ProductIDandNameDTO> productDTOs = couponApplicableProductService.findByCoupon(coupon).stream()
+                .map(cap -> new ProductIDandNameDTO(cap.getProductId(), productService.findProductNameById(cap.getProductId())))
+                .collect(Collectors.toList());
 
         model.addAttribute("productDTOs", productDTOs);
         model.addAttribute("coupon", coupon);
 
         return "seller/couponManage/couponSelectProduct";
     }
-    @PostMapping("/coupon/select")
-    public String selectProductForCoupon(@RequestParam("couponID") Long couponID, @RequestParam(value = "productIDs", required = false) List<Long> productIDs) {
-        Coupon coupon = couponService.findById(couponID).orElse(null);
-        if (coupon == null) {
-            return "error/403";
+
+    @PostMapping("/select")
+    @Transactional
+    public String selectProductForCoupon(@RequestParam("couponID") Long couponID,
+                                         @RequestParam(value = "productIDs", required = false) List<Long> productIDs) {
+        Coupon coupon = couponService.findById(couponID)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Coupon not found"));
+
+        couponApplicableProductService.deleteByCoupon(coupon);
+
+        if (productIDs != null) {
+            productIDs.forEach(productID -> {
+                CouponApplicableProduct cap = new CouponApplicableProduct(coupon, productID);
+                couponApplicableProductService.save(cap);
+            });
         }
 
-        List<CouponApplicableProduct> couponApplicableProducts = couponApplicableProductService.findByCoupon(coupon);
-        for (CouponApplicableProduct couponApplicableProduct : couponApplicableProducts) {
-            couponApplicableProductService.delete(couponApplicableProduct);
-        }
-
-
-        for (Long productID : productIDs) {
-            CouponApplicableProduct couponApplicableProduct = new CouponApplicableProduct();
-            couponApplicableProduct.setCoupon(coupon);
-            couponApplicableProduct.setProductId(productID);
-            couponApplicableProductService.save(couponApplicableProduct);
-        }
-
-        return "redirect:/coupon/list";
+        return "redirect:/seller/couponManage/list";
     }
-
-
 }

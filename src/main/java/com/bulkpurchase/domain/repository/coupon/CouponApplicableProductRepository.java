@@ -17,4 +17,5 @@ public interface CouponApplicableProductRepository extends JpaRepository<CouponA
 
     Optional<CouponApplicableProduct> findByCouponAndProductId(Coupon coupon, Long productId);
 
+    void deleteByCoupon(Coupon coupon);
 }
