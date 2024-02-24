@@ -3,8 +3,7 @@ package com.bulkpurchase.domain.service.user;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,17 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RegisterService {
 
-    UserRepository userRepository;
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public RegisterService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
-    public User registerProcess(User newUser) {
+    public void registerProcess(User newUser) {
         if (userRepository.existsByUsername(newUser.getUsername())) {
             throw new IllegalStateException("이미 사용중인 사용자명입니다.");
         }
@@ -32,10 +25,10 @@ public class RegisterService {
         }
 
         // 비밀번호 해시 처리
-        String hashedPassword = passwordEncoder.encode(newUser.getPassword());
+        String hashedPassword = bCryptPasswordEncoder.encode(newUser.getPassword());
         newUser.setPassword(hashedPassword);
 
         // 사용자 저장
-        return userRepository.save(newUser);
+        userRepository.save(newUser);
     }
 }

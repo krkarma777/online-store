@@ -4,17 +4,17 @@ import com.bulkpurchase.domain.dto.product.ProductIDandNameDTO;
 import com.bulkpurchase.domain.entity.coupon.Coupon;
 import com.bulkpurchase.domain.entity.coupon.CouponApplicableProduct;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.service.coupon.CouponService;
 import com.bulkpurchase.domain.service.coupon.CouponApplicableProductService;
+import com.bulkpurchase.domain.service.coupon.CouponService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
 import java.security.Principal;
 import java.time.LocalDate;
@@ -25,7 +25,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/seller/couponManage")
+@RequestMapping("/seller/coupon")
 @RequiredArgsConstructor
 public class SellerCouponManageController {
 

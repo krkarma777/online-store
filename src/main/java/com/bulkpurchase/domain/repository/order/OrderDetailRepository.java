@@ -19,7 +19,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
 
     List<OrderDetail> findByProductOrderByOrderDetailIDDesc(Product product);
 
-    @Query("SELECT new com.bulkpurchase.domain.dto.OrderDetailNameAndIdDTO(od.order.orderID, p.productName) " +
+    @Query("SELECT new com.bulkpurchase.domain.dto.orderdetail.OrderDetailNameAndIdDTO(od.order.orderID, p.productName) " +
             "FROM OrderDetail od JOIN od.product p WHERE p.user = :user " +
             "ORDER BY od.orderDetailID DESC")
     List<OrderDetailNameAndIdDTO> findOrderIDAndProductNameByUser(@Param("user") User user, Pageable pageable);

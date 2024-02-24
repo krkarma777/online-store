@@ -37,7 +37,7 @@ dependencies {
     runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.12.5'
 }
 
 tasks.named('test') {
