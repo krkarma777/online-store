@@ -1,4 +1,4 @@
-package com.bulkpurchase.security.user;
+package com.bulkpurchase.domain.dto.user;
 
 import com.bulkpurchase.domain.entity.user.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,7 +18,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
         Collection<GrantedAuthority> collection = new ArrayList<>();
 
         collection.add(new GrantedAuthority() {
@@ -34,32 +33,38 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
+
         return user.getPassword();
     }
 
     @Override
     public String getUsername() {
+
         return user.getUsername();
     }
 
     // 계정의 만료
     @Override
     public boolean isAccountNonExpired() {
+
         return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
+
         return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
+
         return true;
     }
 
     @Override
     public boolean isEnabled() {
+
         return true;
     }
 }

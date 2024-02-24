@@ -1,7 +1,11 @@
 package com.bulkpurchase.security;
 
 import com.bulkpurchase.security.handler.LoginAuthenticationFailureHandler;
+import com.bulkpurchase.security.jwt.JWTFilter;
+import com.bulkpurchase.security.jwt.JWTUtil;
 import com.bulkpurchase.security.jwt.LoginFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +14,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -20,6 +26,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final JWTUtil jwtUtil;
+
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -55,11 +63,15 @@ public class SecurityConfig {
                 )*/
 
                 .formLogin((authorize) -> authorize
-                        .loginPage("/login")
-                        .loginProcessingUrl("/loginProc")
-                        .failureHandler(new LoginAuthenticationFailureHandler())
-                        .permitAll()
-                )
+//                                .disable()
+                        .loginPage("/login").loginProcessingUrl("/loginProc").successHandler((HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
+                            // 사용자 이름과 권한을 기반으로 JWT 토큰 생성
+                            String token = jwtUtil.createJwt(authentication.getName(), "USER_ROLE", 3600000L); // 1시간 후 만료되는 토큰 생성
+
+                            // 토큰을 HTTP 헤더 또는 바디에 추가하여 반환
+                            response.addHeader("Authorization", "Bearer " + token);
+
+                        }).failureHandler(new LoginAuthenticationFailureHandler()).permitAll())
 
                 .logout((logoutConfig) ->
                         logoutConfig
@@ -69,9 +81,17 @@ public class SecurityConfig {
                                 .deleteCookies("JESSIONID")
                                 .permitAll())
 
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable);
 
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+        http
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+        //세션 설정
+        http
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }

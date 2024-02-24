@@ -14,4 +14,13 @@ public enum UserRole {
     public String getDescription() {
         return description;
     }
+
+    public static UserRole fromDescription(String description) {
+        for (UserRole role : UserRole.values()) {
+            if (role.getDescription().equals(description)) {
+                return role;
+            }
+        }
+        throw new IllegalArgumentException("No matching constant for [" + description + "]");
+    }
 }

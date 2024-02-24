@@ -1,6 +1,6 @@
 package com.bulkpurchase.domain.service.user;
 
-import com.bulkpurchase.security.user.CustomUserDetails;
+import com.bulkpurchase.domain.dto.user.CustomUserDetails;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (userOpt.isEmpty()) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         } else {
+            System.out.println("CustomUserDetails");
+
             return new CustomUserDetails(userOpt.get());
         }
     }
