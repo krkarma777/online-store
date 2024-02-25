@@ -4,6 +4,7 @@ import com.bulkpurchase.domain.entity.cart.Cart;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.cart.CartService;
 import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,15 +18,13 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class CartViewController {
 
-    private final UserService userService;
     private final CartService cartService;
+    private final UserAuthValidator userAuthValidator;
 
-    @GetMapping("")
+    @GetMapping
     public String cartForm(Principal principal, Model model) {
 
-        User user = userService.findByUsername(principal.getName()).orElse(null);
-
-
+        User user = userAuthValidator.getCurrentUser(principal);
         Cart cart = cartService.cartFindOrCreate(user);
 
         model.addAttribute("cart", cart);

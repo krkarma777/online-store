@@ -9,12 +9,15 @@ import com.bulkpurchase.domain.service.coupon.CouponApplicableProductService;
 import com.bulkpurchase.domain.service.coupon.CouponService;
 import com.bulkpurchase.domain.service.coupon.UserCouponService;
 import com.bulkpurchase.domain.service.product.ProductService;
-import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.List;
@@ -27,9 +30,9 @@ public class UserCouponController {
 
     private final CouponService couponService;
     private final CouponApplicableProductService couponApplicableProductService;
-    private final UserService userService;
     private final UserCouponService userCouponService;
     private final ProductService productService;
+    private final UserAuthValidator userAuthValidator;
 
     @GetMapping("/user/coupon/redeem")
     public String userCouponRedeemForm() {
@@ -42,7 +45,7 @@ public class UserCouponController {
             return "error/403";
         }
 
-        User user = userService.findByUsername(principal.getName()).orElse(null);
+        User user = userAuthValidator.getCurrentUser(principal);
         Coupon coupon = couponService.findByCode(code);
 
         if (coupon == null) {
@@ -60,7 +63,7 @@ public class UserCouponController {
     @GetMapping("/user/coupon/list")
     public String userCoupons(Principal principal, Model model) {
 
-        User user = userService.findByUsername(principal.getName()).orElse(null);
+        User user = userAuthValidator.getCurrentUser(principal);
         List<UserCoupon> userCoupons = userCouponService.findByUser(user);
 
         model.addAttribute("userCoupons", userCoupons);

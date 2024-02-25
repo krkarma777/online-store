@@ -1,9 +1,11 @@
 package com.bulkpurchase.security;
 
+import com.bulkpurchase.security.handler.CustomAuthenticationSuccessHandler;
 import com.bulkpurchase.security.handler.LoginAuthenticationFailureHandler;
 import com.bulkpurchase.security.jwt.JWTFilter;
 import com.bulkpurchase.security.jwt.JWTUtil;
 import com.bulkpurchase.security.jwt.LoginFilter;
+import com.bulkpurchase.web.service.login.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,8 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
 
     @Bean
@@ -56,11 +60,12 @@ public class SecurityConfig {
 /*                                .requestMatchers("/*").permitAll()*/
                                 .anyRequest().permitAll()
                 );
-
-/*                .oauth2Login(oauth2 -> oauth2
+        http
+                .oauth2Login(oauth2 -> oauth2
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
-                        .userInfoEndpoint(endpoint -> endpoint.userService(defaultOAuth2UserService))
-                )*/
+                        .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
+                        .successHandler(customAuthenticationSuccessHandler)
+                );
 
 //                .formLogin((authorize) -> authorize
 //                                .disable()
@@ -71,13 +76,14 @@ public class SecurityConfig {
 //                        })
 //                        .failureHandler(new LoginAuthenticationFailureHandler()).permitAll())
 //
-//                .logout((logoutConfig) ->
-//                        logoutConfig
-//                                .logoutUrl("/logout")
-//                                .logoutSuccessUrl("/main")
-//                                .invalidateHttpSession(true)
-//                                .deleteCookies("JESSIONID")
-//                                .permitAll())
+        http
+                .logout((logoutConfig) ->
+                        logoutConfig
+                                .logoutUrl("/logout")
+                                .logoutSuccessUrl("/")
+                                .invalidateHttpSession(true)
+                                .deleteCookies("AuthToken")
+                                .permitAll());
         //csrf disable
         http
                 .csrf(AbstractHttpConfigurer::disable);

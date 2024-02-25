@@ -5,16 +5,17 @@ import com.bulkpurchase.domain.entity.coupon.UserCoupon;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.order.Payment;
+import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.service.coupon.UserCouponService;
-import com.bulkpurchase.domain.service.order.PaymentService;
-import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.order.OrderService;
+import com.bulkpurchase.domain.service.order.PaymentService;
+import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.FavoriteProductService;
 import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,9 +50,11 @@ public class MyPageController {
 
     private final UserCouponService userCouponService;
 
+    private final UserAuthValidator userAuthValidator;
+
     @GetMapping("/mypage")
     public String myPageForm(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName()).orElse(null);
+        User user = userAuthValidator.getCurrentUser(principal);
 
         if (user == null) return "error/403";
 
@@ -74,23 +77,20 @@ public class MyPageController {
     }
 
 
-
     @GetMapping("/mypage/edit")
     public String userEditForm(Model model, Principal principal) {
-        User user = userService.findByUsername(principal.getName()).orElse(null);
+        User user = userAuthValidator.getCurrentUser(principal);
         model.addAttribute("user", user);
         return "users/edit";
     }
 
 
-
     @PostMapping("/mypage/update")
     public String userEditForm(@ModelAttribute User user, Principal principal) {
-        log.info("user = {}" , user);
+        log.info("user = {}", user);
 
         String password = user.getPassword();
-        String email = user.getEmail();
-        User existingUser = userService.findByUsername(principal.getName()).orElse(null);
+        User existingUser = userAuthValidator.getCurrentUser(principal);
 
         // 비밀번호가 비어 있지 않으면 해시 처리
         if (password != null && !password.isEmpty()) {
@@ -107,7 +107,7 @@ public class MyPageController {
     }
 
     @GetMapping("/orders/detail/{orderID}")
-    public String orderDetailInfoForSeller(@PathVariable("orderID") Long orderID , Model model) {
+    public String orderDetailInfoForSeller(@PathVariable("orderID") Long orderID, Model model) {
         Order order = orderService.findById(orderID).orElse(null);
         Payment payment = paymentService.findByOrder(order);
         List<OrderDetail> orderDetailList = orderDetailService.findByOrder(order);
@@ -117,9 +117,4 @@ public class MyPageController {
         model.addAttribute("payment", payment);
         return "/users/orderDetailForUser";
     }
-
-
-
-
-
 }

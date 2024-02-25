@@ -8,12 +8,13 @@ import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.order.Payment;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.cart.CartService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.order.OrderService;
 import com.bulkpurchase.domain.service.order.PaymentService;
+import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class OrderController {
     private final UserService userService;
     private final OrderDetailService orderDetailService;
     private final PaymentService paymentService;
+    private final UserAuthValidator userAuthValidator;
 
     @PostMapping("/item/one")
     public String oneItemOrder(@RequestParam("productID") Long productID,
@@ -89,7 +91,7 @@ public class OrderController {
                                Principal principal, Model model) {
 
         // 주문 생성
-        User user = userService.findByUsername(principal.getName()).orElse(null);
+        User user = userAuthValidator.getCurrentUser(principal);
         Order order = orderService.saveOrder(user, totalPrice);
         model.addAttribute("order", order);
 
@@ -115,7 +117,7 @@ public class OrderController {
     @GetMapping("list")
     public String orderList(Model model, Principal principal) {
         try {
-            User user = userService.findByUsername(principal.getName()).orElse(null);
+            User user = userAuthValidator.getCurrentUser(principal);
             List<OrderViewDTO> orderViewDTOS = orderService.getOrderViewModelsByUser(user);
             model.addAttribute("orderViewDTOS", orderViewDTOS);
             return "order/orders";

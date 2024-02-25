@@ -1,11 +1,10 @@
 package com.bulkpurchase.web.controller.seller;
 
-import com.bulkpurchase.domain.dto.product.ProductInquiryDTO;
 import com.bulkpurchase.domain.dto.inquiry.ReplyRequestDTO;
+import com.bulkpurchase.domain.dto.product.ProductInquiryDTO;
 import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductInquiryService;
-import com.bulkpurchase.domain.service.user.UserService;
 import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,7 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SellerInquiryManageController {
 
-    private final UserService userService;
     private final ProductInquiryService productInquiryService;
     private final UserAuthValidator userAuthValidator;
 

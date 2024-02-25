@@ -3,7 +3,7 @@ package com.bulkpurchase.web.controller.seller;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductService;
-import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +16,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SellerProductManageController {
 
-    private final UserService userService;
+    private final UserAuthValidator userAuthValidator;
     private final ProductService productService;
 
     @GetMapping("/seller/products")
     public String manageProducts(Principal principal, Model model) {
 
-        User user = userService.findByUsername(principal.getName()).orElse(null);
+        User user = userAuthValidator.getCurrentUser(principal);
         List<Product> products = productService.findByUserOrderByProductIDDesc(user);
         model.addAttribute("products", products);
 

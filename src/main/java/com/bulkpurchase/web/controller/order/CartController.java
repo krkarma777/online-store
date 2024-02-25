@@ -2,16 +2,19 @@ package com.bulkpurchase.web.controller.order;
 
 import com.bulkpurchase.domain.entity.cart.Cart;
 import com.bulkpurchase.domain.entity.cart.CartItem;
-import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
-import com.bulkpurchase.domain.service.product.ProductService;
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.cart.CartItemService;
 import com.bulkpurchase.domain.service.cart.CartService;
-import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.domain.service.product.ProductService;
+import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.List;
@@ -26,7 +29,7 @@ public class CartController {
     private final CartItemService cartItemService;
     private final CartService cartService;
     private final ProductService productService;
-    private final UserService userService;
+    private final UserAuthValidator userAuthValidator;
 
     @PostMapping("/add")
     public ResponseEntity<?> addToCart(@RequestParam(value = "productID") Long productID,
@@ -41,7 +44,7 @@ public class CartController {
             return createErrorResponse(HttpStatus.NOT_FOUND, "해당 상품이 존재하지 않습니다.");
         }
 
-        User user = userService.findByUsername(principal.getName()).orElse(null);
+        User user = userAuthValidator.getCurrentUser(principal);
         Cart cart = cartService.cartFindOrCreate(user);
 
         // 장바구니에서 해당 상품 검색
@@ -63,7 +66,7 @@ public class CartController {
             return createErrorResponse(HttpStatus.UNAUTHORIZED, "사용자 인증이 필요합니다.");
         }
 
-        User user = userService.findByUsername(principal.getName()).orElse(null); // 사용자 이름을 통해 사용자 객체를 가져옵니다.
+        User user = userAuthValidator.getCurrentUser(principal);
         if (user == null) {
             return createErrorResponse(HttpStatus.UNAUTHORIZED, "사용자를 찾을 수 없습니다.");
         }

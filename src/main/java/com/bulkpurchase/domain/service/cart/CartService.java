@@ -17,6 +17,7 @@ public class CartService {
     private final CartRepository cartRepository;
 
     public Cart cartFindOrCreate(User user) {
+        System.out.println("user = " + user);
         Optional<Cart> existingCart = cartRepository.findByUser(user);
         if (existingCart.isPresent()) {
             return existingCart.get();

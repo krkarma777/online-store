@@ -6,7 +6,7 @@ import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.FavoriteProductService;
-import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,20 +22,19 @@ public class FavoriteProductController {
 
     private final FavoriteProductService favoriteProductService;
     private final ProductService productService;
-    private final UserService userService;
+    private final UserAuthValidator userAuthValidator;
 
     @PostMapping("/toggle")
     @ResponseBody
     public FavoriteResponse toggleFavorite(@RequestParam(value = "productID") Long productID, Principal principal) {
         Product product = productService.findById(productID).orElse(null);
-        User user = userService.findByUsername(principal.getName()).orElse(null);
-
+        User user = userAuthValidator.getCurrentUser(principal);
         boolean isFavorited = favoriteProductService.toggleFavorite(user, product);
         return new FavoriteResponse(isFavorited);
     }
     @GetMapping
     private String favorites(Principal principal, Model model) {
-        User user = userService.findByUsername(principal.getName()).orElse(null);
+        User user = userAuthValidator.getCurrentUser(principal);
         List<FavoriteProduct> favoriteProducts = favoriteProductService.findByUser(user);
         model.addAttribute("favoriteProducts", favoriteProducts);
 

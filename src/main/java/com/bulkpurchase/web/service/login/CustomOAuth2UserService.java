@@ -2,48 +2,61 @@ package com.bulkpurchase.web.service.login;
 
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.UserRole;
+import com.bulkpurchase.domain.repository.user.UserRepository;
+import com.bulkpurchase.domain.service.user.UserService;
+import com.bulkpurchase.security.handler.CustomOAuth2User;
 import com.bulkpurchase.security.jwt.JWTUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    @Autowired
-    private JWTUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final JWTUtil jwtUtil;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User user = super.loadUser(userRequest);
-        // OAuth2 공급자로부터 받은 사용자 정보를 기반으로 추가 작업을 수행합니다.
-        // 예를 들어, 사용자 정보를 데이터베이스에 저장하거나, 사용자별 권한을 설정할 수 있습니다.
-        System.out.println("user = " + user);
-
-        String username = user.getName();
-        UserRole userRole = UserRole.ROLE_자영업자;
-        // 필요한 정보를 바탕으로 JWT 생성
-        String token = jwtUtil.createJwt(username, userRole.toString(), 60*60*10L);
-
-        // JWT 토큰을 사용자 세션에 저장하거나, 적절한 방법으로 클라이언트에 전달합니다.
-//        response.addHeader("Authorization", "Bearer " + token);
-//        response.sendRedirect("/");
-
-
         Map<String, Object> attributes = user.getAttributes();
-        if (attributes.get("message").toString().equals("success")) {
-            return null;
+
+        // 메시지 상태 확인 후, 성공적으로 정보를 가져왔는지 검증
+        if (!"success".equals(attributes.get("message").toString())) {
+            throw new OAuth2AuthenticationException("OAuth2 공급자로부터 사용자 정보를 성공적으로 가져오지 못했습니다.");
         }
+
+        // attributes에서 response를 추출하여 사용자 정보 설정
+        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+
+        String email = response.get("email").toString();
+        Optional<User> userOpt = userRepository.findByUsername(email);
         User userEntity = new User();
-//        userEntity.setUsername();
-        userEntity.setRealName(attributes.get("name").toString());
+        if (userOpt.isEmpty()) {
+            userEntity.setUsername(email); // 사용자 고유 이메일을 username으로 사용
+            userEntity.setEmail(response.get("email").toString());
+            userEntity.setRealName(response.get("name").toString());
+            userEntity.setPhoneNumber(response.get("mobile").toString());
+            userEntity.setRole(UserRole.ROLE_자영업자); // 모든 사용자를 자영업자로 설정
+            userEntity.setPassword(UUID.randomUUID().toString());
+            userRepository.save(userEntity);
+        }
 
+        // 필요한 정보를 바탕으로 JWT 생성 및 로그 출력
+        jwtUtil.createJwt(response.get("id").toString(), "자영업자", 60 * 60 * 10L);
 
-        return user;
+        return new CustomOAuth2User(user);
     }
 }
