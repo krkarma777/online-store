@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class SearchProductController {
+public class CouponSearchProductController {
 
     private final ProductService productService;
     private final UserService userService;

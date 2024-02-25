@@ -37,7 +37,9 @@ dependencies {
     runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.12.5'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.5'
+    runtimeOnly group: 'io.jsonwebtoken' ,name:'jjwt-impl', version: '0.12.5'
+    runtimeOnly group: 'io.jsonwebtoken' ,name:'jjwt-jackson', version: '0.12.5'
 }
 
 tasks.named('test') {

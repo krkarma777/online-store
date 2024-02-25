@@ -1,6 +1,10 @@
 package com.bulkpurchase.security.jwt;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +16,10 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    private SecretKey secretKey;
+    private final SecretKey secretKey;
 
-    public JWTUtil(@Value("${spring.jwt.secret}")String secret) {
-
-        this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+    public JWTUtil(@Value("${spring.jwt.secret}") String secretKey) {
+        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
     }
 
     public String getUsername(String token) {
@@ -45,4 +48,15 @@ public class JWTUtil {
                 .signWith(secretKey)
                 .compact();
     }
+
+    // 토큰의 유효성을 검증하는 메서드
+    public Boolean validateToken(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token);
+            return !isExpired(token); // 토큰 만료 여부 확인
+        } catch (Exception e) {
+            return false; // 유효하지 않은 토큰으로 간주
+        }
+    }
+
 }

@@ -23,8 +23,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (userOpt.isEmpty()) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         } else {
-            System.out.println("CustomUserDetails");
-
             return new CustomUserDetails(userOpt.get());
         }
     }

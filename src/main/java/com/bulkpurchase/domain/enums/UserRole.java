@@ -23,4 +23,10 @@ public enum UserRole {
         }
         throw new IllegalArgumentException("No matching constant for [" + description + "]");
     }
+
+    public static UserRole fromRoleString(String roleStr) {
+        String description = roleStr.replace("ROLE_", ""); // 접두사 제거
+        return fromDescription(description);
+    }
+
 }

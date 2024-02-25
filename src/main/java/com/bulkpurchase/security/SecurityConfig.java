@@ -55,33 +55,40 @@ public class SecurityConfig {
                                 .requestMatchers("/admin/**").hasRole("관리자")
 /*                                .requestMatchers("/*").permitAll()*/
                                 .anyRequest().permitAll()
-                )
+                );
 
 /*                .oauth2Login(oauth2 -> oauth2
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
                         .userInfoEndpoint(endpoint -> endpoint.userService(defaultOAuth2UserService))
                 )*/
 
-                .formLogin((authorize) -> authorize
+//                .formLogin((authorize) -> authorize
 //                                .disable()
-                        .loginPage("/login").loginProcessingUrl("/loginProc").successHandler((HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
-                            // 사용자 이름과 권한을 기반으로 JWT 토큰 생성
-                            String token = jwtUtil.createJwt(authentication.getName(), "USER_ROLE", 3600000L); // 1시간 후 만료되는 토큰 생성
-
-                            // 토큰을 HTTP 헤더 또는 바디에 추가하여 반환
-                            response.addHeader("Authorization", "Bearer " + token);
-
-                        }).failureHandler(new LoginAuthenticationFailureHandler()).permitAll())
-
-                .logout((logoutConfig) ->
-                        logoutConfig
-                                .logoutUrl("/logout")
-                                .logoutSuccessUrl("/main")
-                                .invalidateHttpSession(true)
-                                .deleteCookies("JESSIONID")
-                                .permitAll())
-
+//                        .loginPage("/login")
+//                        .loginProcessingUrl("/loginProc")
+//                        .successHandler((HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
+//
+//                        })
+//                        .failureHandler(new LoginAuthenticationFailureHandler()).permitAll())
+//
+//                .logout((logoutConfig) ->
+//                        logoutConfig
+//                                .logoutUrl("/logout")
+//                                .logoutSuccessUrl("/main")
+//                                .invalidateHttpSession(true)
+//                                .deleteCookies("JESSIONID")
+//                                .permitAll())
+        //csrf disable
+        http
                 .csrf(AbstractHttpConfigurer::disable);
+
+        //Form 로그인 방식 disable
+        http
+                .formLogin(AbstractHttpConfigurer::disable);
+
+        //http basic 인증 방식 disable
+        http
+                .httpBasic(AbstractHttpConfigurer::disable);
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
