@@ -3,6 +3,7 @@ package com.bulkpurchase.domain.repository.product;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.enums.ProductStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,6 +36,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findPopularProductsByCategory(Long categoryID);
 
     List<Product> findByProductNameContainingAndUser(String productName,User user);
+    
+    
     @Query("select p.productName from Product p WHERE p.productID = :productID")
     String findProductNameById(@Param("productID") Long productID);
+
+    Page<Product> findByProductNameContaining(Pageable pageable, String productName);
 }

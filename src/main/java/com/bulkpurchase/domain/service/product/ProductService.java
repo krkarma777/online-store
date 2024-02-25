@@ -4,6 +4,7 @@ import com.bulkpurchase.domain.dto.product.ProductForCouponDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -74,5 +75,9 @@ public class ProductService {
 
     public String findProductNameById(Long productId) {
         return productRepository.findProductNameById(productId);
+    }
+
+    public Page<Product> findPageByProductNameContaining(Pageable pageable, String productName) {
+        return  productRepository.findByProductNameContaining(pageable, productName);
     }
 }
