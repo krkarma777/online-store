@@ -1,5 +1,7 @@
-package com.bulkpurchase.domain.service.user;
+package com.bulkpurchase.web.controller;
 
+import com.bulkpurchase.domain.service.user.RewardPointService;
+import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

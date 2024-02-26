@@ -10,11 +10,11 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class CustomOAuth2User implements OAuth2User {
+public class NaverOAuth2User implements OAuth2User {
 
     private final OAuth2User oauth2User;
 
-    public CustomOAuth2User(OAuth2User oauth2User) {
+    public NaverOAuth2User(OAuth2User oauth2User) {
         this.oauth2User = oauth2User;
     }
 
