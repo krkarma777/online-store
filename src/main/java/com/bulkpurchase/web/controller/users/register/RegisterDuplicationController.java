@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.register;
+package com.bulkpurchase.web.controller.users.register;
 
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;

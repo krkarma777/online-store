@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.register;
+package com.bulkpurchase.web.controller.users.register;
 
 import com.bulkpurchase.domain.entity.user.RegisterCheck;
 import com.bulkpurchase.domain.entity.user.User;

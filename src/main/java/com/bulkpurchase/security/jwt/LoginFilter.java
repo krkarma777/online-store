@@ -23,8 +23,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
-
-    @Value("${jwt.expiredMs}") private String expiredMs;
+    private final Long expiredMs;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -48,7 +47,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(username, role, Long.parseLong(expiredMs));
+        String token = jwtUtil.createJwt(username, role, expiredMs);
         String cookieValue = "AuthToken=" + token + "; Path=/; HttpOnly";
         if (request.isSecure()) { // HTTPS인 경우에만 Secure 플래그 추가
             cookieValue += "; Secure";
