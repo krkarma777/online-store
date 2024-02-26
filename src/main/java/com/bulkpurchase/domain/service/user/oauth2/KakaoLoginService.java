@@ -5,6 +5,7 @@ import com.bulkpurchase.domain.enums.UserRole;
 import com.bulkpurchase.domain.repository.user.UserRepository;
 import com.bulkpurchase.security.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -17,6 +18,8 @@ public class KakaoLoginService implements SocialOauth2Service{
 
     private final UserRepository userRepository;
     private final JWTUtil jwtUtil;
+
+    @Value("${jwt.expiredMs}") private String expiredMs;
 
     @Override
     public void login(Map<String, Object> attributes) {
@@ -35,6 +38,6 @@ public class KakaoLoginService implements SocialOauth2Service{
         }
 
         // 필요한 정보를 바탕으로 JWT 생성 및 로그 출력
-        jwtUtil.createJwt(username, "자영업자", 60 * 60 * 10L);
+        jwtUtil.createJwt(username, "자영업자", Long.parseLong(expiredMs));
     }
 }

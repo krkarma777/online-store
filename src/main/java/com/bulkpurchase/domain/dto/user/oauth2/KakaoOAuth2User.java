@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Collection;
 import java.util.Map;
 
+@Getter
 @Setter
 public class KakaoOAuth2User implements OAuth2User {
 

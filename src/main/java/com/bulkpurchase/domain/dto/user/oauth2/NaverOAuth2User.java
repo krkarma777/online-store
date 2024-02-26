@@ -33,5 +33,4 @@ public class NaverOAuth2User implements OAuth2User {
         Map<String, Object> response = (Map<String, Object>) oauth2User.getAttributes().get("response");
         return response.get("email").toString();
     }
-
 }

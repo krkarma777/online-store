@@ -66,8 +66,8 @@
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <li><a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editCouponModal" th:data-coupon-id="${coupon.couponID}">쿠폰 수정</a></li>
-                        <li><a th:href="@{'/coupon/delete/' + ${coupon.couponID}}" class="dropdown-item">쿠폰 삭제</a></li>
-                        <li><a th:href="@{'/coupon/select/' + ${coupon.couponID}}" class="dropdown-item">적용되는 상품 관리</a></li>
+                        <li><a th:href="@{'/seller/coupon/delete/' + ${coupon.couponID}}" class="dropdown-item">쿠폰 삭제</a></li>
+                        <li><a th:href="@{'/seller/coupon/select/' + ${coupon.couponID}}" class="dropdown-item">적용되는 상품 관리</a></li>
                     </ul>
                 </div>
             </td>

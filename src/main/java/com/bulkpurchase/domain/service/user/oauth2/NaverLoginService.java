@@ -5,6 +5,7 @@ import com.bulkpurchase.domain.enums.UserRole;
 import com.bulkpurchase.domain.repository.user.UserRepository;
 import com.bulkpurchase.security.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ public class NaverLoginService implements SocialOauth2Service{
 
     private final UserRepository userRepository;
     private final JWTUtil jwtUtil;
+
+    @Value("${jwt.expiredMs}") private String expiredMs;
 
     @Override
     public void login(Map<String, Object> attributes) {
@@ -44,6 +47,6 @@ public class NaverLoginService implements SocialOauth2Service{
         }
 
         // 필요한 정보를 바탕으로 JWT 생성 및 로그 출력
-        jwtUtil.createJwt(response.get("id").toString(), "자영업자", 60 * 60 * 10L);
+        jwtUtil.createJwt(response.get("id").toString(), "자영업자", Long.parseLong(expiredMs));
     }
 }
