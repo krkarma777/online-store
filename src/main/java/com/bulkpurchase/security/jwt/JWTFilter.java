@@ -50,9 +50,9 @@ public class JWTFilter extends OncePerRequestFilter {
             CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
             Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
-        } else {
+        } /*else {
             log.info("토큰이 유효하지 않거나, 유효 기간이 지났습니다.");
-        }
+        }*/
 
         filterChain.doFilter(request, response);
     }
