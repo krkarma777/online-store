@@ -2,8 +2,8 @@ package com.bulkpurchase.web.service.login;
 
 import com.bulkpurchase.domain.service.user.oauth2.KakaoLoginService;
 import com.bulkpurchase.domain.service.user.oauth2.NaverLoginService;
-import com.bulkpurchase.security.handler.KakaoOAuth2User;
-import com.bulkpurchase.security.handler.NaverOAuth2User;
+import com.bulkpurchase.domain.dto.user.oauth2.KakaoOAuth2User;
+import com.bulkpurchase.domain.dto.user.oauth2.NaverOAuth2User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;

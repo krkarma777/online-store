@@ -1,4 +1,4 @@
-package com.bulkpurchase.security.handler;
+package com.bulkpurchase.domain.dto.user.oauth2;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,13 +8,12 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Collection;
 import java.util.Map;
 
-@Getter
 @Setter
-public class NaverOAuth2User implements OAuth2User {
+public class KakaoOAuth2User implements OAuth2User {
 
     private final OAuth2User oauth2User;
 
-    public NaverOAuth2User(OAuth2User oauth2User) {
+    public KakaoOAuth2User(OAuth2User oauth2User) {
         this.oauth2User = oauth2User;
     }
 
@@ -30,8 +29,8 @@ public class NaverOAuth2User implements OAuth2User {
 
     @Override
     public String getName() {
-        Map<String, Object> response = (Map<String, Object>) oauth2User.getAttributes().get("response");
-        return response.get("email").toString();
+        Map<String, Object> response = oauth2User.getAttributes();
+        return response.get("id").toString();
     }
 
 }
