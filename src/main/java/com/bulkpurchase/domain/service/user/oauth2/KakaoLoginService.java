@@ -27,6 +27,7 @@ public class KakaoLoginService implements SocialOauth2Service{
         User userEntity = new User();
         String username = attributes.get("id").toString();
         Optional<User> kakaoUserOpt = userRepository.findByUsername(username);
+        String role = "자영업자";
         if (kakaoUserOpt.isEmpty()) {
             userEntity.setUsername(username);
             userEntity.setRealName(attributes.get("id").toString());
@@ -35,9 +36,11 @@ public class KakaoLoginService implements SocialOauth2Service{
             userEntity.setRole(UserRole.ROLE_자영업자); // 모든 사용자를 자영업자로 설정
             userEntity.setPassword(UUID.randomUUID().toString());
             userRepository.save(userEntity);
+        } else {
+            role = UserRole.fromRoleString(kakaoUserOpt.get().getRole().toString()).toString();
         }
 
         // 필요한 정보를 바탕으로 JWT 생성 및 로그 출력
-        return jwtUtil.createJwt(username, "자영업자", Long.parseLong(expiredMs));
+        return jwtUtil.createJwt(username, role, Long.parseLong(expiredMs));
     }
 }

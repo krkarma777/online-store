@@ -35,6 +35,7 @@ public class NaverLoginService implements SocialOauth2Service{
 
         String email = response.get("email").toString();
         Optional<User> userOpt = userRepository.findByUsername(email);
+        String role = "자영업자";
         User userEntity = new User();
         if (userOpt.isEmpty()) {
             userEntity.setUsername(email); // 사용자 고유 이메일을 username으로 사용
@@ -44,8 +45,9 @@ public class NaverLoginService implements SocialOauth2Service{
             userEntity.setRole(UserRole.ROLE_자영업자); // 모든 사용자를 자영업자로 설정
             userEntity.setPassword(UUID.randomUUID().toString());
             userRepository.save(userEntity);
+        } else {
+            role = UserRole.fromRoleString(userOpt.get().getRole().toString()).toString();
         }
-
-        return jwtUtil.createJwt(response.get("id").toString(), "자영업자", Long.parseLong(expiredMs));
+        return jwtUtil.createJwt(response.get("id").toString(), role, Long.parseLong(expiredMs));
     }
 }
