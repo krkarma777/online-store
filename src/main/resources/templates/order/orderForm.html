@@ -60,7 +60,7 @@
                     <td th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '원'" th:data-price="${item.product.price}"></td>
                     <td>
                         <label>
-                            <input type="number" name="quantity" min="1" value="1" th:value="${item.quantity}" class="form-control">
+                            <input type="number" th:name="'quantity' + ${itemStat.index}" min="1" th:value="${item.quantity}" class="form-control">
                         </label>
                     </td>
                     <td>

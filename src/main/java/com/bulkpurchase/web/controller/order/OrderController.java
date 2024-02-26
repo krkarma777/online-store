@@ -34,7 +34,6 @@ public class OrderController {
     private final ProductService productService;
     private final CartService cartService;
     private final OrderService orderService;
-    private final UserService userService;
     private final OrderDetailService orderDetailService;
     private final PaymentService paymentService;
     private final UserAuthValidator userAuthValidator;
@@ -86,22 +85,36 @@ public class OrderController {
 
     @PostMapping
     public String orderProcess(HttpServletRequest request,
-                               @RequestParam("totalPrice") Double totalPrice,
-                               @RequestParam("paymentMethod") String paymentMethod,
                                Principal principal, Model model) {
+        Map<String, String[]> paramMap = request.getParameterMap();
+        Map<Long, Integer> productQuantities = new HashMap<>();
+        double totalPrice = 0;
+        String paymentMethod = "";
+
+        for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
+            String key = entry.getKey();
+            String[] value = entry.getValue();
+
+            if (key.startsWith("quantity")) {
+                int index = Integer.parseInt(key.substring("quantity".length()));
+                int quantity = Integer.parseInt(value[0]);
+                // 여기서 product ID를 찾아서 매핑해야 함
+                Long productId = Long.parseLong(request.getParameter("product_" + index));
+                productQuantities.put(productId, quantity);
+            } else if (key.equals("totalPrice")) {
+                totalPrice = Double.parseDouble(value[0]);
+            } else if (key.equals("paymentMethod")) {
+                paymentMethod = value[0];
+            }
+        }
 
         // 주문 생성
         User user = userAuthValidator.getCurrentUser(principal);
         Order order = orderService.saveOrder(user, totalPrice);
         model.addAttribute("order", order);
 
-        // 제품 ID와 수량 파싱
-        Map<Long, Integer> productIdQuantityMap = new HashMap<>();
-        paramIter(request, productIdQuantityMap);
-
-
         // 주문 항목 처리
-        List<OrderDetail> orderDetails = getOrderDetails(productIdQuantityMap, order);
+        List<OrderDetail> orderDetails = getOrderDetails(productQuantities, order);
         model.addAttribute("orderDetails", orderDetails);
 
         // 결제 정보 생성
@@ -125,27 +138,6 @@ public class OrderController {
             return "error/400";
         }
     }
-
-
-
-
-    private void paramIter(HttpServletRequest request, Map<Long, Integer> productIdQuantityMap) {
-        Map<String, String[]> paramMap = request.getParameterMap();
-        for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
-            String paramName = entry.getKey();
-            if (paramName.startsWith("product_")) {
-                try {
-                    Long productId = Long.valueOf(entry.getValue()[0]); // 상품 ID 추출
-                    Integer quantity = Integer.valueOf(request.getParameter("quantity")); // 해당 상품의 수량 추출
-                    productIdQuantityMap.put(productId, quantity);
-                } catch (NumberFormatException e) {
-                    log.error("상품 ID 또는 수량 파싱 오류", e);
-                }
-            }
-        }
-    }
-
-
     private List<OrderDetail> getOrderDetails(Map<Long, Integer> productIdQuantityMap, Order order) {
         List<OrderDetail> orderDetails = new ArrayList<>();
         for (Map.Entry<Long, Integer> entry : productIdQuantityMap.entrySet()) {
