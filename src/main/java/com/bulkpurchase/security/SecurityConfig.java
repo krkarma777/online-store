@@ -50,7 +50,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .requestMatchers("/", "/api/v1/auth/**", "/oauth2/**", "/inquiries/load-more").permitAll()
+                                .requestMatchers("/", "/api/v1/auth/**", "/oauth2/**", "/inquiries/load-more", "/login/social").permitAll()
                                 .requestMatchers("/css/**", "/js/**", "/img/**").permitAll() // 정적 리소스 허용
                                 .requestMatchers("/register/**", "/registerProc", "/login/**", "/loginProc", "/").permitAll()
                                 .requestMatchers("/mypage/**", "/cart/**", "/review/write", "/product/inquiry/add/**", "/review/*/feedback", "/order/**",
@@ -64,6 +64,7 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
                         .userInfoEndpoint(endpoint -> endpoint.userService(customOAuth2UserService))
+                        .loginPage("/login/social")
                         .successHandler(customAuthenticationSuccessHandler)
                 );
 

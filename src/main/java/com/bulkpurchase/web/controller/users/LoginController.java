@@ -26,4 +26,9 @@ public class LoginController {
         System.out.println("goToHome response authorization = " + authorization2);
         return "/home";
     }
+
+    @GetMapping("/login/social")
+    public String socialLoginOauth2() {
+        return "/users/login";
+    }
 }
