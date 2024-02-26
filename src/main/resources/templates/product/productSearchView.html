@@ -5,43 +5,193 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            color: #333;
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .btn-modern {
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-modern:hover {
+            background-color: #0056b3;
+        }
+
+        .product-wrapper {
+            transition: transform .2s;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .product-wrapper:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        }
+
+        .product-image {
+            max-width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto;
+            border-radius: 5px;
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .custom-container {
+            width: 90%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1);
+        }
+
+        .floating-buttons {
+            position: fixed;
+            right: 550px; /* 조정값 */
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .floating-buttons button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .floating-buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .dropdown-menu-end {
+            text-align: right;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
-
-<div class="container mt-4">
-    <h2>상품 목록</h2>
-
-    <table class="table table-striped table-bordered table-hover">
-        <thead class="table-dark">
-        <tr>
-            <th th:text="#{label.product.id}">ID</th>
-            <th th:text="#{label.product.name}">상품명</th>
-            <th th:text="#{label.product.price}">가격</th>
-            <th th:text="#{label.product.stock}">재고</th>
-            <th th:text="#{label.product.userId}">판매자</th>
-            <th th:text="#{label.product.region}">판매 지역</th>
-            <th>행동</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="product : ${productPage}">
-            <td th:text="${product.productID}"></td>
-            <td th:text="${product.productName}"></td>
-            <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-            <td th:text="${product.stock}"></td>
-            <td th:text="${product.user.username}"></td>
-            <td>
-                <span th:each="region : ${product.salesRegions}" th:text="${region}"></span>
-            </td>
-            <td>
-                <a th:href="@{/product/update/{productId}(productId=${product.productID})}" class="btn btn-primary btn-sm">수정</a>
-                <a th:href="@{/product/{productId}(productId=${product.productID})}" class="btn btn-primary btn-sm">상세</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div class="container custom-container">
+    <div class="action-bar">
+        <div class="sorting-buttons">
+            <button class="btn btn-modern">랭킹순</button>
+            <button class="btn btn-modern">낮은 가격순</button>
+            <button class="btn btn-modern">높은 가격순</button>
+            <button class="btn btn-modern">판매량순</button>
+            <button class="btn btn-modern">최신순</button>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                상품 보기
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" style="text-align: center">
+                <li><a class="dropdown-item" href="#">12개씩</a></li>
+                <li><a class="dropdown-item" href="#">24개씩</a></li>
+                <li><a class="dropdown-item" href="#">36개씩</a></li>
+                <li><a class="dropdown-item" href="#">48개씩</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- 컨텐츠 추가 부분 -->
 </div>
+<div class="floating-buttons">
+    <button onclick="scrollToTop()"><i class="bi bi-chevron-up"></i></button>
+    <button onclick="scrollToBottom()"><i class="bi bi-chevron-down"></i></button>
+</div>
+<div class="container custom-container mt-4">
+    <h2>상품 검색 결과</h2>
+    <div class="row">
+        <div th:each="product : ${productPage}" class="col-md-3">
+            <div class="product-wrapper">
+                <a th:href="'/product/'+${product.productID}">
+                    <img th:if="${not #lists.isEmpty(product.imageUrls)}" th:src="@{'/uploaded-images/'+${product.imageUrls[0]}}" class="product-image" alt="Product Image">
+                    <img th:unless="${not #lists.isEmpty(product.imageUrls)}" src="/img/logo.png" class="product-image" alt="Default Image">
+                </a>
+                <div class="product-info">
+                    <h5 th:text="${product.productName}">상품명</h5>
+                    <p th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'">가격</p>
+                    <p th:text="'재고: ' + ${product.stock}">재고</p>
+                    <p th:text="${product.user.username}">판매자</p>
+                    <a th:href="@{/product/detail/{productId}(productId=${product.productID})}" class="btn btn-primary">상세 보기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${page == 1} ? 'disabled' : ''">
+                <a class="page-link" th:href="@{/product/search(q=${q}, p=${page - 1})}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li th:each="pageNum : ${#numbers.sequence(1, totalPages)}" class="page-item" th:classappend="${pageNum == page} ? 'active' : ''">
+                <a class="page-link" th:href="@{/product/search(q=${q}, p=${pageNum})}" th:text="${pageNum}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${page == totalPages} ? 'disabled' : ''">
+                <a class="page-link" th:href="@{/product/search(q=${q}, p=${page + 1})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 
+</div>
+<script>
+    function scrollToTop() {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function scrollToBottom() {
+    window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+}
+
+    // 드롭다운을 열기 위한 함수
+    function openDropdown() {
+        document.getElementById("dropdownMenuButton").classList.add("show");
+    }
+
+    // 드롭다운을 닫기 위한 함수
+    function closeDropdown() {
+        document.getElementById("dropdownMenuButton").classList.remove("show");
+    }
+
+    // 드롭다운 버튼에 마우스를 갖다 대면 열리도록 이벤트 리스너 추가
+    document.getElementById("dropdownMenuButton").addEventListener("mouseenter", openDropdown);
+    // 드롭다운 메뉴 영역에서 마우스가 벗어나면 닫히도록 이벤트 리스너 추가
+    document.querySelector(".dropdown-menu").addEventListener("mouseleave", closeDropdown);
+</script>
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

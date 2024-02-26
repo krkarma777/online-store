@@ -19,7 +19,7 @@ public class ProductSearchController {
 
     @GetMapping("/product/search")
     public String productSearchView(@RequestParam(value = "q", required = false) String productName, @RequestParam(value = "p", required = false) Integer page, Model model) {
-        int size = 10;
+        int size = 12;
         if (page==null) {
             page = 1;
         }
@@ -29,6 +29,9 @@ public class ProductSearchController {
         Pageable pageable = PageRequest.of(page-1, size);
         Page<Product> productPage = productService.findPageByProductNameContaining(pageable, productName);
         model.addAttribute("productPage", productPage);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("page", page);
+        model.addAttribute("q", productName);
         return "product/productSearchView";
     }
 }
