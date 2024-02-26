@@ -13,9 +13,11 @@ import java.util.Map;
 public class KakaoOAuth2User implements OAuth2User {
 
     private final OAuth2User oauth2User;
+    private final String token;
 
-    public KakaoOAuth2User(OAuth2User oauth2User) {
+    public KakaoOAuth2User(OAuth2User oauth2User, String token) {
         this.oauth2User = oauth2User;
+        this.token = token;
     }
 
     @Override

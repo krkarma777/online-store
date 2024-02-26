@@ -60,7 +60,18 @@
             gap: 20px;
         }
 
-
+        .favorite-products ul li {
+            flex-basis: 25%;
+            -webkit-flex-basis: 25%; /* Safari를 위한 설정 */
+            max-width: 25%; /* 이 항목은 flex-basis와 함께 사용되어, 항목의 최대 너비를 제한합니다. */
+            box-sizing: border-box; /* padding과 border가 너비에 포함되도록 설정 */
+        }
+        @media (max-width: 768px) {
+            .favorite-products ul li {
+                flex-basis: 50%;
+                max-width: 50%;
+            }
+        }
         .favorite-products ul li img {
             width: 100%;
             height: auto;

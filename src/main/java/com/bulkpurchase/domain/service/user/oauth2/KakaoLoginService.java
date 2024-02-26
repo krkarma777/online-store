@@ -22,7 +22,7 @@ public class KakaoLoginService implements SocialOauth2Service{
     @Value("${jwt.expiredMs}") private String expiredMs;
 
     @Override
-    public void login(Map<String, Object> attributes) {
+    public String login(Map<String, Object> attributes) {
 
         User userEntity = new User();
         String username = attributes.get("id").toString();
@@ -38,6 +38,6 @@ public class KakaoLoginService implements SocialOauth2Service{
         }
 
         // 필요한 정보를 바탕으로 JWT 생성 및 로그 출력
-        jwtUtil.createJwt(username, "자영업자", Long.parseLong(expiredMs));
+        return jwtUtil.createJwt(username, "자영업자", Long.parseLong(expiredMs));
     }
 }

@@ -28,13 +28,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         /* 네이버 로그인 로직 */
         if (attributes.get("message")!=null) {
-            naverLoginService.login(attributes);
-            return new NaverOAuth2User(user);
+            String token = naverLoginService.login(attributes);
+            return new NaverOAuth2User(user, token);
         }
         /* 카카오 로그인 로직 */
         if (attributes.get("kakao_account") != null) {
-            kakaoLoginService.login(attributes);
-            return new KakaoOAuth2User(user);
+            String token = kakaoLoginService.login(attributes);
+            return new KakaoOAuth2User(user, token);
         }
 
         return null;

@@ -23,7 +23,7 @@ public class NaverLoginService implements SocialOauth2Service{
     @Value("${jwt.expiredMs}") private String expiredMs;
 
     @Override
-    public void login(Map<String, Object> attributes) {
+    public String login(Map<String, Object> attributes) {
 
         // 메시지 상태 확인 후, 성공적으로 정보를 가져왔는지 검증
         if (!"success".equals(attributes.get("message").toString())) {
@@ -46,7 +46,6 @@ public class NaverLoginService implements SocialOauth2Service{
             userRepository.save(userEntity);
         }
 
-        // 필요한 정보를 바탕으로 JWT 생성 및 로그 출력
-        jwtUtil.createJwt(response.get("id").toString(), "자영업자", Long.parseLong(expiredMs));
+        return jwtUtil.createJwt(response.get("id").toString(), "자영업자", Long.parseLong(expiredMs));
     }
 }

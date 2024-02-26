@@ -4,5 +4,5 @@ import java.util.Map;
 
 public interface SocialOauth2Service {
 
-    void login(Map<String, Object> attributes);
+    String login(Map<String, Object> attributes);
 }
