@@ -33,6 +33,8 @@ public class SellerSalesManageController {
         last30DaysSales.sort(Comparator.comparing(SalesDataDTO::getPeriod));
         // 지난 12개월 판매 데이터
         List<SalesDataDTO> last12MonthsSales = orderService.calculateSalesLast12MonthsBySeller(userID);
+        // 날짜순으로 정렬
+        last12MonthsSales.sort(Comparator.comparing(SalesDataDTO::getPeriod));
         // 최근 3년 판매 데이터
         List<SalesDataDTO> last3YearsSales = orderService.calculateSalesLast3YearsBySeller(userID);
 
