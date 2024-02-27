@@ -66,7 +66,7 @@
                 <td th:text="${detail.product.productName}"></td>
                 <td th:text="${detail.quantity}"></td>
                 <td th:text="${#numbers.formatDecimal(detail.product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+                <td th:text="${#numbers.formatDecimal(detail.product.price*detail.quantity, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
             </tr>
             </tbody>
         </table>
