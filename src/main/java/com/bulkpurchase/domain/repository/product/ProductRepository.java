@@ -42,4 +42,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     String findProductNameById(@Param("productID") Long productID);
 
     Page<Product> findByProductNameContaining(Pageable pageable, String productName);
+
+    @Query("SELECT p FROM Product p ORDER BY p.productID desc ")
+    List<Product> findAllProducts();
 }

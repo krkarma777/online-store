@@ -213,4 +213,12 @@ public class OrderService {
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
+
+    public void delete(Order order) {
+        orderRepository.delete(order);
+    }
+
+    public List<Order> findByOrderByOrderIDDesc() {
+        return orderRepository.findByOrderByOrderIDDesc();
+    }
 }

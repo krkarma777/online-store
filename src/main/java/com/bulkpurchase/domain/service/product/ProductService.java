@@ -34,7 +34,7 @@ public class ProductService {
     }
 
     public List<Product> findAllProducts() {
-        return productRepository.findAll();
+        return productRepository.findAllProducts();
     }
 
     public List<Product> findActiveProduct(ProductStatus status) {

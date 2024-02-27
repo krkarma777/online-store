@@ -55,4 +55,8 @@ public class UserService {
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    public List<User> findAllOrderByUserID() {
+        return userRepository.findAllOrderByUserID();
+    }
 }

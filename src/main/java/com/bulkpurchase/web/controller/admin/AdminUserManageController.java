@@ -22,7 +22,7 @@ public class AdminUserManageController {
 
     @GetMapping("/user")
     public String userManagementPage(Model model) {
-        List<User> users = userService.findAll();
+        List<User> users = userService.findAllOrderByUserID();
         model.addAttribute("users", users);
 
         return "/admin/userManagement";

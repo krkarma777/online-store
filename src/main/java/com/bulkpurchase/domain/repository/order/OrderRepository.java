@@ -119,4 +119,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Object[]> calculateSalesLast3YearsBySeller(@Param("userID") Long userID);
 
 
+    List<Order> findByOrderByOrderIDDesc();
+
 }
