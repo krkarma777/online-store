@@ -5,6 +5,7 @@ import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.enums.SalesRegion;
+import com.bulkpurchase.domain.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -74,5 +75,9 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<FavoriteProduct> favoritedByUsers;
+
+    public ProductStatus getOppositeStatus() {
+        return this.status == ProductStatus.ACTIVE ? ProductStatus.INACTIVE : ProductStatus.ACTIVE;
+    }
 }
 
