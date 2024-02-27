@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,6 +22,9 @@ public class AdminCategoryManageController {
     public String categoryManagementPage(Model model) {
         // 모든 카테고리를 계층 구조로 가져오기
         List<Category> categories = categoryService.findAllWithChildren();
+        for (Category category : categories) {
+            Set<Category> children = category.getChildren();
+        }
         model.addAttribute("categories", categories);
         model.addAttribute("currentCategory", new Category()); // 새 카테고리 추가를 위한 빈 객체
         return "admin/categoryManagement"; // 카테고리 관리 페이지 뷰 이름

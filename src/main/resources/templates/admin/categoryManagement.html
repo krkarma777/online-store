@@ -23,9 +23,6 @@
             margin-bottom: 10px;
         }
 
-        .category-indent {
-            margin-left: 20px;
-        }
 
         /* 버튼과 입력 필드 스타일링 */
         .btn-primary {
@@ -52,10 +49,6 @@
             transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
         }
 
-        .category-indent {
-            padding-left: 20px;
-        }
-
         .category-item {
             cursor: pointer;
         }
@@ -69,6 +62,49 @@
         .form-inline .form-control {
             width: auto;
         }
+
+        /* 기본 스타일 유지 */
+
+        /* 드롭다운 메뉴 스타일링 */
+        .dropdown-menu {
+            padding: 0;
+            margin: 0;
+            border-radius: 0.25rem;
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* 드롭다운 트리거 버튼 스타일링 */
+        .dropdown-toggle::after {
+            margin-left: 0.5rem;
+        }
+
+        /* 카테고리 리스트 스타일링 */
+        .category-list {
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .category-item {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border: 1px solid #dee2e6;
+            margin-bottom: 0.5rem;
+            background-color: #fff;
+        }
+
+        .category-item:hover {
+            background-color: #f8f9fa;
+        }
+
     </style>
 </head>
 <body>
@@ -82,35 +118,30 @@
             <button type="submit" class="btn btn-primary">카테고리 추가</button>
         </form>
     </div>
-    <div th:fragment="categoryList(categories, currentCategory)">
-        <ul class="list-group">
-            <li th:each="category : ${categories}" class="list-group-item category-item"
-                th:data-category-id="${category.categoryID}" th:id="'category-' + ${category.categoryID}">
-                <span th:text="${category.name}">카테고리 이름</span>
-                <div th:if="${not #lists.isEmpty(category.children)}" class="category-indent collapse"
-                     th:id="'collapse-' + ${category.categoryID}">
-                    <div th:replace="~{this::categoryList(${category.children}, ${currentCategory})}"></div>
-                </div>
-            </li>
-        </ul>
-    </div>
+    <ul class="category-list">
+        <li th:each="category : ${categories}" class="list-group-item category-item dropdown">
+            <a href="#" class="dropdown-toggle" th:class="parentCategory" data-bs-toggle="dropdown" th:text="${category.name}" th:data-category-id="${category.categoryID}">카테고리 이름</a>
+            <ul th:if="${not #lists.isEmpty(category.children)}" class="dropdown-menu">
+        <li th:each="child : ${category.children}">
+            <a class="dropdown-item parentCategory" th:text="${child.name}" href="#" th:data-category-id="${child.categoryID}"></a>
+        </li>
+    </ul>
+    </li>
+    </ul>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('.category-item').click(function () {
-            const categoryId = $(this).data('category-id');
-            $('#collapse-' + categoryId).collapse('toggle');
-        });
 
-        $('.category-item').each(function () {
+        $('.parentCategory').on('click', function (e) {
             const categoryId = $(this).data('category-id');
-            $(this).on('click', function (e) {
-                e.stopPropagation();
-                $('#parentInput').val(categoryId);
-            });
+            console.log(categoryId);
+            $('#parentInput').val(categoryId);
         });
     });
 </script>
