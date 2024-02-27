@@ -29,7 +29,6 @@ public class NaverLoginService implements SocialOauth2Service{
         if (!"success".equals(attributes.get("message").toString())) {
             throw new OAuth2AuthenticationException("OAuth2 공급자로부터 사용자 정보를 성공적으로 가져오지 못했습니다.");
         }
-        System.out.println("expiredMs = " + expiredMs);
         // attributes에서 response를 추출하여 사용자 정보 설정
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
@@ -46,7 +45,9 @@ public class NaverLoginService implements SocialOauth2Service{
             userEntity.setPassword(UUID.randomUUID().toString());
             userRepository.save(userEntity);
         } else {
-            role = UserRole.fromRoleString(userOpt.get().getRole().toString()).toString();
+            String gettedRole = userOpt.get().getRole().toString();
+            UserRole userRole = UserRole.fromRoleString(gettedRole);
+            role = userRole.getDescription();
         }
         return jwtUtil.createJwt(response.get("id").toString(), role, Long.parseLong(expiredMs));
     }
