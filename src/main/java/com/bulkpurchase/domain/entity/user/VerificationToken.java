@@ -25,4 +25,14 @@ public class VerificationToken {
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(this.expiryDate);
     }
+
+    @Override
+    public String toString() {
+        return "VerificationToken{" +
+                "VerificationTokenID=" + VerificationTokenID +
+                ", token='" + token + '\'' +
+                ", expiryDate=" + expiryDate +
+                ", user=" + user +
+                '}';
+    }
 }

@@ -2,7 +2,7 @@ package com.bulkpurchase.web.controller.users;
 
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.UserService;
-import com.bulkpurchase.web.service.EmailService;
+import com.bulkpurchase.web.service.verification.EmailService;
 import com.bulkpurchase.web.validator.user.UserAuthValidator;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class UserVerificationController {
 
     @GetMapping("/result")
     public String verifyUser(@RequestParam("token") String token) {
-        if (userService.verifyToken(token)) {
+        if (emailService.verifyToken(token)) {
             return "verifyByEmail/verify_success";
         } else {
             return "verifyByEmail/verify_fail";
@@ -43,8 +43,7 @@ public class UserVerificationController {
     @GetMapping("/send")
     public String emailSend(Principal principal) throws MessagingException {
         User user = userAuthValidator.getCurrentUser(principal);
-        String verificationUrl = "test";
-        emailService.sendVerificationEmail("yjoa777@naver.com", user.getRealName(), verificationUrl);
+        emailService.sendVerificationEmail(user);
 
         return "redirect:/verify"; // 이메일 전송 후 리다이렉트할 페이지
     }

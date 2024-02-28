@@ -2,14 +2,18 @@ package com.bulkpurchase.domain.service.user;
 
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.user.VerificationToken;
+import com.bulkpurchase.domain.enums.UserStatus;
 import com.bulkpurchase.domain.repository.VerificationTokenRepository;
 import com.bulkpurchase.domain.repository.user.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -17,7 +21,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private VerificationTokenRepository verificationTokenRepository;
 
 
     public List<User> findAll() {
@@ -66,21 +69,5 @@ public class UserService {
         return userRepository.findAllOrderByUserID();
     }
 
-    public void createVerificationToken(User user, String token) {
-        VerificationToken myToken = new VerificationToken();
-        myToken.setUser(user);
-        myToken.setToken(token);
-        myToken.setExpiryDate(LocalDateTime.now().plusHours(24)); // 24시간 후 만료
-        verificationTokenRepository.save(myToken);
-    }
 
-    public boolean verifyToken(String token) {
-        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
-        if (verificationToken == null || verificationToken.isExpired()) {
-            return false;
-        }
-        User user = verificationToken.getUser();
-        // 사용자 인증 로직 (예: 사용자 상태 업데이트)
-        return true;
-    }
 }

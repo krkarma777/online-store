@@ -91,7 +91,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private UserStatus status = UserStatus.ACTIVE;
+    private UserStatus status = UserStatus.INACTIVE;
 
     @OneToMany(mappedBy = "user")
     private List<FavoriteProduct> favoriteProducts;
