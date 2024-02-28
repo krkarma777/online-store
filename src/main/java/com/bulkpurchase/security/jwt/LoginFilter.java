@@ -5,7 +5,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,9 +13,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
@@ -57,8 +58,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        // 아이디 비밀번호 불일치시 로직 구현
-        response.sendRedirect("/login");
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
+        String username = obtainUsername(request); // 로그인 시도한 사용자 이름 가져오기
+        String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8); // URL에 포함시키기 위해 인코딩
+
+        if (Objects.equals(exception.getMessage(), "이메일 인증이 필요합니다.")) {
+            // 이메일 인증이 필요한 경우의 로직
+            response.sendRedirect("/verify?username=" + encodedUsername); // 이메일 인증 페이지로 리디렉션
+        } else if (Objects.equals(exception.getMessage(), "차단된 사용자입니다.")) {
+            response.sendRedirect("/banned");
+        } else {
+            // 다른 종류의 인증 실패 처리
+            response.sendRedirect("/login?error=true"); // 기본 로그인 페이지로 리디렉션
+        }
     }
 }

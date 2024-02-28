@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.validator.user;
+package com.bulkpurchase.domain.validator.user;
 
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
@@ -27,6 +27,10 @@ public class UserAuthValidator {
 
     public User getCurrentUser(Principal principal) {
         return userService.findByUsername(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+    }
+    public User getCurrentUserByUsername(String username) {
+        return userService.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
     }
 

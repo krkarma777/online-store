@@ -2,7 +2,7 @@ package com.bulkpurchase.web.service.coupon;
 
 import com.bulkpurchase.domain.entity.coupon.Coupon;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.web.validator.coupon.CouponValidatorImpl;
+import com.bulkpurchase.domain.validator.coupon.CouponValidatorImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

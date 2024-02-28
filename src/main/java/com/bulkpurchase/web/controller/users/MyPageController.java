@@ -15,7 +15,7 @@ import com.bulkpurchase.domain.service.order.PaymentService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.user.FavoriteProductService;
 import com.bulkpurchase.domain.service.user.UserService;
-import com.bulkpurchase.web.validator.user.UserAuthValidator;
+import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

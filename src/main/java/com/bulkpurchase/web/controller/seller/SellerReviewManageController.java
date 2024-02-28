@@ -3,7 +3,7 @@ package com.bulkpurchase.web.controller.seller;
 import com.bulkpurchase.domain.dto.review.ReviewDetailDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.review.ReviewService;
-import com.bulkpurchase.web.validator.user.UserAuthValidator;
+import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

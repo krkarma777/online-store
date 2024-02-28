@@ -2,7 +2,7 @@ package com.bulkpurchase.web.controller.seller;
 
 import com.bulkpurchase.domain.dto.seller.SalesDataDTO;
 import com.bulkpurchase.domain.service.order.OrderService;
-import com.bulkpurchase.web.validator.user.UserAuthValidator;
+import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

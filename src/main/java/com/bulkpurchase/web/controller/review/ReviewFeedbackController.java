@@ -2,7 +2,7 @@ package com.bulkpurchase.web.controller.review;
 
 import com.bulkpurchase.domain.dto.user.FeedbackRequestDTO;
 import com.bulkpurchase.web.service.product.ProductFeedbackProcessService;
-import com.bulkpurchase.web.validator.user.UserAuthValidator;
+import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

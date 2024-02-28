@@ -2,7 +2,7 @@ package com.bulkpurchase.web.service.product;
 
 import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.service.product.ProductService;
-import com.bulkpurchase.web.validator.user.UserAuthValidator;
+import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

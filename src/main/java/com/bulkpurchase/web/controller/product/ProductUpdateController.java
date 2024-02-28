@@ -5,7 +5,7 @@ import com.bulkpurchase.domain.entity.product.UpdateCheck;
 import com.bulkpurchase.domain.enums.ErrorPage;
 import com.bulkpurchase.domain.enums.SalesRegion;
 import com.bulkpurchase.domain.service.product.ProductService;
-import com.bulkpurchase.web.validator.user.UserAuthValidator;
+import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

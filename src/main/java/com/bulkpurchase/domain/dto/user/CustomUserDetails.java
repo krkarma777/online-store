@@ -1,6 +1,7 @@
 package com.bulkpurchase.domain.dto.user;
 
 import com.bulkpurchase.domain.entity.user.User;
+import com.bulkpurchase.domain.enums.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -64,7 +65,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-
-        return true;
+        return this.user.getStatus() == UserStatus.ACTIVE;
     }
 }

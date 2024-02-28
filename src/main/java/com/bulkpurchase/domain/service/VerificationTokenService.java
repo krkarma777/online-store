@@ -2,11 +2,10 @@ package com.bulkpurchase.domain.service;
 
 import com.bulkpurchase.domain.entity.user.VerificationToken;
 import com.bulkpurchase.domain.repository.VerificationTokenRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +28,8 @@ public class VerificationTokenService {
         return verificationTokenRepository.findByToken(token);
     }
 
+    @Transactional
     public void delete(VerificationToken verificationToken) {
-        System.out.println("verificationToken = " + verificationToken.toString());
         verificationTokenRepository.delete(verificationToken);
     }
 
@@ -38,11 +37,4 @@ public class VerificationTokenService {
         return verificationTokenRepository.findAll();
     }
 
-    public void deleteExpiredTokens() {
-        List<VerificationToken> tokens = findAll();
-
-        tokens.stream()
-                .filter(VerificationToken::isExpired)
-                .forEach(this::delete);
-    }
 }

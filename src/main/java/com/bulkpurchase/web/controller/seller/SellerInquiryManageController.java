@@ -5,7 +5,7 @@ import com.bulkpurchase.domain.dto.product.ProductInquiryDTO;
 import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductInquiryService;
-import com.bulkpurchase.web.validator.user.UserAuthValidator;
+import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -3,16 +3,15 @@ package com.bulkpurchase.web.controller.users;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.UserService;
 import com.bulkpurchase.web.service.verification.EmailService;
-import com.bulkpurchase.web.validator.user.UserAuthValidator;
+import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,18 +32,22 @@ public class UserVerificationController {
     }
 
     @GetMapping
-    public String verifyForm(Model model, Principal principal) {
-        User user = userAuthValidator.getCurrentUser(principal);
-        model.addAttribute("username", user.getRealName());
-
+    public String verifyForm(@RequestParam("username") String username, Model model) {
+        User user = userAuthValidator.getCurrentUserByUsername(username);
+        model.addAttribute("user", user);
         return "verifyByEmail/verification_email";
     }
 
-    @GetMapping("/send")
-    public String emailSend(Principal principal) throws MessagingException {
-        User user = userAuthValidator.getCurrentUser(principal);
+    @PostMapping("/send")
+    public String emailSend(@RequestParam("username") String username, @RequestParam("email") String email) throws MessagingException {
+        User user = userAuthValidator.getCurrentUserByUsername(username);
+        String userEmailOrigin = user.getEmail();
+        if (!userEmailOrigin.equals(email)) {
+            user.setEmail(email);
+            userService.save(user);
+        }
         emailService.sendVerificationEmail(user);
 
-        return "redirect:/verify"; // 이메일 전송 후 리다이렉트할 페이지
+        return "redirect:/main"; // 이메일 전송 후 리다이렉트할 페이지
     }
 }

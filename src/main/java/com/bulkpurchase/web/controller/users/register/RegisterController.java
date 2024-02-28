@@ -3,7 +3,7 @@ package com.bulkpurchase.web.controller.users.register;
 import com.bulkpurchase.domain.entity.user.RegisterCheck;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.RegisterService;
-import com.bulkpurchase.web.validator.user.UserRegisterValidator;
+import com.bulkpurchase.domain.validator.user.UserRegisterValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

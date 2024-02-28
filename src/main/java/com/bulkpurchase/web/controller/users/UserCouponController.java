@@ -9,7 +9,7 @@ import com.bulkpurchase.domain.service.coupon.CouponApplicableProductService;
 import com.bulkpurchase.domain.service.coupon.CouponService;
 import com.bulkpurchase.domain.service.coupon.UserCouponService;
 import com.bulkpurchase.domain.service.product.ProductService;
-import com.bulkpurchase.web.validator.user.UserAuthValidator;
+import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
