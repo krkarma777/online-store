@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PayPal 샌드박스 테스트</title>
+    <script th:src="'https://www.paypal.com/sdk/js?client-id='+${paypalClientId}"></script>
+</head>
+<body>
+<h1>PayPal 결제 테스트</h1>
+
+<!-- PayPal 결제 버튼을 표시할 컨테이너 -->
+<div id="paypal-button-container"></div>
+
+<script>
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            // 결제 생성
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: '10.00' // 테스트 결제 금액
+                    }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            // 결제 승인
+            return actions.order.capture().then(function(details) {
+                alert('결제 완료: ' + details.payer.name.given_name);
+                // 여기서 결제 성공 처리 로직을 추가할 수 있습니다.
+            });
+        }
+    }).render('#paypal-button-container');
+</script>
+</body>
+</html>
