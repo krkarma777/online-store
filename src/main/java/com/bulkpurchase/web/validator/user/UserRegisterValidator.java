@@ -2,8 +2,8 @@ package com.bulkpurchase.web.validator.user;
 
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.UserService;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

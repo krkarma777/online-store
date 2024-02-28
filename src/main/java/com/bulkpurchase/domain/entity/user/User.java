@@ -99,6 +99,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<RewardPoint> rewardPoints = new HashSet<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private VerificationToken verificationToken;
+
     public UserStatus getOppositeStatus() {
         return this.status == UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE;
     }

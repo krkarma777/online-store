@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>이메일 인증</title>
+</head>
+<body>
+<h2>이메일 인증을 위한 메일입니다.</h2>
+<p>안녕하세요, <span th:text="${username}">사용자</span>님!</p>
+<p>회원가입을 완료하려면 아래의 링크를 클릭해 주세요:</p>
+<a href="/verify/send">이메일 인증하기</a>
+<p>이 링크는 24시간 동안 유효합니다.</p>
+</body>
+</html>
