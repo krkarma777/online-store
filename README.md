@@ -1,7 +1,7 @@
 <div align="center">
-# 프로젝트 이름
+프로젝트 이름
 
-Seed
+<h1>Seed</h1>
 
 ## 시작하기
 
