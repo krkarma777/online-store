@@ -1,4 +1,3 @@
-<div align="center">
 프로젝트 이름
 
 <h1>Seed</h1>
@@ -36,7 +35,7 @@ IntelliJ<br>
 ![image](https://github.com/krkarma777/online-store/assets/149022496/338d7250-707f-4c49-8c69-80cfcead3a94)
 
 
-## 주문 및 마이 페이지
+## 장바구니 및 주문
 ![image](https://github.com/krkarma777/online-store/assets/149022496/5d2f825f-8322-4059-a638-eb97f6c9a071)
 
 ![image](https://github.com/krkarma777/online-store/assets/149022496/0ec67ad5-0a34-4e83-b7de-08ade9f2fe22)
@@ -45,7 +44,11 @@ IntelliJ<br>
 ![image](https://github.com/krkarma777/online-store/assets/149022496/fc473698-03bc-4ae2-acb2-c8c82366d812)
 ![image](https://github.com/krkarma777/online-store/assets/149022496/c15f4b01-08ed-405b-8096-b6addd5712b5)
 
-![image](https://github.com/krkarma777/online-store/assets/149022496/260dc401-6fa7-45ed-a43b-ecaeb4fc21af)
+## 일반 회원 페이지
+![image](https://github.com/krkarma777/online-store/assets/149022496/cc0246f9-29db-4b05-bb19-61d92a6a14c3)
+![image](https://github.com/krkarma777/online-store/assets/149022496/af5ca1be-f490-474d-a51a-37a98387c2f5)
+![image](https://github.com/krkarma777/online-store/assets/149022496/15d299a7-f311-40ac-9bd6-79818b20030e)
+
 
 
 ## 판매자 페이지
@@ -71,6 +74,10 @@ IntelliJ<br>
 ## 관리자 페이지
 ![image](https://github.com/krkarma777/online-store/assets/149022496/2201887f-1553-41b6-a698-1a29e2aa6dfb)
 ![image](https://github.com/krkarma777/online-store/assets/149022496/060617aa-6654-4954-8c67-900a43777f5e)
+![image](https://github.com/krkarma777/online-store/assets/149022496/05b05f39-1b9d-4f04-95f0-03cf8a4df7a2)
+![image](https://github.com/krkarma777/online-store/assets/149022496/7802f79f-4e91-4270-a8f1-d8fb52030e3f)
+![image](https://github.com/krkarma777/online-store/assets/149022496/a41bbfa5-d0a5-4f80-8a5a-6fc0815ad09d)
+![image](https://github.com/krkarma777/online-store/assets/149022496/840bc554-6511-4a1d-9d4b-138390b5fbd6)
 
 ## 저자 및 기여자
 
