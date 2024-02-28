@@ -45,6 +45,3 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
-kotlin {
-    jvmToolchain(17)
-}
