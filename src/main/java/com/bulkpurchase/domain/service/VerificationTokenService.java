@@ -37,4 +37,8 @@ public class VerificationTokenService {
         return verificationTokenRepository.findAll();
     }
 
+    @Transactional
+    public void deleteByToken(String token) {
+        verificationTokenRepository.deleteByToken(token);
+    }
 }

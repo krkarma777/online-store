@@ -1,6 +1,7 @@
 package com.bulkpurchase.web.controller.users;
 
 import com.bulkpurchase.domain.entity.user.User;
+import com.bulkpurchase.domain.service.VerificationTokenService;
 import com.bulkpurchase.domain.service.user.UserService;
 import com.bulkpurchase.web.service.verification.EmailService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
@@ -21,10 +22,12 @@ public class UserVerificationController {
     private final UserService userService;
     private final UserAuthValidator userAuthValidator;
     private final EmailService emailService;
+    private final VerificationTokenService verificationTokenService;
 
     @GetMapping("/result")
     public String verifyUser(@RequestParam("token") String token) {
         if (emailService.verifyToken(token)) {
+            verificationTokenService.deleteByToken(token);
             return "verifyByEmail/verify_success";
         } else {
             return "verifyByEmail/verify_fail";
