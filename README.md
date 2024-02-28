@@ -27,7 +27,7 @@ IntelliJ<br>
 ## 상품 목록 페이지
 ![image](https://github.com/krkarma777/online-store/assets/149022496/20395bb3-270a-421e-8aad-cd26abda6ae8)
 ![image](https://github.com/krkarma777/online-store/assets/149022496/d7f4a12c-c067-463b-b086-dd862554d2d6)
-![image](https://github.com/krkarma777/online-store/assets/149022496/9167696c-9ec9-4d0f-90a8-59f4145dffb0)
+
 
 ## 상품 상세 페이지
 ![image](https://github.com/krkarma777/online-store/assets/149022496/a7d5c8b3-849a-45cb-a96e-bc36b9f5d0f2)
