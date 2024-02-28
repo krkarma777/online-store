@@ -79,9 +79,7 @@ public class EmailService {
     }
 
     public boolean verifyToken(String token) {
-        VerificationToken verificationToken = verificationTokenService.findByToken(token)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "토큰을 찾을 수 없습니다."));
-
+        VerificationToken verificationToken = verificationTokenService.findByToken(token).orElse(null);
         if (verificationToken == null || verificationToken.isExpired()) {
             return false;
         }
