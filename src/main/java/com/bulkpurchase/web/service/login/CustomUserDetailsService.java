@@ -1,5 +1,6 @@
 package com.bulkpurchase.web.service.login;
 
+import com.bulkpurchase.domain.dto.user.CustomUserDetails;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.UserRole;
 import com.bulkpurchase.domain.enums.UserStatus;
@@ -33,8 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UserLoginAuthenticatedException("차단된 사용자입니다.");
         }
 
-
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), mapRolesToAuthorities(user.getRole()));
+        return new CustomUserDetails(user);
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(UserRole role) {
