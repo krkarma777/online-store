@@ -19,6 +19,7 @@ Kakao OAuth2 프로바이더 설정<br>
 kakao OAuth 설정<br>
 paypal.client.id설정<br>
 kakao js open api 시크릿 키 설정<br>
+kakao 로그인 naver 로그인 시크릿 키 설정<br>
 ## 기능과 스크린샷
 
 ## 회원가입 & 로그인
