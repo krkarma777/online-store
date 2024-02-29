@@ -63,11 +63,9 @@
 
         .floating-buttons {
             position: fixed;
-            right: 550px; /* 조정값 */
+            right: 50px; /* 조정값 */
             top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
+            transform: translateY(-80%); /* 세로 중앙 정렬 */
         }
 
         .floating-buttons button {
@@ -105,11 +103,11 @@
 <div class="container custom-container">
     <div class="action-bar">
         <div class="sorting-buttons">
-            <button class="btn btn-modern">랭킹순</button>
-            <button class="btn btn-modern">낮은 가격순</button>
-            <button class="btn btn-modern">높은 가격순</button>
-            <button class="btn btn-modern">판매량순</button>
-            <button class="btn btn-modern">최신순</button>
+            <button class="btn btn-modern">랭킹순(구현중)</button>
+            <a href="#" class="btn btn-modern" th:href="@{/product/search(q=${q}, p=${page}, sortField='price', sortDir='asc')}">낮은 가격순</a>
+            <a href="#" class="btn btn-modern" th:href="@{/product/search(q=${q}, p=${page}, sortField='price', sortDir='desc')}">높은 가격순</a>
+            <a href="#" class="btn btn-modern" th:href="@{/product/search(q=${q}, p=${page}, sortField='salesVolume', sortDir='desc')}">판매량순</a>
+            <a href="#" class="btn btn-modern" th:href="@{/product/search(q=${q}, p=${page}, sortField='productID', sortDir='desc')}">최신순</a>
         </div>
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -151,15 +149,15 @@
     <nav aria-label="Page navigation example" class="d-flex justify-content-center">
         <ul class="pagination">
             <li class="page-item" th:classappend="${page == 1} ? 'disabled' : ''">
-                <a class="page-link" th:href="@{/product/search(q=${q}, p=${page - 1})}" aria-label="Previous">
+                <a class="page-link" th:href="@{/product/search(q=${q}, p=${page - 1}, sortField=${sortField}, sortDir=${sortDir})}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             <li th:each="pageNum : ${#numbers.sequence(1, totalPages)}" class="page-item" th:classappend="${pageNum == page} ? 'active' : ''">
-                <a class="page-link" th:href="@{/product/search(q=${q}, p=${pageNum})}" th:text="${pageNum}">1</a>
+                <a class="page-link" th:href="@{/product/search(q=${q}, p=${pageNum}, sortField=${sortField}, sortDir=${sortDir})}" th:text="${pageNum}">1</a>
             </li>
             <li class="page-item" th:classappend="${page == totalPages} ? 'disabled' : ''">
-                <a class="page-link" th:href="@{/product/search(q=${q}, p=${page + 1})}" aria-label="Next">
+                <a class="page-link" th:href="@{/product/search(q=${q}, p=${page + 1}, sortField=${sortField}, sortDir=${sortDir})}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>

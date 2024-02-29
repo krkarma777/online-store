@@ -1,5 +1,6 @@
 package com.bulkpurchase.domain.repository.product;
 
+import com.bulkpurchase.domain.dto.product.ProductForSalesVolumeSortDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.enums.ProductStatus;
@@ -45,4 +46,18 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p ORDER BY p.productID desc ")
     List<Product> findAllProducts();
+
+    @Query(value = "SELECT new com.bulkpurchase.domain.dto.product.ProductForSalesVolumeSortDTO" +
+            "(p.productID, p.productName, p.price, p.stock, p.user.username, p.imageUrls,SUM(od.quantity) , p.user)" +
+            "FROM OrderDetail od JOIN od.product p " +
+            "WHERE p.productName LIKE %:productName% " +
+            "GROUP BY p.productID, p.productName, p.price, p.stock, p.user.username,  p.imageUrls,od.order, p.user " +
+            "ORDER BY SUM(od.quantity) DESC",
+            countQuery = "SELECT COUNT(DISTINCT p.productID) " +
+                    "FROM OrderDetail od JOIN od.product p " +
+                    "WHERE p.productName LIKE %:productName%",
+            nativeQuery = false)
+    Page<ProductForSalesVolumeSortDTO> findByProductNameContainingAndOrderBySalesVolume(@Param("productName") String productName, Pageable pageable);
+
+
 }

@@ -1,6 +1,7 @@
 package com.bulkpurchase.domain.service.product;
 
 import com.bulkpurchase.domain.dto.product.ProductForCouponDTO;
+import com.bulkpurchase.domain.dto.product.ProductForSalesVolumeSortDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import lombok.RequiredArgsConstructor;
@@ -79,5 +80,9 @@ public class ProductService {
 
     public Page<Product> findPageByProductNameContaining(Pageable pageable, String productName) {
         return  productRepository.findByProductNameContaining(pageable, productName);
+    }
+
+    public Page<ProductForSalesVolumeSortDTO> findProductsBySearchTermAndSortBySalesVolume(String productName, Pageable pageable) {
+        return productRepository.findByProductNameContainingAndOrderBySalesVolume(productName, pageable);
     }
 }
