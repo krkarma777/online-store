@@ -43,6 +43,7 @@ IntelliJ<br>
 
 ## 장바구니 및 주문
 ![image](https://github.com/krkarma777/online-store/assets/149022496/5d2f825f-8322-4059-a638-eb97f6c9a071)
+![image](https://github.com/krkarma777/online-store/assets/149022496/52696a1a-64fc-45c9-b736-6086b95d6fe1)
 
 ![image](https://github.com/krkarma777/online-store/assets/149022496/0ec67ad5-0a34-4e83-b7de-08ade9f2fe22)
 ![image](https://github.com/krkarma777/online-store/assets/149022496/e5fd91de-b8e5-4aad-9736-44bb1ec72375)
