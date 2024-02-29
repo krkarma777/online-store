@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 public class KakaoPayService {
 
     static final String cid = "TC0ONETIME"; // 가맹점 테스트 코드
-    static final String admin_Key = "${ADMIN_KEY}"; // 애플리케이션의 어드민 키
+    static final String admin_Key = "${}"; // 애플리케이션의 어드민 키
     private KakaoReadyResponse kakaoReady;
 
     public KakaoReadyResponse kakaoPayReady() {
@@ -33,9 +33,9 @@ public class KakaoPayService {
         parameters.add("total_amount", "총 금액");
         parameters.add("vat_amount", "부가세");
         parameters.add("tax_free_amount", "상품 비과세 금액");
-        parameters.add("approval_url", "http://localhost:8080/payment/success"); // 성공 시 redirect url
-        parameters.add("cancel_url", "http://localhost:8080/payment/cancel"); // 취소 시 redirect url
-        parameters.add("fail_url", "http://localhost:8080/payment/fail"); // 실패 시 redirect url
+        parameters.add("approval_url", "http://localhost:9090/payment/success"); // 성공 시 redirect url
+        parameters.add("cancel_url", "http://localhost:9090/payment/cancel"); // 취소 시 redirect url
+        parameters.add("fail_url", "http://localhost:9090/payment/fail"); // 실패 시 redirect url
 
         // 파라미터, 헤더
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
