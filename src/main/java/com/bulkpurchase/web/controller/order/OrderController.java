@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,8 @@ public class OrderController {
     private final OrderDetailService orderDetailService;
     private final PaymentService paymentService;
     private final UserAuthValidator userAuthValidator;
+    @Value("${paypal.client.id}")
+    private String paypalClientId;
 
     @PostMapping("/item/one")
     public String oneItemOrder(@RequestParam("productID") Long productID,
@@ -51,6 +54,8 @@ public class OrderController {
 
         buyItems.add(cartItem);
         model.addAttribute("items", buyItems);
+
+        model.addAttribute("paypalClientId", paypalClientId);
         return "order/orderForm";
     }
 
@@ -77,6 +82,8 @@ public class OrderController {
         }
         cart.setItems(items);
         cartService.save(cart);
+
+        model.addAttribute("paypalClientId", paypalClientId);
 
         model.addAttribute("items", buyItems);
         return "order/orderForm";

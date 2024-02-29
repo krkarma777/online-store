@@ -4,16 +4,13 @@
     <title>주문 페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script th:src="'https://www.paypal.com/sdk/js?client-id='+${paypalClientId}"></script>
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
         body {
             padding-top: 60px;
             font-family: 'Noto Sans KR', sans-serif;
             background-color: #f8f9fa;
-        }
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
         }
         .table {
             border-radius: 10px;
@@ -37,6 +34,14 @@
             background-color: #0056b3;
             border-color: #0056b3;
         }
+        #paypal-payment-section {
+            margin-top: 40px;
+            text-align: center; /* PayPal 버튼을 중앙 정렬합니다 */
+            display: flex;
+            justify-content: center; /* 가로 방향으로 중앙 정렬 */
+            align-items: center; /* 세로 방향으로 중앙 정렬 (필요한 경우) */
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -44,7 +49,7 @@
 <div class="container mt-4">
     <h2 class="mb-3">제품 주문</h2>
 
-    <form th:action="@{/order}" method="post">
+    <form th:action="@{/order}" method="post" id="orderForm">
         <div class="table-responsive">
             <table class="table">
                 <thead>
@@ -82,6 +87,14 @@
                 <option value="Kakao Pay">카카오페이</option>
                 <option value="Bank Transfer">무통장입금</option>
             </select>
+            <input type="hidden" name="paymentResult">
+            <div>
+                <div id="paypal-payment-section" >
+                    <!-- PayPal 결제 버튼을 표시할 컨테이너 -->
+                    <div id="paypal-button-container"></div>
+                </div>
+            </div>
+            <input type="hidden" name="paymentResult" id="paymentResult" value="">
         </div>
         <!-- 총 가격을 저장할 hidden input, 폼 제출 시 사용 -->
         <input type="hidden" name="totalPrice" id="hiddenTotalPrice" value="0">
@@ -89,9 +102,9 @@
     </form>
 </div>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         // 수량 입력 필드 변경 시 총 가격 재계산
-        $('input[type="number"][name="quantity"]').on("change", function() {
+        $('input[type="number"][name="quantity"]').on("change", function () {
             calculateTotalPrice();
         });
 
@@ -100,7 +113,7 @@
 
         function calculateTotalPrice() {
             let totalPrice = 0;
-            $('tbody tr').each(function() {
+            $('tbody tr').each(function () {
                 const price = parseFloat($(this).find('td[data-price]').data('price'));
                 const quantity = parseInt($(this).find('input[type="number"]').val()) || 0;
                 totalPrice += price * quantity;
@@ -110,7 +123,38 @@
             $("#totalPrice").text(totalPrice.toLocaleString());
             $("#hiddenTotalPrice").val(totalPrice);
         }
+
+        $("#orderForm").submit(function (e) {
+            // "무통장입금"이 아닌 결제 방식 선택 시
+            if ($("#paymentMethod").val() !== "Bank Transfer" && $("#paymentResult").val() !== "success") {
+                // 폼 제출을 막고 경고 메시지 표시
+                e.preventDefault();
+                alert("결제가 필요합니다.");
+                return false;
+            }
+        });
     });
+
+    paypal.Buttons({
+        createOrder: function (data, actions) {
+            // 결제 생성
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: '10.00' // 테스트 결제 금액
+                    }
+                }]
+            });
+        },
+        onApprove: function (data, actions) {
+            // 결제 승인
+            return actions.order.capture().then(function (details) {
+                alert('결제 완료: ' + details.payer.name.given_name);
+                document.getElementById("paymentResult").value = "success";
+                document.getElementById("orderForm").submit();
+            });
+        }
+    }).render('#paypal-button-container');
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>

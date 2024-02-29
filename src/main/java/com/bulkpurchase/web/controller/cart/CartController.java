@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.order;
+package com.bulkpurchase.web.controller.cart;
 
 import com.bulkpurchase.domain.entity.cart.Cart;
 import com.bulkpurchase.domain.entity.cart.CartItem;

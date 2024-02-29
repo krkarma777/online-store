@@ -14,6 +14,6 @@ public class PaymentController {
     @GetMapping("/paypal-test")
     public String paypalTest(Model model) {
         model.addAttribute("paypalClientId", paypalClientId);
-        return "paymentGateway/paypal-test";
+        return "order/paymentGateway/paypal-test";
     }
 }
