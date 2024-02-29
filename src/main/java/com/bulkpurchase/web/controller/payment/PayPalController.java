@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class PaymentController {
+public class PayPalController {
 
     @Value("${paypal.client.id}")
     private String paypalClientId;

@@ -9,7 +9,6 @@ public class UserLoginAuthenticatedException extends AuthenticationException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-
     public UserLoginAuthenticatedException(String message) {
         super(message);
     }
