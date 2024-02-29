@@ -34,13 +34,13 @@
             background-color: #0056b3;
             border-color: #0056b3;
         }
-        #paypal-payment-section {
-            margin-top: 40px;
-            text-align: center; /* PayPal 버튼을 중앙 정렬합니다 */
+        .payment-section {
             display: flex;
-            justify-content: center; /* 가로 방향으로 중앙 정렬 */
-            align-items: center; /* 세로 방향으로 중앙 정렬 (필요한 경우) */
-            width: 100%;
+            justify-content: center;
+        }
+        /* PayPal 버튼을 감싸는 컨테이너에 대한 스타일 */
+        #paypal-button-container {
+            min-width: 500px; /* PayPal 버튼의 최소 너비를 지정 */
         }
     </style>
 </head>
@@ -88,12 +88,9 @@
                 <option value="Bank Transfer">무통장입금</option>
             </select>
             <input type="hidden" name="paymentResult">
-            <div>
-                <div id="paypal-payment-section" >
-                    <!-- PayPal 결제 버튼을 표시할 컨테이너 -->
-                    <div id="paypal-button-container"></div>
-                </div>
-            </div>
+        </div>
+        <div class="payment-section">
+            <div id="paypal-button-container"></div>
             <input type="hidden" name="paymentResult" id="paymentResult" value="">
         </div>
         <!-- 총 가격을 저장할 hidden input, 폼 제출 시 사용 -->
@@ -136,6 +133,13 @@
     });
 
     paypal.Buttons({
+        style: {
+            layout: 'vertical', // or 'horizontal'
+            color: 'gold', // or 'gold', 'blue', 'silver', 'white', 'black'
+            shape: 'rect', // or 'pill'
+            label: 'paypal', // or 'checkout', 'buynow', 'pay'
+            size: 'responsive', // or 'small', 'medium', 'large', 'responsive' for automatic resizing
+        },
         createOrder: function (data, actions) {
             // 결제 생성
             return actions.order.create({
