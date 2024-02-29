@@ -13,7 +13,13 @@
 JDK 17<br>
 Oracle DB 19C<br>
 IntelliJ<br>
-
+Naver OAuth2 프로바이더 설정<br>
+Naver OAuth 설정<br>
+Kakao OAuth2 프로바이더 설정<br>
+kakao OAuth 설정<br>
+paypal.client.id설정<br>
+kakao js open api 시크릿 키 설정<br>
+kakao 로그인 naver 로그인 시크릿 키 설정<br>
 ## 기능과 스크린샷
 
 ## 회원가입 & 로그인
@@ -43,6 +49,7 @@ IntelliJ<br>
 
 ## 장바구니 및 주문
 ![image](https://github.com/krkarma777/online-store/assets/149022496/5d2f825f-8322-4059-a638-eb97f6c9a071)
+![image](https://github.com/krkarma777/online-store/assets/149022496/52696a1a-64fc-45c9-b736-6086b95d6fe1)
 
 ![image](https://github.com/krkarma777/online-store/assets/149022496/0ec67ad5-0a34-4e83-b7de-08ade9f2fe22)
 ![image](https://github.com/krkarma777/online-store/assets/149022496/e5fd91de-b8e5-4aad-9736-44bb1ec72375)
