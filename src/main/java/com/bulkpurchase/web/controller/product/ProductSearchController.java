@@ -13,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class ProductSearchController {
@@ -36,20 +38,17 @@ public class ProductSearchController {
         if (sortDir == null) {
             sortDir = "desc";
         }
-        if (productName == null) {
-            return "redirect:/";
-        }
-
-
         if (sortField == null) {
             sortField = "productID";
         }
-
+        if (productName == null) {
+            return "redirect:/";
+        }
         if (sortField.equals("salesVolume")) {
-            Page<ProductForSalesVolumeSortDTO> productPage = productService.findProductsBySearchTermAndSortBySalesVolume(productName, PageRequest.of(page - 1, size));
+            Page<ProductForSalesVolumeSortDTO> initialProductsPage = productService.findProductsBySalesVolume(productName, PageRequest.of(page - 1, size));
+            List<ProductForSalesVolumeSortDTO> productPage = productService.completeProductDTOs(initialProductsPage.getContent());
             model.addAttribute("productPage", productPage);
-            model.addAttribute("totalPages", productPage.getTotalPages());
-            System.out.println("productPage = " + productPage);
+            model.addAttribute("totalPages", initialProductsPage.getTotalPages());
         } else {
             Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortField);
             Pageable pageable = PageRequest.of(page-1, size, sort);
@@ -64,4 +63,5 @@ public class ProductSearchController {
         model.addAttribute("sortDir", sortDir);
         return "product/productSearchView";
     }
+
 }
