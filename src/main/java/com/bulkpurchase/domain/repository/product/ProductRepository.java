@@ -48,10 +48,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllProducts();
 
     @Query(value = "SELECT new com.bulkpurchase.domain.dto.product.ProductForSalesVolumeSortDTO" +
-            "(p.productID, p.productName, p.price, p.stock, p.user.username, p.imageUrls,SUM(od.quantity) , p.user)" +
+            "(p.productID, p.productName, p.price, p.stock, p.user.username,SUM(od.quantity) , p.user)" +
             "FROM OrderDetail od JOIN od.product p " +
             "WHERE p.productName LIKE %:productName% " +
-            "GROUP BY p.productID, p.productName, p.price, p.stock, p.user.username,  p.imageUrls,od.order, p.user " +
+            "GROUP BY p.productID, p.productName, p.price, p.stock, p.user.username,od.order, p.user " +
             "ORDER BY SUM(od.quantity) DESC",
             countQuery = "SELECT COUNT(DISTINCT p.productID) " +
                     "FROM OrderDetail od JOIN od.product p " +
