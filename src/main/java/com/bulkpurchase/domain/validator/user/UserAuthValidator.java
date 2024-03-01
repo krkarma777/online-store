@@ -5,6 +5,7 @@ import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class UserAuthValidator {
 
     private final UserService userService;
@@ -26,6 +28,9 @@ public class UserAuthValidator {
     }
 
     public User getCurrentUser(Principal principal) {
+        log.info("principle= [{}]", principal);
+        log.info("principal.getName()= [{}]", principal.getName());
+
         return userService.findByUsername(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
     }
