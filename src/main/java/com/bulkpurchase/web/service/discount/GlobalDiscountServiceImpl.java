@@ -19,7 +19,7 @@ public class GlobalDiscountServiceImpl implements GlobalDiscountService{
     @Override
     public Double globalDiscount(GlobalDiscountModel globalDiscountModel, Double totalPrice) {
 
-        if (globalDiscountValidator.isGlobalDiscountValid(globalDiscountModel)) {
+        if (!globalDiscountValidator.isGlobalDiscountValid(globalDiscountModel)) {
             return totalPrice; // 유효기간 만료
         }
 
