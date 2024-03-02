@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class GlobalDiscountServiceImpl implements GlobalDiscountService{
+public class GlobalDiscountWebServiceImpl implements GlobalDiscountWebService {
 
     private final GlobalAmountDiscountPolicy globalAmountDiscountPolicy;
     private final GlobalPercentageDiscountPolicy globalPercentageDiscountPolicy;
