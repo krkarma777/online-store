@@ -57,6 +57,7 @@
                     <th>제품명</th>
                     <th>가격</th>
                     <th>수량 선택</th>
+                    <th>쿠폰 선택</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -71,6 +72,12 @@
                     <td>
                         <input type="hidden" th:name="'product_' + ${itemStat.index}" th:value="${item.product.productID}">
                     </td>
+                    <!-- 쿠폰 선택 버튼 추가 -->
+                    <td>
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#couponModal"
+                                th:data-productid="${item.product.productID}" th:data-totalprice="${item.product.price * item.quantity}">쿠폰 선택</button>
+                    </td>
+
                 </tr>
                 </tbody>
             </table>
@@ -98,8 +105,65 @@
         <button type="submit" class="btn btn-primary">주문하기</button>
     </form>
 </div>
+<!-- 모달 컴포넌트 추가 -->
+<div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="couponModalLabel">사용 가능한 쿠폰</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 쿠폰 목록 표시 -->
+                <ul id="couponList" class="list-group">
+                    <!-- 여기에 AJAX를 통해 받아온 쿠폰 목록을 동적으로 추가 -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" id="applyCoupon">적용</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     $(document).ready(function () {
+
+        // 쿠폰 모달을 열었을 때의 이벤트 핸들러
+        $('#couponModal').on('show.bs.modal', function (e) {
+            var button = $(e.relatedTarget); // 모달을 트리거한 버튼
+            var productID = button.data('productid'); // 버튼의 data-productId 속성 값
+            var totalPrice = button.data('totalprice'); // 버튼의 data-totalPrice 속성 값
+
+            $.ajax({
+                url: '/find/coupon', // 쿠폰 정보를 조회할 서버의 URL
+                method: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    productID: productID,
+                    totalPrice: totalPrice
+                }),
+                success: function(couponList) {
+                    var couponListHtml = '';
+                    $.each(couponList, function(i, coupon) {
+                        couponListHtml += '<li class="list-group-item">' + coupon.name + ' - 설명: ' + coupon.description + '</li>';
+                    });
+                    $('#couponList').html(couponListHtml);
+                },
+                error: function() {
+                    alert('쿠폰 정보를 가져오는데 실패했습니다.');
+                }
+            });
+        });
+
+        // 쿠폰 선택 버튼 클릭 이벤트 핸들러
+        $("#applyCoupon").click(function () {
+            // 선택된 쿠폰 정보를 가져와서 총 가격에 적용하는 로직 구현
+            // 예시: 선택된 쿠폰의 할인 금액을 총 가격에서 차감
+            // 쿠폰 목록을 AJAX로 받아와서 #couponList에 추가하는 로직도 필요
+            // 이 부분은 서버에서 쿠폰 데이터를 받아와야 하므로 서버와의 통신 코드 필요
+        });
+
         // 수량 입력 필드 변경 시 총 가격 재계산
         $('input[type="number"][name="quantity"]').on("change", function () {
             calculateTotalPrice();
