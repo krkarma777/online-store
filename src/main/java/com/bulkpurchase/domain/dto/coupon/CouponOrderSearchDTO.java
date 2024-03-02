@@ -11,8 +11,9 @@ import java.time.LocalDateTime;
 @Setter
 public class CouponOrderSearchDTO {
 
+    private Long couponID;
     private String name;
-    private String description; // 쿠폰 설명
+    private String description;
     private CouponType type;
     private Double discount;
     private Double minimumOrderAmount;
@@ -20,6 +21,7 @@ public class CouponOrderSearchDTO {
     private LocalDateTime validUntil;
 
     public CouponOrderSearchDTO(Coupon coupon) {
+        this.couponID = coupon.getCouponID();
         this.name = coupon.getName();
         this.description = coupon.getDescription();
         this.type = coupon.getType();

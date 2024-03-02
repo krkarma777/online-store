@@ -42,6 +42,17 @@
         #paypal-button-container {
             min-width: 500px; /* PayPal 버튼의 최소 너비를 지정 */
         }
+
+        .selected {
+            background-color: #007bff; /* Bootstrap의 기본 파란색 */
+            color: white; /* 텍스트 색상을 흰색으로 */
+            font-weight: bold; /* 글자를 굵게 */
+            border: 2px solid #0056b3; /* 좀 더 진한 파란색 테두리 */
+            border-radius: 5px; /* 모서리를 둥글게 */
+            margin-bottom: 5px; /* 항목 사이의 간격 */
+            cursor: pointer; /* 마우스 오버 시 커서 변경 */
+        }
+
     </style>
 </head>
 <body>
@@ -81,6 +92,10 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+        <!-- 쿠폰 적용 정보 표시 -->
+        <div id="appliedCouponInfo" class="alert alert-success" style="display: none;">
+            적용된 쿠폰: <span id="appliedCouponName"></span>
         </div>
         <!-- 총 가격 표시 -->
         <div class="total-price">
@@ -135,6 +150,13 @@
             var productID = button.data('productid'); // 버튼의 data-productId 속성 값
             var totalPrice = button.data('totalprice'); // 버튼의 data-totalPrice 속성 값
 
+            // selectedCoupon 객체를 초기화합니다.
+            window.selectedCoupon = {
+                couponId: null,
+                productID: productID,
+                totalPrice: totalPrice
+            };
+
             $.ajax({
                 url: '/find/coupon', // 쿠폰 정보를 조회할 서버의 URL
                 method: 'POST',
@@ -146,7 +168,11 @@
                 success: function(couponList) {
                     var couponListHtml = '';
                     $.each(couponList, function(i, coupon) {
-                        couponListHtml += '<li class="list-group-item">' + coupon.name + ' - 설명: ' + coupon.description + '</li>';
+                        couponListHtml += '<li class="list-group-item coupon-item" ' +
+                            'data-couponid="'+ coupon.couponID +'" ' +
+                            'data-totalPrice="'+ totalPrice +'" '+
+                            'data-productID="'+ productID + '" '+
+                            '>' + coupon.name + ' - 설명: ' + coupon.description + '</li>';
                     });
                     $('#couponList').html(couponListHtml);
                 },
@@ -156,12 +182,44 @@
             });
         });
 
-        // 쿠폰 선택 버튼 클릭 이벤트 핸들러
+        $(document).on('click', '.coupon-item', function () {
+            $('.coupon-item').removeClass('selected'); // 기존 선택된 항목의 선택 해제
+            $(this).addClass('selected'); // 현재 항목 선택 표시
+            // 선택된 쿠폰 정보 업데이트
+            selectedCoupon.couponId = $(this).data('couponid');
+        });
+
         $("#applyCoupon").click(function () {
-            // 선택된 쿠폰 정보를 가져와서 총 가격에 적용하는 로직 구현
-            // 예시: 선택된 쿠폰의 할인 금액을 총 가격에서 차감
-            // 쿠폰 목록을 AJAX로 받아와서 #couponList에 추가하는 로직도 필요
-            // 이 부분은 서버에서 쿠폰 데이터를 받아와야 하므로 서버와의 통신 코드 필요
+            // 선택된 쿠폰과 제품 ID, 현재 총 가격 정보를 가져옴
+            let couponId = selectedCoupon.couponId;
+            let productId = selectedCoupon.productID;
+            let totalPrice = selectedCoupon.totalPrice;
+
+            // 서버에 쿠폰 적용 요청을 보냄
+            $.ajax({
+                url: '/apply/coupon',
+                method: 'POST',
+                data: {
+                    productID: productId,
+                    couponID: couponId,
+                    totalPrice: totalPrice
+                },
+                success: function(applyPrice) {
+                    // 성공적으로 쿠폰이 적용된 최종 가격을 화면에 표시
+                    $("#totalPrice").text(applyPrice.toLocaleString());
+                    $("#hiddenTotalPrice").val(applyPrice); // hidden input에 최종 가격 업데이트
+
+                    // 쿠폰 적용 정보를 업데이트하고 표시합니다.
+                    var selectedCouponName = $('.coupon-item.selected').text();
+                    $("#appliedCouponName").text(selectedCouponName);
+                    $("#appliedCouponInfo").show();
+
+                    $('#couponModal').modal('hide'); // 쿠폰 모달 닫기
+                },
+                error: function() {
+                    alert('쿠폰 적용에 실패했습니다.');
+                }
+            });
         });
 
         // 수량 입력 필드 변경 시 총 가격 재계산
