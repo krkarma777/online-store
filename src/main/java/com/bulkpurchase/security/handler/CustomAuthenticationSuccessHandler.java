@@ -2,8 +2,6 @@ package com.bulkpurchase.security.handler;
 
 import com.bulkpurchase.domain.dto.user.oauth2.KakaoOAuth2User;
 import com.bulkpurchase.domain.dto.user.oauth2.NaverOAuth2User;
-import com.bulkpurchase.domain.enums.UserRole;
-import com.bulkpurchase.security.jwt.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
