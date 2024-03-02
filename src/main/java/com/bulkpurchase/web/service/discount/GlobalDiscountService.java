@@ -1,8 +1,8 @@
 package com.bulkpurchase.web.service.discount;
 
-import com.bulkpurchase.domain.dto.discount.GlobalDiscountModel;
+import com.bulkpurchase.domain.entity.discount.GlobalDiscount;
 
 public interface GlobalDiscountService {
 
-    Double globalDiscount(GlobalDiscountModel globalDiscountModel, Double totalprice);
+    Double globalDiscount(GlobalDiscount globalDiscount, Double totalprice);
 }

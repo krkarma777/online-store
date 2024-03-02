@@ -1,76 +1,79 @@
 package com.bulkpurchase.web.service.discount;
 
-import com.bulkpurchase.domain.dto.discount.GlobalDiscountModel;
+import com.bulkpurchase.domain.entity.discount.GlobalDiscount;
 import com.bulkpurchase.domain.enums.DiscountType;
 import com.bulkpurchase.web.policy.discount.GlobalAmountDiscountPolicy;
 import com.bulkpurchase.web.policy.discount.GlobalPercentageDiscountPolicy;
 import com.bulkpurchase.web.validator.discount.GlobalDiscountValidator;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
 public class GlobalDiscountServiceTest {
 
-    @Mock
+    @Autowired
     private GlobalAmountDiscountPolicy globalAmountDiscountPolicy;
 
-    @Mock
+    @Autowired
     private GlobalPercentageDiscountPolicy globalPercentageDiscountPolicy;
 
-    @Mock
+    @Autowired
     private GlobalDiscountValidator globalDiscountValidator;
 
-    @InjectMocks
+    @Autowired
     private GlobalDiscountServiceImpl globalDiscountService;
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     public void testPercentageDiscount() {
-        GlobalDiscountModel discountModel = new GlobalDiscountModel();
-        discountModel.setDiscountType(DiscountType.PERCENTAGE_DISCOUNT);
-        discountModel.setDiscount(10.0); // 10% discount
+        GlobalDiscount globalDiscount = new GlobalDiscount();
+        globalDiscount.setDiscountType(DiscountType.PERCENTAGE_DISCOUNT);
+        globalDiscount.setValidFrom(LocalDateTime.now().minusDays(2));
+        globalDiscount.setValidUntil(LocalDateTime.now().plusDays(1));
+        globalDiscount.setIsActive(true);
+        globalDiscount.setDiscount(10.0); // 10%
+        globalDiscount.setMinimumOrderAmount(20.0);
+        globalDiscount.setMaxDiscountAmount(20.0);
 
-        when(globalPercentageDiscountPolicy.discount(discountModel, 100.0)).thenReturn(90.0);
-
-        Double finalPrice = globalDiscountService.globalDiscount(discountModel, 100.0);
-
-        assertEquals(90.0, finalPrice);
+        Double finalPrice = globalDiscountService.globalDiscount(globalDiscount, 100.0);
+        assertThat(finalPrice).isEqualTo(90.0);
     }
 
     @Test
     public void testAmountDiscount() {
-        GlobalDiscountModel discountModel = new GlobalDiscountModel();
-        discountModel.setDiscountType(DiscountType.AMOUNT_DISCOUNT);
-        discountModel.setDiscount(20.0); // $20 discount
+        GlobalDiscount globalDiscount = new GlobalDiscount();
+        globalDiscount.setDiscountType(DiscountType.AMOUNT_DISCOUNT);
+        globalDiscount.setValidFrom(LocalDateTime.now().minusDays(2));
+        globalDiscount.setValidUntil(LocalDateTime.now().plusDays(1));
+        globalDiscount.setIsActive(true);
+        globalDiscount.setDiscount(20.0);
+        globalDiscount.setMinimumOrderAmount(20.0);
+        globalDiscount.setMaxDiscountAmount(20.0);
 
-        when(globalAmountDiscountPolicy.discount(discountModel, 100.0)).thenReturn(80.0);
+        Double finalPrice = globalDiscountService.globalDiscount(globalDiscount, 100.0);
 
-        Double finalPrice = globalDiscountService.globalDiscount(discountModel, 100.0);
-
-        assertEquals(80.0, finalPrice);
+        assertThat(finalPrice).isEqualTo(80.0);
     }
 
     @Test
     public void testInvalidDiscount() {
-        GlobalDiscountModel discountModel = new GlobalDiscountModel();
-        discountModel.setValidFrom(LocalDateTime.now().minusDays(2));
-        discountModel.setValidUntil(LocalDateTime.now().minusDays(1));
+        GlobalDiscount globalDiscount = new GlobalDiscount();
+        globalDiscount.setValidFrom(LocalDateTime.now().minusDays(2));
+        globalDiscount.setValidUntil(LocalDateTime.now().minusDays(1));
 
-        when(globalDiscountValidator.isGlobalDiscountValid(discountModel)).thenReturn(false);
+        Double finalPrice = globalDiscountService.globalDiscount(globalDiscount, 100.0);
 
-        Double finalPrice = globalDiscountService.globalDiscount(discountModel, 100.0);
-
-        assertEquals(100.0, finalPrice);
+        assertThat(finalPrice).isEqualTo(100.0);
     }
 }

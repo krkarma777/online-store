@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.validator.discount;
 
-import com.bulkpurchase.domain.dto.discount.GlobalDiscountModel;
+import com.bulkpurchase.domain.entity.discount.GlobalDiscount;
 import com.bulkpurchase.domain.enums.DiscountType;
 import org.springframework.stereotype.Component;
 
@@ -9,18 +9,20 @@ import java.time.LocalDateTime;
 @Component
 public class GlobalDiscountValidator {
 
-    public boolean isGlobalDiscountValid(GlobalDiscountModel globalDiscountModel) {
-        LocalDateTime validFrom = globalDiscountModel.getValidFrom();
-        LocalDateTime validUntil = globalDiscountModel.getValidUntil();
+    public boolean isGlobalDiscountValid(GlobalDiscount globalDiscount, Double orderAmount) {
+        LocalDateTime validFrom = globalDiscount.getValidFrom();
+        LocalDateTime validUntil = globalDiscount.getValidUntil();
         LocalDateTime now = LocalDateTime.now();
 
-        DiscountType discountType = globalDiscountModel.getDiscountType();
-        Boolean isActive = globalDiscountModel.getIsActive();
-        Double discount = globalDiscountModel.getDiscount();
+        DiscountType discountType = globalDiscount.getDiscountType();
+        Boolean isActive = globalDiscount.getIsActive();
+        Double discount = globalDiscount.getDiscount();
+        Double minimumOrderAmount = globalDiscount.getMinimumOrderAmount();
 
         return validFrom.isBefore(now) && validUntil.isAfter(now)
                 && discountType != null
                 && isActive
-                && discount != 0.0;
+                && discount != 0.0
+                && orderAmount >= minimumOrderAmount;
     }
 }

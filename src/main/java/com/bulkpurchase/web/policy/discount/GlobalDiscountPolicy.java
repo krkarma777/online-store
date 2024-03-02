@@ -1,8 +1,8 @@
 package com.bulkpurchase.web.policy.discount;
 
-import com.bulkpurchase.domain.dto.discount.GlobalDiscountModel;
+import com.bulkpurchase.domain.entity.discount.GlobalDiscount;
 
 public interface GlobalDiscountPolicy {
 
-    Double discount(GlobalDiscountModel globalDiscountModel, Double totalPrice);
+    Double discount(GlobalDiscount globalDiscount, Double totalPrice);
 }
