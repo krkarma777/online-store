@@ -126,6 +126,6 @@ public class SellerCouponManageController {
             });
         }
 
-        return "redirect:/seller/couponManage/list";
+        return "redirect:/seller/coupon/list";
     }
 }
