@@ -26,4 +26,7 @@ public class CouponApplicableProduct {
         this.coupon = coupon;
         this.productId = productId;
     }
+
+    public CouponApplicableProduct() {
+    }
 }
