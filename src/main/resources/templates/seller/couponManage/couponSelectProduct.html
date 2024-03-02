@@ -110,7 +110,7 @@
 <div th:replace="~{seller/common/navBar :: content}"></div>
 <div class="container mt-5">
     <div class="page-title">쿠폰 적용 상품 설정</div>
-    <form id="couponForm" action="/coupon/select" method="post">
+    <form id="couponForm" action="/seller/coupon/select" method="post">
         <input type="hidden" name="couponID" th:value="${couponID}">
         <div class="section">
             <div class="section-title">쿠폰 코드 정보</div>

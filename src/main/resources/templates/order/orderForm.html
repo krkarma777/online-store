@@ -42,6 +42,17 @@
         #paypal-button-container {
             min-width: 500px; /* PayPal 버튼의 최소 너비를 지정 */
         }
+
+        .selected {
+            background-color: #007bff; /* Bootstrap의 기본 파란색 */
+            color: white; /* 텍스트 색상을 흰색으로 */
+            font-weight: bold; /* 글자를 굵게 */
+            border: 2px solid #0056b3; /* 좀 더 진한 파란색 테두리 */
+            border-radius: 5px; /* 모서리를 둥글게 */
+            margin-bottom: 5px; /* 항목 사이의 간격 */
+            cursor: pointer; /* 마우스 오버 시 커서 변경 */
+        }
+
     </style>
 </head>
 <body>
@@ -57,6 +68,7 @@
                     <th>제품명</th>
                     <th>가격</th>
                     <th>수량 선택</th>
+                    <th>쿠폰 선택</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -71,9 +83,19 @@
                     <td>
                         <input type="hidden" th:name="'product_' + ${itemStat.index}" th:value="${item.product.productID}">
                     </td>
+                    <!-- 쿠폰 선택 버튼 추가 -->
+                    <td>
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#couponModal"
+                                th:data-productid="${item.product.productID}" th:data-totalprice="${item.product.price * item.quantity}">쿠폰 선택</button>
+                    </td>
+
                 </tr>
                 </tbody>
             </table>
+        </div>
+        <!-- 쿠폰 적용 정보 표시 -->
+        <div id="appliedCouponInfo" class="alert alert-success" style="display: none;">
+            적용된 쿠폰: <span id="appliedCouponName"></span>
         </div>
         <!-- 총 가격 표시 -->
         <div class="total-price">
@@ -98,8 +120,108 @@
         <button type="submit" class="btn btn-primary">주문하기</button>
     </form>
 </div>
+<!-- 모달 컴포넌트 추가 -->
+<div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="couponModalLabel">사용 가능한 쿠폰</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 쿠폰 목록 표시 -->
+                <ul id="couponList" class="list-group">
+                    <!-- 여기에 AJAX를 통해 받아온 쿠폰 목록을 동적으로 추가 -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" id="applyCoupon">적용</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     $(document).ready(function () {
+
+        // 쿠폰 모달을 열었을 때의 이벤트 핸들러
+        $('#couponModal').on('show.bs.modal', function (e) {
+            var button = $(e.relatedTarget); // 모달을 트리거한 버튼
+            var productID = button.data('productid'); // 버튼의 data-productId 속성 값
+            var totalPrice = button.data('totalprice'); // 버튼의 data-totalPrice 속성 값
+
+            // selectedCoupon 객체를 초기화합니다.
+            window.selectedCoupon = {
+                couponId: null,
+                productID: productID,
+                totalPrice: totalPrice
+            };
+
+            $.ajax({
+                url: '/find/coupon', // 쿠폰 정보를 조회할 서버의 URL
+                method: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    productID: productID,
+                    totalPrice: totalPrice
+                }),
+                success: function(couponList) {
+                    var couponListHtml = '';
+                    $.each(couponList, function(i, coupon) {
+                        couponListHtml += '<li class="list-group-item coupon-item" ' +
+                            'data-couponid="'+ coupon.couponID +'" ' +
+                            'data-totalPrice="'+ totalPrice +'" '+
+                            'data-productID="'+ productID + '" '+
+                            '>' + coupon.name + ' - 설명: ' + coupon.description + '</li>';
+                    });
+                    $('#couponList').html(couponListHtml);
+                },
+                error: function() {
+                    alert('쿠폰 정보를 가져오는데 실패했습니다.');
+                }
+            });
+        });
+
+        $(document).on('click', '.coupon-item', function () {
+            $('.coupon-item').removeClass('selected'); // 기존 선택된 항목의 선택 해제
+            $(this).addClass('selected'); // 현재 항목 선택 표시
+            // 선택된 쿠폰 정보 업데이트
+            selectedCoupon.couponId = $(this).data('couponid');
+        });
+
+        $("#applyCoupon").click(function () {
+            // 선택된 쿠폰과 제품 ID, 현재 총 가격 정보를 가져옴
+            let couponId = selectedCoupon.couponId;
+            let productId = selectedCoupon.productID;
+            let totalPrice = selectedCoupon.totalPrice;
+
+            // 서버에 쿠폰 적용 요청을 보냄
+            $.ajax({
+                url: '/apply/coupon',
+                method: 'POST',
+                data: {
+                    productID: productId,
+                    couponID: couponId,
+                    totalPrice: totalPrice
+                },
+                success: function(applyPrice) {
+                    // 성공적으로 쿠폰이 적용된 최종 가격을 화면에 표시
+                    $("#totalPrice").text(applyPrice.toLocaleString());
+                    $("#hiddenTotalPrice").val(applyPrice); // hidden input에 최종 가격 업데이트
+
+                    // 쿠폰 적용 정보를 업데이트하고 표시합니다.
+                    var selectedCouponName = $('.coupon-item.selected').text();
+                    $("#appliedCouponName").text(selectedCouponName);
+                    $("#appliedCouponInfo").show();
+
+                    $('#couponModal').modal('hide'); // 쿠폰 모달 닫기
+                },
+                error: function() {
+                    alert('쿠폰 적용에 실패했습니다.');
+                }
+            });
+        });
+
         // 수량 입력 필드 변경 시 총 가격 재계산
         $('input[type="number"][name="quantity"]').on("change", function () {
             calculateTotalPrice();

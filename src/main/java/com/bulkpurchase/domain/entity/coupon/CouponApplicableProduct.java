@@ -1,5 +1,6 @@
 package com.bulkpurchase.domain.entity.coupon;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ public class CouponApplicableProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long CouponApplicableProductID;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CouponID", nullable = false)
     private Coupon coupon;
@@ -25,5 +27,8 @@ public class CouponApplicableProduct {
     public CouponApplicableProduct(Coupon coupon, Long productId) {
         this.coupon = coupon;
         this.productId = productId;
+    }
+
+    public CouponApplicableProduct() {
     }
 }
