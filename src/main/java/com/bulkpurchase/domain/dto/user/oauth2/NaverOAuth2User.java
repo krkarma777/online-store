@@ -33,6 +33,6 @@ public class NaverOAuth2User implements OAuth2User {
     @Override
     public String getName() {
         Map<String, Object> response = (Map<String, Object>) oauth2User.getAttributes().get("response");
-        return response.get("email").toString();
+        return response.get("id").toString();
     }
 }

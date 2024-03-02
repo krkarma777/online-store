@@ -32,12 +32,12 @@ public class NaverLoginService implements SocialOauth2Service{
         // attributes에서 response를 추출하여 사용자 정보 설정
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
-        String email = response.get("email").toString();
-        Optional<User> userOpt = userRepository.findByUsername(email);
+        String id = response.get("id").toString();
+        Optional<User> userOpt = userRepository.findByUsername(id);
         String role = "자영업자";
         User userEntity = new User();
         if (userOpt.isEmpty()) {
-            userEntity.setUsername(email); // 사용자 고유 이메일을 username으로 사용
+            userEntity.setUsername(response.get("id").toString()); // 사용자 고유 id를 username으로 사용
             userEntity.setEmail(response.get("email").toString());
             userEntity.setPhoneNumber(response.get("mobile").toString());
             userEntity.setRealName(response.get("name").toString());

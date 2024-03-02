@@ -22,12 +22,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
         OAuth2User user = super.loadUser(userRequest);
         Map<String, Object> attributes = user.getAttributes();
 
         /* 네이버 로그인 로직 */
-        if (attributes.get("message")!=null) {
+        if (attributes.get("message") != null) {
             String token = naverLoginService.login(attributes);
             return new NaverOAuth2User(user, token);
         }
