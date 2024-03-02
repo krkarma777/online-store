@@ -1,18 +1,19 @@
 package com.bulkpurchase.web.controller.order;
 
-import com.bulkpurchase.domain.dto.CouponRequestDTO;
+import com.bulkpurchase.domain.dto.coupon.CouponOrderSearchDTO;
+import com.bulkpurchase.domain.dto.coupon.CouponRequestDTO;
 import com.bulkpurchase.domain.entity.coupon.Coupon;
 import com.bulkpurchase.domain.entity.coupon.CouponApplicableProduct;
+import com.bulkpurchase.domain.entity.coupon.UserCoupon;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.coupon.CouponService;
-import com.bulkpurchase.domain.service.product.ProductService;
+import com.bulkpurchase.domain.service.coupon.UserCouponService;
 import com.bulkpurchase.domain.validator.coupon.CouponValidatorImpl;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import com.bulkpurchase.web.service.coupon.ApplyCouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,21 +31,23 @@ public class CouponController {
     private final ApplyCouponService applyCouponService;
     private final CouponService couponService;
     private final CouponValidatorImpl couponValidator;
+    private final UserCouponService userCouponService;
 
     @PostMapping("/find/coupon")
-    public ResponseEntity<List<Coupon>> findCoupon(@RequestBody CouponRequestDTO couponRequest,
-                                         Principal principal) {
+    public ResponseEntity<List<CouponOrderSearchDTO>> findCoupon(@RequestBody CouponRequestDTO couponRequest,
+                                                                 Principal principal) {
         Long productID = couponRequest.getProductID();
         Double totalPrice = couponRequest.getTotalPrice();
         User user = userAuthValidator.getCurrentUser(principal);
-        List<Coupon> couponListByUser = couponService.findByUser(user);
-        List<Coupon> couponList = new ArrayList<>();
-        for (Coupon coupon : couponListByUser) {
+        List<UserCoupon> userCouponList = userCouponService.findByUser(user);
+        List<CouponOrderSearchDTO> couponList = new ArrayList<>();
+        for (UserCoupon userCoupon : userCouponList) {
+            Coupon coupon = userCoupon.getCoupon();
             Set<CouponApplicableProduct> applicableProducts = coupon.getApplicableProducts();
             for (CouponApplicableProduct applicableProduct : applicableProducts) {
                 Long applicableProductProductId = applicableProduct.getProductId();
                 if (applicableProductProductId.equals(productID) && couponValidator.isItValidCoupon(user, coupon, productID, totalPrice)) {
-                    couponList.add(coupon);
+                    couponList.add(new CouponOrderSearchDTO(coupon));
                     break;
                 }
             }

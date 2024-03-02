@@ -2,6 +2,7 @@ package com.bulkpurchase.domain.entity.coupon;
 
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.CouponType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,6 +43,7 @@ public class Coupon {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CouponApplicableProduct> applicableProducts = new HashSet<>();
 
