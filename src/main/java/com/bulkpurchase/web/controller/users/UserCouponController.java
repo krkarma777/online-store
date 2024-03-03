@@ -47,8 +47,9 @@ public class UserCouponController {
 
         User user = userAuthValidator.getCurrentUser(principal);
         Coupon coupon = couponService.findByCode(code);
+        Optional<UserCoupon> existCoupon = userCouponService.findByUserAndCoupon(user, coupon);
 
-        if (coupon == null) {
+        if (coupon == null || existCoupon.isPresent()) {
             return "error/403";
         }
 
