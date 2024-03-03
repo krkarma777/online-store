@@ -47,7 +47,6 @@ public class AdminDiscountPolicyManageController {
     public String discountPolicyActiveChange(@PathVariable("discountId") Long discountId) {
         GlobalDiscount globalDiscount = findById(discountId);
         Boolean isActive = globalDiscount.getIsActive();
-        System.out.println("isActive = " + isActive);
         globalDiscount.setIsActive(!isActive);
         globalDiscountService.save(globalDiscount);
         return "redirect:/admin/event/discount";
