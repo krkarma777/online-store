@@ -144,6 +144,9 @@
 <script>
     $(document).ready(function () {
 
+        // 페이지 로드 시 총 가격 초기 계산
+        calculateTotalPrice();
+
         // 쿠폰 모달을 열었을 때의 이벤트 핸들러
         $('#couponModal').on('show.bs.modal', function (e) {
             var button = $(e.relatedTarget); // 모달을 트리거한 버튼
@@ -193,7 +196,9 @@
             // 선택된 쿠폰과 제품 ID, 현재 총 가격 정보를 가져옴
             let couponId = selectedCoupon.couponId;
             let productId = selectedCoupon.productID;
-            let totalPrice = selectedCoupon.totalPrice;
+            let price = selectedCoupon.totalPrice;
+            let totalPrice = $("#hiddenTotalPrice").val();
+
 
             // 서버에 쿠폰 적용 요청을 보냄
             $.ajax({
@@ -202,12 +207,12 @@
                 data: {
                     productID: productId,
                     couponID: couponId,
-                    totalPrice: totalPrice
+                    totalPrice: price
                 },
-                success: function(applyPrice) {
+                success: function(discountAmount) {
                     // 성공적으로 쿠폰이 적용된 최종 가격을 화면에 표시
-                    $("#totalPrice").text(applyPrice.toLocaleString());
-                    $("#hiddenTotalPrice").val(applyPrice); // hidden input에 최종 가격 업데이트
+                    $("#totalPrice").text((totalPrice - discountAmount).toLocaleString());
+                    $("#hiddenTotalPrice").val(totalPrice - discountAmount); // hidden input에 최종 가격 업데이트
 
                     // 쿠폰 적용 정보를 업데이트하고 표시합니다.
                     var selectedCouponName = $('.coupon-item.selected').text();
@@ -227,8 +232,6 @@
             calculateTotalPrice();
         });
 
-        // 페이지 로드 시 총 가격 초기 계산
-        calculateTotalPrice();
 
         function calculateTotalPrice() {
             let totalPrice = 0;
