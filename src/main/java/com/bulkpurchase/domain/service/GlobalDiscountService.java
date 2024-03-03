@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,5 +21,9 @@ public class GlobalDiscountService {
 
     public List<GlobalDiscount> findAll() {
         return globalDiscountRepository.findAll(Sort.by(Sort.Direction.ASC, "globalDiscountID"));
+    }
+
+    public Optional<GlobalDiscount> findById(Long discountId) {
+        return globalDiscountRepository.findById(discountId);
     }
 }

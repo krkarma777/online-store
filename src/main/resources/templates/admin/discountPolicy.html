@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>전역 할인 관리 시스템</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/adminPage.css">
     <style>
         .modal-header {
@@ -50,7 +51,7 @@
                 <td th:text="${globalDiscount.discountType.description}">유형</td>
                 <td>
                     <!-- 수정 및 삭제 버튼 -->
-                    <button class="btn btn-warning btn-sm">수정</button>
+                    <button class="btn btn-warning btn-sm edit-discount" th:data-id="${globalDiscount.globalDiscountID}">수정</button>
                     <button class="btn btn-danger btn-sm" th:attr="data-id=${globalDiscount.globalDiscountID}, data-action=@{/admin/event/discount/delete/{id}(id=${globalDiscount.globalDiscountID})}">삭제</button>
                 </td>
             </tr>
@@ -58,7 +59,7 @@
         </table>
     </div>
 </div>
-<!-- 할인 정책 추가/수정 모달 -->
+<!-- 할인 정책 추가 모달 -->
 <div class="modal fade" id="discountModal" tabindex="-1" aria-labelledby="discountModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -109,7 +110,96 @@
     </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- 할인 정책 수정 모달 -->
+<div class="modal fade" id="editDiscountModal" tabindex="-1" aria-labelledby="editDiscountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editDiscountModalLabel">할인 정책 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/admin/event/discount/update" th:object="${globalDiscount}" method="post">
+                    <div class="form-group mb-3">
+                        <label for="editName">이름</label>
+                        <input type="text" class="form-control" id="editName" th:field="*{name}" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="editDiscount">할인율</label>
+                        <input type="number" class="form-control" id="editDiscount" th:field="*{discount}" min="0" max="100" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="editMinimumOrderAmount">최소주문금액</label>
+                        <input type="number" class="form-control" id="editMinimumOrderAmount" th:field="*{minimumOrderAmount}" min="0" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="editMaxDiscountAmount">최대할인금액</label>
+                        <input type="number" class="form-control" id="editMaxDiscountAmount" th:field="*{maxDiscountAmount}" max="10000" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="editValidFrom">유효 시작일</label>
+                        <input type="datetime-local" class="form-control" id="editValidFrom" th:field="*{validFrom}" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="editValidUntil">유효 종료일</label>
+                        <input type="datetime-local" class="form-control" id="editValidUntil" th:field="*{validUntil}" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="editDiscountType">할인 유형</label>
+                        <select class="form-control" id="editDiscountType" th:field="*{discountType}" required>
+                            <option value="PERCENTAGE_DISCOUNT">비율 할인</option>
+                            <option value="AMOUNT_DISCOUNT">금액 할인</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button class="btn btn-primary">변경 사항 저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('.edit-discount').click(function() {
+            var discountId = $(this).data('id');
+
+            $.ajax({
+                url: '/discount/' + discountId,
+                type: 'GET',
+                success: function(data) {
+                    $('#editName').val(data.name);
+                    $('#editDiscount').val(data.discount);
+                    $('#editMinimumOrderAmount').val(data.minimumOrderAmount);
+                    $('#editMaxDiscountAmount').val(data.maxDiscountAmount);
+                    var validFrom = new Date(data.validFrom[0], data.validFrom[1] - 1, data.validFrom[2], data.validFrom[3], data.validFrom[4]);
+                    var validUntil = new Date(data.validUntil[0], data.validUntil[1] - 1, data.validUntil[2], data.validUntil[3], data.validUntil[4]);
+
+                    var formatDate = function(date) {
+                        return date.getFullYear() + '-' +
+                            ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+                            ('0' + date.getDate()).slice(-2) + 'T' +
+                            ('0' + date.getHours()).slice(-2) + ':' +
+                            ('0' + date.getMinutes()).slice(-2);
+                    };
+
+                    $('#editValidFrom').val(formatDate(validFrom));
+                    $('#editValidUntil').val(formatDate(validUntil));
+
+                    $('#editDiscountType').val(data.discountType);
+                    $('#editDiscountModal').modal('show');
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert('데이터를 가져오는데 실패했습니다.');
+                }
+            });
+        });
+    });
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
