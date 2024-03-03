@@ -5,12 +5,7 @@ import com.bulkpurchase.domain.enums.DiscountType;
 import com.bulkpurchase.web.policy.discount.GlobalAmountDiscountPolicy;
 import com.bulkpurchase.web.policy.discount.GlobalPercentageDiscountPolicy;
 import com.bulkpurchase.web.validator.discount.GlobalDiscountValidator;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -18,10 +13,9 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class GlobalDiscountServiceTest {
+public class GlobalDiscountWebServiceTest {
 
     @Autowired
     private GlobalAmountDiscountPolicy globalAmountDiscountPolicy;
@@ -33,7 +27,7 @@ public class GlobalDiscountServiceTest {
     private GlobalDiscountValidator globalDiscountValidator;
 
     @Autowired
-    private GlobalDiscountServiceImpl globalDiscountService;
+    private GlobalDiscountWebServiceImpl globalDiscountService;
 
     @Test
     public void testPercentageDiscount() {

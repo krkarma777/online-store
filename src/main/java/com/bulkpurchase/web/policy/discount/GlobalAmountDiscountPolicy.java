@@ -1,9 +1,10 @@
 package com.bulkpurchase.web.policy.discount;
 
 import com.bulkpurchase.domain.entity.discount.GlobalDiscount;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component
 public class GlobalAmountDiscountPolicy implements GlobalDiscountPolicy {
 
     public Double discount(GlobalDiscount globalDiscount, Double totalPrice) {
