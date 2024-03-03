@@ -38,6 +38,7 @@
                 <th>유효 시작일</th>
                 <th>유효 종료일</th>
                 <th>유형</th>
+                <th>active</th>
                 <th>작업</th>
             </tr>
             </thead>
@@ -49,10 +50,13 @@
                 <td th:text="${#temporals.format(globalDiscount.validFrom, 'yyyy-MM-dd')}">유효 시작일</td>
                 <td th:text="${#temporals.format(globalDiscount.validUntil, 'yyyy-MM-dd')}">유효 종료일</td>
                 <td th:text="${globalDiscount.discountType.description}">유형</td>
+                <td th:text="${globalDiscount.isActive} ? '진행중' : '종료'">active</td>
                 <td>
                     <!-- 수정 및 삭제 버튼 -->
                     <button class="btn btn-warning btn-sm edit-discount" th:data-id="${globalDiscount.globalDiscountID}">수정</button>
-                    <button class="btn btn-danger btn-sm" th:attr="data-id=${globalDiscount.globalDiscountID}, data-action=@{/admin/event/discount/delete/{id}(id=${globalDiscount.globalDiscountID})}">삭제</button>
+                    <button class="btn btn-danger btn-sm btn-change-state"
+                            th:data-id="${globalDiscount.globalDiscountID}" th:text="${globalDiscount.isActive} ? '중단' : '재개'">
+                    </button>
                 </td>
             </tr>
             </tbody>
@@ -162,6 +166,11 @@
 </div>
 <script>
     $(document).ready(function() {
+        $('.btn-change-state').click(function() {
+            var discountId = $(this).data('id');
+            window.location.href = '/discount/action/' + discountId;
+        });
+
         $('.edit-discount').click(function() {
             var discountId = $(this).data('id');
 
@@ -196,6 +205,7 @@
                 }
             });
         });
+
     });
 </script>
 

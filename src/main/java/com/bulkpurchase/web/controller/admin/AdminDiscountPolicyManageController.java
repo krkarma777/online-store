@@ -41,6 +41,19 @@ public class AdminDiscountPolicyManageController {
     @GetMapping("/discount/{discountId}")
     @ResponseBody
     public GlobalDiscount updateDiscountPolicyForm(@PathVariable("discountId") Long discountId) {
+        return findById(discountId);
+    }
+    @GetMapping("/discount/action/{discountId}")
+    public String discountPolicyActiveChange(@PathVariable("discountId") Long discountId) {
+        GlobalDiscount globalDiscount = findById(discountId);
+        Boolean isActive = globalDiscount.getIsActive();
+        System.out.println("isActive = " + isActive);
+        globalDiscount.setIsActive(!isActive);
+        globalDiscountService.save(globalDiscount);
+        return "redirect:/admin/event/discount";
+    }
+
+    private GlobalDiscount findById(Long discountId) {
         return globalDiscountService.findById(discountId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "할인 정책을 찾을 수 없습니다."));
     }
