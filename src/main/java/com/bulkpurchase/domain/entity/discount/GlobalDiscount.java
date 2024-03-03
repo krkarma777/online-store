@@ -9,7 +9,7 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "global_discounts") // 데이터베이스에서 사용할 테이블 이름 지정
+@Table(name = "global_discounts")
 @Getter
 @Setter
 @ToString
@@ -17,7 +17,7 @@ public class GlobalDiscount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long globalDiscountID; // Unique identifier
+    private Long globalDiscountID;
 
     @Column(nullable = false)
     private String name;
@@ -45,5 +45,5 @@ public class GlobalDiscount {
     private String description;
 
     @Column(nullable = false)
-    private Boolean isActive;
+    private Boolean isActive = true;
 }
