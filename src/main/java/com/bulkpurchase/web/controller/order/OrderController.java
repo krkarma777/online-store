@@ -139,7 +139,7 @@ public class OrderController {
             User user = userAuthValidator.getCurrentUser(principal);
             List<OrderViewDTO> orderViewDTOS = orderService.getOrderViewModelsByUser(user);
             model.addAttribute("orderViewDTOS", orderViewDTOS);
-            return "order/orders";
+            return "users/orders";
         } catch (Exception e) {
             return "error/400";
         }

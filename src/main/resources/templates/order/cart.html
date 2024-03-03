@@ -9,7 +9,7 @@
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
-<div class="container mt-5">
+<div class="container cart-container mt-5">
     <h2 class="mb-4 text-center">장바구니</h2>
     <form th:action="@{/cart/update}" method="post">
         <div class="table-responsive">
@@ -46,7 +46,6 @@
         </div>
         <div class="d-flex justify-content-between mt-3">
             <button type="button" class="btn btn-outline-danger" onclick="deleteSelectedItems()">선택 삭제</button>
-            <button type="button" onclick="submitFormWithCartId()" class="btn btn-success">결제하기</button>
         </div>
         <input type="hidden" id="cartId" name="cartId" th:value="${cart.cartID}"/>
     </form>
@@ -68,7 +67,7 @@
             <div class="col-6 fw-bold">총합계:</div>
             <div class="col-6 text-end fw-bold"><span id="total">0</span>원</div>
         </div>
-        <button id="checkoutButton" class="btn btn-primary w-100 mt-3">구매하기</button>
+        <button id="checkoutButton" onclick="submitFormWithCartId()" class="btn btn-primary w-100 mt-3">구매하기</button>
     </div>
 </div>
 

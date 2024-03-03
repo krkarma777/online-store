@@ -79,12 +79,6 @@ public class User {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createDate;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "user_sales_regions", joinColumns = @JoinColumn(name = "userid"))
-    @Column(name = "region")
-    @Enumerated(EnumType.STRING)
-    private Set<SalesRegion> salesRegions = new HashSet<>();
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<Product> products = new HashSet<>();
