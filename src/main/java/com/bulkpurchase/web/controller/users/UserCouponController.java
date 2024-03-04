@@ -70,7 +70,6 @@ public class UserCouponController {
         model.addAttribute("userCoupons", userCoupons);
 
         return "users/coupon/userCoupons";
-
     }
 
     // 쿠폰에 적용 가능한 상품을 조회하는 컨트롤러 메서드

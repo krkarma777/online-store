@@ -18,15 +18,6 @@ public class LoginController {
         return "/users/login";
     }
 
-    @PostMapping("/login")
-    public String loginAccess(HttpServletRequest request, HttpServletResponse response) {
-        String authorization = request.getHeader("Authorization");
-        System.out.println("goToHome request authorization = " + authorization);
-        String authorization2 = response.getHeader("Authorization");
-        System.out.println("goToHome response authorization = " + authorization2);
-        return "/home";
-    }
-
     @GetMapping("/login/social")
     public String socialLoginOauth2() {
         return "/users/login";
