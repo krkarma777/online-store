@@ -37,7 +37,7 @@ public class MyPageOrderController {
         User user = userAuthValidator.getCurrentUser(principal);
         List<OrderViewDTO> orderViewDTOS = orderService.getOrderViewModelsByUser(user);
         model.addAttribute("orderViewDTOS", orderViewDTOS);
-        return "users/myPage/orders";
+        return "users/myPage/shopping/orders";
     }
 
 
