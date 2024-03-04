@@ -61,12 +61,15 @@ public class OrderProcessingService {
         for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
             String key = entry.getKey();
             String[] value = entry.getValue();
+
             if (key.startsWith("quantity")) {
-                Long productId = Long.parseLong(request.getParameter("product" + key.substring(8)));
-                productQuantities.put(productId, Integer.parseInt(value[0]));
-            } else if ("totalPrice".equals(key)) {
+                int index = Integer.parseInt(key.substring("quantity".length()));
+                int quantity = Integer.parseInt(value[0]);
+                Long productId = Long.parseLong(request.getParameter("product_" + index));
+                productQuantities.put(productId, quantity);
+            } else if (key.equals("totalPrice")) {
                 totalPrice = Double.parseDouble(value[0]);
-            } else if ("paymentMethod".equals(key)) {
+            } else if (key.equals("paymentMethod")) {
                 paymentMethod = value[0];
             }
         }
