@@ -1,12 +1,9 @@
 package com.bulkpurchase.web.controller.users.myPage;
 
 import com.bulkpurchase.domain.dto.order.OrderViewDTO;
-import com.bulkpurchase.domain.entity.coupon.UserCoupon;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.order.Payment;
-import com.bulkpurchase.domain.entity.product.Product;
-import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.coupon.UserCouponService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
@@ -17,7 +14,6 @@ import com.bulkpurchase.domain.service.user.FavoriteProductService;
 import com.bulkpurchase.domain.service.user.UserService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,14 +27,9 @@ import java.util.List;
 @RequestMapping("/myPage")
 public class MyPageOrderController {
 
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
-    private final ProductService productService;
     private final OrderService orderService;
     private final OrderDetailService orderDetailService;
-    private final FavoriteProductService favoriteProductService;
     private final PaymentService paymentService;
-    private final UserCouponService userCouponService;
     private final UserAuthValidator userAuthValidator;
 
     @GetMapping("/order/list")
