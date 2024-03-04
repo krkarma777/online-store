@@ -68,6 +68,42 @@ public class EmailService {
 
         mailSender.send(message);
     }
+    public void sendUserIdEmail(User user) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setFrom("admin@seed.com");
+        helper.setTo(user.getEmail());
+        helper.setSubject(user.getRealName() + "님, Seed 아이디 찾기 결과입니다.");
+
+        String mailContent =
+                "<html>" +
+                        "<body style='font-family: Arial, sans-serif; color: #333;'>" +
+                        "   <div style='max-width: 600px; margin: 20px auto; border: 1px solid #ddd; padding: 20px;'>" +
+                        "       <h2 style='color: #007bff; text-align: center;'>Seed 아이디 찾기</h2>" +
+                        "       <p style='font-size: 16px;'>" +
+                        "           안녕하세요, <strong>" + user.getRealName() + "</strong>님! 귀하의 Seed 아이디는 다음과 같습니다:<br>" +
+                        "           <strong>" + user.getUsername() + "</strong><br>" +
+                        "           보안을 위해 비밀번호는 공개하지 않으며, 비밀번호 찾기 기능을 이용해 주시길 바랍니다." +
+                        "       </p>" +
+                        "       <div style='text-align: center; margin: 40px 0;'>" +
+                        "           <a href='http://localhost:9090/login'" +
+                        "              style='display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>" +
+                        "               로그인 페이지로 이동" +
+                        "           </a>" +
+                        "       </div>" +
+                        "   </div>" +
+                        "   <footer style='text-align: center; font-size: 12px; color: #777;'>" +
+                        "       이 메일은 Seed 아이디 찾기 요청 과정 중 생성되었습니다. 문의사항이 있는 경우, 고객 지원 센터에 연락해 주세요.<br>" +
+                        "       &copy; Seed All Rights Reserved" +
+                        "   </footer>" +
+                        "</body>" +
+                        "</html>";
+
+        helper.setText(mailContent, true); // true를 설정하여 HTML 컨텐츠로 인식하도록 합니다.
+
+        mailSender.send(message);
+    }
 
     public VerificationToken createVerificationToken(User user) {
         VerificationToken myToken = new VerificationToken();

@@ -70,4 +70,7 @@ public class UserService {
     }
 
 
+    public Optional<User> findByRealNameAndEmail(String realname, String email) {
+        return userRepository.findByRealNameAndEmail(realname, email);
+    }
 }

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>아이디 찾기</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+<div class="container">
+    <h2>아이디 찾기</h2>
+    <form action="/find/id" method="post">
+        <div class="form-group">
+            <label for="name">이름:</label>
+            <input type="text" id="name" name="name" required placeholder="이름을 입력하세요">
+        </div>
+        <div class="form-group">
+            <label for="email">이메일:</label>
+            <input type="email" id="email" name="email" required placeholder="이메일 주소를 입력하세요">
+        </div>
+        <button type="submit" class="btn">아이디 찾기</button>
+    </form>
+    <div>
+        <a href="/login">로그인 페이지로 돌아가기</a>
+    </div>
+</div>
+</body>
+</html>

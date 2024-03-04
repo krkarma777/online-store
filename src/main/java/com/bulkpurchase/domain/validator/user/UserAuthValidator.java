@@ -28,9 +28,6 @@ public class UserAuthValidator {
     }
 
     public User getCurrentUser(Principal principal) {
-        log.info("principle= [{}]", principal);
-        log.info("principal.getName()= [{}]", principal.getName());
-
         return userService.findByUsername(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
     }
