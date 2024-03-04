@@ -35,21 +35,13 @@ import java.util.List;
 public class MyPageController {
 
     private final UserService userService;
-
     private final PasswordEncoder passwordEncoder;
-
     private final ProductService productService;
-
     private final OrderService orderService;
-
     private final OrderDetailService orderDetailService;
-
     private final FavoriteProductService favoriteProductService;
-
     private final PaymentService paymentService;
-
     private final UserCouponService userCouponService;
-
     private final UserAuthValidator userAuthValidator;
 
     @GetMapping("/mypage")

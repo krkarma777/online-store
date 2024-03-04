@@ -40,7 +40,5 @@ public class FavoriteProductController {
 
         return "users/favoritedProduct";
     }
-
-
 }
 
