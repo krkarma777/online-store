@@ -118,4 +118,31 @@ body, html {
 .dropdown-menu .dropdown-submenu:hover .dropdown-menu {
     display: block;
 }
+/* 2024 03 04 마이페이지 사이드바 */
+.mypage-sidebar-head {
+    background-color: forestgreen;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 4px 4px 0 0;
+    font-size: 16px;
+}
 
+.mypage-sidebar-body {
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    border-top: none;
+    font-size: 14px;
+}
+hr {
+    margin-top: 0;
+    margin-bottom: 0;
+    border: 0;
+    border-top: 1px solid #ddd;
+}
+.mypage-sidebar {
+    width: 70%;
+}
