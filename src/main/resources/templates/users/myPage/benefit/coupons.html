@@ -8,23 +8,184 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        .coupon-section {
+            background: white;
+            margin-top: 200px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .redeem h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .redeem form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .redeem label {
+            font-weight: bold;
+        }
+        .redeem input[type="text"] {
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            padding: 10px;
+        }
+        .redeem button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .redeem button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .coupon-section, .coupon-list-section {
+            background: white;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .redeem h2, .coupon-list h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .coupon-filter {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .coupon-filter button {
+            margin: 0 10px;
+        }
+        .no-coupons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        /* 새로운 스타일 */
+        .modal-dialog {
+            display: flex;
+            align-items: center;
+            min-height: calc(100% - (.5rem * 2));
+        }
+        .modal {
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
-
 <div class="container mt-4">
     <div class="row">
         <div th:replace="~{common/mypage-sidebar :: sidebar}"></div>
 
-        <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9">
-            구현중인 컨텐츠입니다.
+            <div class="coupon-section">
+                <h2>쿠폰 코드 입력</h2>
+                <form class="redeem" th:action="@{/coupons/redeem}" method="post" id="couponForm">
+                    <div class="mb-3">
+                        <label for="code" class="form-label">쿠폰 코드:</label>
+                        <input type="text" class="form-control" id="code" name="code" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">쿠폰 받기</button>
+                </form>
+            </div>
+            <div class="coupon-list-section">
+                <h2 class="mb-3 text-center">내 쿠폰 목록</h2>
+                <div class="coupon-filter">
+                    <button type="button" class="btn btn-outline-primary" id="all-coupons">전체</button>
+                    <button type="button" class="btn btn-outline-success" id="active-coupons">사용 가능</button>
+                    <button type="button" class="btn btn-outline-secondary" id="used-coupons">사용 완료 / 기간 만료</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-dark">
+                        <tr>
+                            <th scope="col">쿠폰 이름</th>
+                            <th scope="col">할인율</th>
+                            <th scope="col">유효 기간</th>
+                            <th scope="col">최소 주문 금액</th>
+                            <th scope="col">사용 여부</th>
+                            <th scope="col">상품 보기</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="userCoupon : ${userCoupons}">
+                            <td th:text="${userCoupon.coupon.name}">name</td>
+                            <td th:text="${userCoupon.coupon.discount}">할인율</td>
+                            <td th:text="${userCoupon.coupon.validFrom.format(formatter)} + ' ~ ' + ${userCoupon.coupon.validUntil.format(formatter)}">유효 기간</td>
+                            <td th:text="${userCoupon.coupon.minimumOrderAmount}">최소 주문 금액</td>
+                            <td th:text="${userCoupon.used ? '사용됨' : '미사용'}">사용 여부</td>
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm view-products" data-bs-toggle="modal" data-bs-target="#productModal" th:data-coupon-id="${userCoupon.coupon.couponID}">상품 보기</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="no-coupons" style="display: none;">사용 가능한 쿠폰이 없습니다.</div>
+                </div>
+            </div>
         </div>
-        <!-- 메인 컨텐츠 끝 -->
     </div>
 </div>
 
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel">적용 가능 상품</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 상품 정보를 여기에 동적으로 삽입 -->
+            </div>
+        </div>
+    </div>
+</div>
 <div th:replace="~{common/footer :: footer}"></div>
+<script>
+    $(document).ready(function() {
+        $('.view-products').click(function() {
+            var couponId = $(this).data('coupon-id');
+            // AJAX 요청으로 쿠폰에 적용 가능한 상품 정보 가져오기
+            $.ajax({
+                url: '/coupons/' + couponId + '/products',
+                type: 'GET',
+                success: function(data) {
+                    var productsHtml = '';
+                    data.forEach(function(product) {
+                        productsHtml += '<p><a href="/product/' + product.productID + '" target="_blank">' + product.productName + '</a></p>';
+                    });
+                    $('#productModal .modal-body').html(productsHtml);
+                }
+            });
+        });
+
+        $('#couponForm').submit(function(e) {
+            e.preventDefault(); // 폼 제출 막기
+            var code = $('#code').val();
+            $.ajax({
+                url: '/coupons/redeem',
+                type: 'post',
+                data: {code: code},
+                success: function(response) {
+                    alert(response.message); // 서버로부터의 응답 메시지를 알림창으로 표시
+                    if (response.redirect) {
+                        window.location.href = response.redirect; // 리다이렉션 URL이 있으면 페이지 이동
+                    }
+                },
+                error: function() {
+                    alert('오류가 발생했습니다. 다시 시도해주세요.');
+                }
+            });
+        });
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

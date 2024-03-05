@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.users;
+package com.bulkpurchase.web.controller.users.myPage;
 
 import com.bulkpurchase.domain.dto.product.ProductForCouponDTO;
 import com.bulkpurchase.domain.entity.coupon.Coupon;
@@ -10,22 +10,24 @@ import com.bulkpurchase.domain.service.coupon.CouponService;
 import com.bulkpurchase.domain.service.coupon.UserCouponService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/coupons")
 public class UserCouponController {
 
     private final CouponService couponService;
@@ -34,46 +36,46 @@ public class UserCouponController {
     private final ProductService productService;
     private final UserAuthValidator userAuthValidator;
 
-    @GetMapping("/user/coupon/redeem")
-    public String userCouponRedeemForm() {
-        return "users/coupon/couponRedeem";
-    }
-
-    @PostMapping("/user/coupon/redeem")
-    public String userCouponRedeem(Principal principal, @RequestParam("code") String code) {
-        if (principal == null) {
-            return "error/403";
-        }
-
-        User user = userAuthValidator.getCurrentUser(principal);
-        Coupon coupon = couponService.findByCode(code);
-        Optional<UserCoupon> existCoupon = userCouponService.findByUserAndCoupon(user, coupon);
-
-        if (coupon == null || existCoupon.isPresent()) {
-            return "error/403";
-        }
-
-        UserCoupon userCoupon = new UserCoupon();
-        userCoupon.setCoupon(coupon);
-        userCoupon.setUser(user);
-        userCouponService.save(userCoupon);
-
-        return "redirect:/user/coupon/list";
-    }
-
-    @GetMapping("/user/coupon/list")
+    @GetMapping
     public String userCoupons(Principal principal, Model model) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm");
+        model.addAttribute("formatter", formatter);
 
         User user = userAuthValidator.getCurrentUser(principal);
         List<UserCoupon> userCoupons = userCouponService.findByUser(user);
-
         model.addAttribute("userCoupons", userCoupons);
 
-        return "users/coupon/userCoupons";
+        return "users/myPage/benefit/coupons";
     }
 
+    @PostMapping("/redeem")
+    @ResponseBody
+    public Map<String, Object> userCouponRedeem(Principal principal, @RequestParam("code") String code) {
+        Map<String, Object> response = new HashMap<>();
+        User user = userAuthValidator.getCurrentUser(principal);
+        Coupon coupon = couponService.findByCode(code);
+
+        if (coupon == null) {
+            response.put("message", "존재하지 않는 쿠폰입니다.");
+        } else if (userCouponService.findByUserAndCoupon(user, coupon).isPresent()) {
+            response.put("message", "이미 보유하고 있는 쿠폰입니다.");
+        } else {
+            UserCoupon userCoupon = new UserCoupon();
+            userCoupon.setCoupon(coupon);
+            userCoupon.setUser(user);
+            userCouponService.save(userCoupon);
+            response.put("message", "쿠폰이 성공적으로 등록되었습니다.");
+            response.put("redirect", "/coupons"); // 성공 시 리다이렉션할 URL
+        }
+        return response;
+    }
+
+
+
+
     // 쿠폰에 적용 가능한 상품을 조회하는 컨트롤러 메서드
-    @GetMapping("/user/coupons/{couponID}/products")
+    @GetMapping("/{couponID}/products")
     public ResponseEntity<?> findApplicableProductsForCoupon(@PathVariable("couponID") Long couponID) {
         List<CouponApplicableProduct> couponApplicableProducts = couponApplicableProductService.findByCouponCouponID(couponID);
 

@@ -24,7 +24,6 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/myPage")
 public class MyPageOrderController {
 
     private final OrderService orderService;
