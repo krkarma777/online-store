@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.users.myPage;
+package com.bulkpurchase.web.controller.users.myPage.benefit;
 
 import com.bulkpurchase.domain.dto.product.ProductForCouponDTO;
 import com.bulkpurchase.domain.entity.coupon.Coupon;
@@ -10,7 +10,6 @@ import com.bulkpurchase.domain.service.coupon.CouponService;
 import com.bulkpurchase.domain.service.coupon.UserCouponService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/coupons")
-public class UserCouponController {
+public class MyPageCouponController {
 
     private final CouponService couponService;
     private final CouponApplicableProductService couponApplicableProductService;

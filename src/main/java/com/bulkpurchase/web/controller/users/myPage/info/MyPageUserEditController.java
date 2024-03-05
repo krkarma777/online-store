@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.users.myPage;
+package com.bulkpurchase.web.controller.users.myPage.info;
 
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.UserService;

@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.users.myPage;
+package com.bulkpurchase.web.controller.users.myPage.shopping;
 
 import com.bulkpurchase.domain.dto.order.OrderViewDTO;
 import com.bulkpurchase.domain.entity.order.Order;
