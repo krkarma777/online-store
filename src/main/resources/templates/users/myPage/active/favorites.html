@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>마이페이지</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        .product-image {
+            width: 100px;
+            height: auto;
+        }
+        .product-details {
+            display: flex;
+            align-items: center;
+        }
+        .product-actions {
+            margin-left: auto;
+        }
+        .product-item {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease-in-out;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .product-item:hover {
+            transform: scale(1.03);
+        }
+        .select-actions {
+            background-color: #e1f5fe;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #b3e5fc;
+            margin-bottom: 20px; /* Adjust based on layout */
+        }
+        .select-actions hr {
+            margin: 10px 0;
+        }
+        .checkbox {
+            margin-right: 15px;
+        }
+        .margin-left {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+
+<div class="container mt-4">
+    <div class="row">
+        <div th:replace="~{common/mypage-sidebar :: sidebar}"></div>
+
+        <div class="col-md-9">
+            <h2>내가 찜한 상품 목록</h2>
+            <p>내가 찜한 상품 목록을 확인하실 수 있습니다.</p>
+
+            <div class="select-actions">
+                <input type="checkbox" id="selectAll1" class="checkbox selectAll">
+                <label for="selectAll1">전체선택</label>
+                <button class="btn btn-outline-primary btn-sm margin-left">선택삭제</button>
+            </div>
+
+            <div th:each="favoriteProduct : ${favoriteProducts}" class="mb-3">
+                <div class="product-item p-3 d-flex align-items-center">
+                    <input type="checkbox" th:id="${'chk' + favoriteProduct.product.productID}" class="checkbox">
+                    <label th:for="${'chk' + favoriteProduct.product.productID}"></label>
+                    <div class="col-md-4">
+                        <a th:href="@{/product/{id}(id=${favoriteProduct.product.productID})}">
+                            <img th:if="${not #lists.isEmpty(favoriteProduct.product.imageUrls)}" th:src="@{'/uploaded-images/'+${favoriteProduct.product.imageUrls[0]}}" class="product-image" alt="Product Image">
+                            <img th:unless="${not #lists.isEmpty(favoriteProduct.product.imageUrls)}" src="@{/img/logo.png}" class="product-image" alt="Default Image">
+                        </a>
+                    </div>
+                    <div class="col-md-8">
+                        <div>
+                            <p th:text="${favoriteProduct.product.productName}">Product Name</p>
+                            <p th:text="${favoriteProduct.product.price} + '원'">Product Price</p>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn btn-primary btn-sm">장바구니 담기</button>
+                            <button class="btn btn-danger btn-sm">삭제</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="select-actions">
+                <input type="checkbox" id="selectAll2" class="checkbox selectAll">
+                <label for="selectAll2">전체선택</label>
+                <button class="btn btn-outline-primary btn-sm margin-left">선택삭제</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{common/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

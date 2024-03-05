@@ -5,6 +5,8 @@ import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.user.FavoriteProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,5 +52,9 @@ public class FavoriteProductService {
 
     public FavoriteProduct findByUserAndProduct(User user, Product product) {
         return favoriteProductRepository.findByUserAndProduct(user, product);
+    }
+
+    public Page<FavoriteProduct> findByUser(User user, Pageable page) {
+        return favoriteProductRepository.findByUser(user, page);
     }
 }
