@@ -6,6 +6,9 @@ import com.bulkpurchase.domain.entity.review.Review;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.review.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -67,5 +70,17 @@ public class ReviewService {
                 (Long) result[1],
                 (Long) result[2]
         )).collect(Collectors.toList());
+    }
+
+    public Page<ReviewDetailDTO> findByUser(User user, Pageable page) {
+        List<Object[]> results = reviewRepository.findByUser(user.getUserID(), page);
+        List<ReviewDetailDTO> dtos = results.stream()
+                .map(result -> new ReviewDetailDTO(
+                        (Review) result[0],
+                        (Long) result[1],
+                        (Long) result[2]
+                ))
+                .collect(Collectors.toList());
+        return new PageImpl<>(dtos, page, dtos.size());
     }
 }
