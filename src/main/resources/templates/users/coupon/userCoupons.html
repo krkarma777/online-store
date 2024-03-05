@@ -75,7 +75,7 @@
             var couponId = $(this).data('coupon-id');
             // AJAX 요청으로 쿠폰에 적용 가능한 상품 정보 가져오기
             $.ajax({
-                url: '/user/coupons/' + couponId + '/products',
+                url: '/coupons/' + couponId + '/products',
                 type: 'GET',
                 success: function(data) {
                     var productsHtml = '';

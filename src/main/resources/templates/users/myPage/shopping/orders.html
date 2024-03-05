@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 목록 목업</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        .order-container {
+            max-width: 1024px;
+            margin: auto;
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .order-header div,
+        .order-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .order-date {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .order-list {
+            list-style: none;
+            padding: 0;
+        }
+        .order-item {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .order-item img {
+            width: 80px;
+            height: 80px;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+        .order-item-detail {
+            flex-grow: 1;
+        }
+        .order-item-actions {
+            text-align: right;
+        }
+        .order-item-actions button {
+            padding: 5px 10px;
+            margin-left: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .order-item-actions button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+<div class="container mt-4">
+    <div class="row">
+        <div th:replace="~{common/mypage-sidebar :: sidebar}"></div>
+
+        <!-- 메인 컨텐츠 시작 -->
+        <div class="col-md-9">
+            <div class="order-container">
+                <div class="order-header">
+                    <div>최근 6개월</div>
+                    <div>
+                        <span>2024</span>
+                        <span>2023</span>
+                        <span>2022</span>
+                        <span>2021</span>
+                        <span>2020</span>
+                        <span>2019</span>
+                    </div>
+                </div>
+
+
+                <!-- 주문 목록 반복 -->
+                <div th:each="orderViewDTO : ${orderViewDTOS}">
+                    <div class="order-date" th:text="${#dates.format(orderViewDTO.orderDate, 'yyyy. MM. dd')} + ' 주문'">2024. 1. 27 주문</div>
+                    <ul class="order-list">
+                        <!-- 주문 상세 목록 반복 -->
+                        <li class="order-item" th:each="orderDetail : ${orderViewDTO.orderDetails}">
+                            <img th:src=" ${'/uploaded-images/'+orderDetail.product.imageUrl}" alt="Product Image" />
+                            <div class="order-item-detail">
+                                <div th:text="'상품명: ' + ${orderDetail.product.name}">상품명: 제품 A</div>
+                                <div th:text="'가격: ' + ${#numbers.formatDecimal(orderDetail.product.price, 0, 'COMMA', 0, 'POINT')} + '원'">가격: 4,100원</div>
+                                <div th:text="'수량: ' + ${orderDetail.quantity} + '개'">수량: 1개</div>
+                            </div>
+                            <div class="order-item-actions">
+                                <a th:href="@{/order/tracking(orderID=${orderViewDTO.orderID})}"><button type="button">배송조회</button></a>
+                                <a th:href="@{/order/return(orderID=${orderViewDTO.orderID})}"><button type="button">교환, 반품 신청</button></a>
+                                <a th:href="@{/review/write(productID=${orderDetail.product.productID},orderDetailID=${orderDetail.orderDetailID})}"><button type="button">리뷰 작성하기</button></a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- 메인 컨텐츠 끝 -->
+    </div>
+</div>
+
+
+<div th:replace="~{common/footer :: footer1}"></div>
+<div th:replace="~{common/footer2 :: footer2}"></div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
