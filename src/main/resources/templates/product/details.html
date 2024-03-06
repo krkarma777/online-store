@@ -563,13 +563,12 @@
 
         /* 찜 하기 기능*/
         $("#favorite").click(function () {
-            var productID = $(this).data("product-id"); // 상품 ID를 저장하는 data-attribute를 사용하세요
+            var productID = $(this).data("product-id");
             $.ajax({
                 type: "POST",
-                url: "/favorite/toggle", // 찜하기 상태를 토글하는 서버의 URL
+                url: "/favorite/toggle",
                 data: { productID: productID },
                 success: function(response) {
-                    // 성공적으로 찜하기 상태가 변경되면, 사용자 인터페이스 업데이트
                     if (response.isFavorited) {
                         $("#favorite").html('<i class="fas fa-heart"></i>'); // 찜한 상태
                     } else {
