@@ -80,13 +80,10 @@
                                 <p th:text="${#numbers.formatDecimal(favoriteProduct.product.price, 0, 'COMMA', 0, 'POINT')} + '원'">Product Price</p>
                             </div>
                             <div class="product-actions">
-                                <form id="add-to-cart-form" action="/cart/add" method="post">
-                                    <input type="hidden" name="productID" th:value="${favoriteProduct.product.productID}"/>
-                                    <input type="number" name="quantity" value="1" class="form-control w-auto d-inline-block" style="max-width: 70px" min="1" max="99"/>
-                                <button class="btn btn-primary btn-sm">장바구니 담기</button>
+                                <button type="button" class="btn btn-primary btn-sm add-to-cart"
+                                        th:data-product-id="${favoriteProduct.product.productID}">장바구니 담기</button>
                                 <button type="button" class="btn btn-danger btn-sm favorite"
                                         th:data-product-id="${favoriteProduct.product.productID}">삭제</button>
-                                </form>
                             </div>
                         </div>
                     </div>
@@ -127,28 +124,31 @@
     });
 
     /* */
-    $("#add-to-cart-form").on('submit', function (e) {
-        e.preventDefault(); // 폼 기본 제출 막기
-
-        var form = $(this);
-        var url = form.attr('action');
+    $(".add-to-cart").on('click', function () {
+        const productID = $(this).data("product-id");
+        const quantity = 1;
 
         $.ajax({
             type: "POST",
-            url: url,
-            data: form.serialize(), // 폼 데이터를 직렬화
-            success: function (data) {
-                alert("장바구니에 담겼습니다."); // 성공 알림
+            url: "/cart/add",
+            data: {
+                productID: productID,
+                quantity: quantity
+            },
+            dataType: 'json',
+            success: function (response) {
+                alert(response.message);
             },
             error: function (xhr, status, error) {
-                alert("장바구니 추가 에러 발생"); // 에러 알림
+                var errorMessage = JSON.parse(xhr.responseText).message;
+                alert(errorMessage);
             }
         });
     });
 
     /* 찜 하기 기능*/
     $(".favorite").click(function () {
-        var productID = $(this).data("product-id");
+        const productID = $(this).data("product-id");
         $.ajax({
             type: "POST",
             url: "/favorite/toggle",
