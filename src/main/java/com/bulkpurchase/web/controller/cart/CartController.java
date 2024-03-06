@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -36,12 +37,12 @@ public class CartController {
                                             @RequestParam(value = "quantity") Integer quantity,
                                             Principal principal) {
         if (principal == null) {
-            return createErrorResponse(HttpStatus.UNAUTHORIZED, "사용자 인증이 필요합니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "사용자 인증이 필요합니다."));
         }
 
         Optional<Product> productOpt = productService.findById(productID);
         if (productOpt.isEmpty()) {
-            return createErrorResponse(HttpStatus.NOT_FOUND, "해당 상품이 존재하지 않습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "해당 상품이 존재하지 않습니다."));
         }
 
         User user = userAuthValidator.getCurrentUser(principal);
@@ -57,7 +58,7 @@ public class CartController {
         } else {
             cartItemService.saveCartItem(new CartItem(cart, productOpt.get(), quantity));
         }
-        return ResponseEntity.ok("상품이 장바구니에 추가되었습니다.");
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "상품이 장바구니에 추가되었습니다."));
     }
 
     @PostMapping("/delete")
