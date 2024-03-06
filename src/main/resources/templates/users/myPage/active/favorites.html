@@ -57,46 +57,131 @@
         <div class="col-md-9">
             <h2>내가 찜한 상품 목록</h2>
             <p>내가 찜한 상품 목록을 확인하실 수 있습니다.</p>
+            <form id="check-list-form">
+                <div class="select-actions">
+                    <input type="checkbox" id="selectAll1" class="checkbox selectAll">
+                    <label for="selectAll1">전체선택</label>
+                    <button class="btn btn-outline-primary btn-sm margin-left select-delete">선택삭제</button>
+                </div>
 
-            <div class="select-actions">
-                <input type="checkbox" id="selectAll1" class="checkbox selectAll">
-                <label for="selectAll1">전체선택</label>
-                <button class="btn btn-outline-primary btn-sm margin-left">선택삭제</button>
-            </div>
-
-            <div th:each="favoriteProduct : ${favoriteProducts}" class="mb-3">
-                <div class="product-item p-3 d-flex align-items-center">
-                    <input type="checkbox" th:id="${'chk' + favoriteProduct.product.productID}" class="checkbox">
-                    <label th:for="${'chk' + favoriteProduct.product.productID}"></label>
-                    <div class="col-md-4">
-                        <a th:href="@{/product/{id}(id=${favoriteProduct.product.productID})}">
-                            <img th:if="${not #lists.isEmpty(favoriteProduct.product.imageUrls)}" th:src="@{'/uploaded-images/'+${favoriteProduct.product.imageUrls[0]}}" class="product-image" alt="Product Image">
-                            <img th:unless="${not #lists.isEmpty(favoriteProduct.product.imageUrls)}" src="@{/img/logo.png}" class="product-image" alt="Default Image">
-                        </a>
-                    </div>
-                    <div class="col-md-8">
-                        <div>
-                            <p th:text="${favoriteProduct.product.productName}">Product Name</p>
-                            <p th:text="${favoriteProduct.product.price} + '원'">Product Price</p>
+                <div th:each="favoriteProduct : ${favoriteProducts}" class="mb-3">
+                    <div class="product-item p-3 d-flex align-items-center">
+                        <input type="checkbox" name="productIDs"  th:data-product-id="${favoriteProduct.product.productID}" class="checkbox delete-select">
+                        <label th:for="${'chk' + favoriteProduct.product.productID}"></label>
+                        <div class="col-md-4">
+                            <a th:href="@{/product/{id}(id=${favoriteProduct.product.productID})}">
+                                <img th:if="${not #lists.isEmpty(favoriteProduct.product.imageUrls)}" th:src="@{'/uploaded-images/'+${favoriteProduct.product.imageUrls[0]}}" class="product-image" alt="Product Image">
+                                <img th:unless="${not #lists.isEmpty(favoriteProduct.product.imageUrls)}" src="@{/img/logo.png}" class="product-image" alt="Default Image">
+                            </a>
                         </div>
-                        <div class="product-actions">
-                            <button class="btn btn-primary btn-sm">장바구니 담기</button>
-                            <button class="btn btn-danger btn-sm">삭제</button>
+                        <div class="col-md-8">
+                            <div>
+                                <p th:text="${favoriteProduct.product.productName}">Product Name</p>
+                                <p th:text="${#numbers.formatDecimal(favoriteProduct.product.price, 0, 'COMMA', 0, 'POINT')} + '원'">Product Price</p>
+                            </div>
+                            <div class="product-actions">
+                                <form id="add-to-cart-form" action="/cart/add" method="post">
+                                    <input type="hidden" name="productID" th:value="${favoriteProduct.product.productID}"/>
+                                    <input type="number" name="quantity" value="1" class="form-control w-auto d-inline-block" style="max-width: 70px" min="1" max="99"/>
+                                <button class="btn btn-primary btn-sm">장바구니 담기</button>
+                                <button type="button" class="btn btn-danger btn-sm favorite"
+                                        th:data-product-id="${favoriteProduct.product.productID}">삭제</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="select-actions">
-                <input type="checkbox" id="selectAll2" class="checkbox selectAll">
-                <label for="selectAll2">전체선택</label>
-                <button class="btn btn-outline-primary btn-sm margin-left">선택삭제</button>
-            </div>
+                <div class="select-actions">
+                    <input type="checkbox" id="selectAll2" class="checkbox selectAll">
+                    <label for="selectAll2">전체선택</label>
+                    <button class="btn btn-outline-primary btn-sm margin-left select-delete">선택삭제</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <div th:replace="~{common/footer :: footer}"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    $(document).ready(function() {
+        // 전체 선택 체크박스의 상태가 변경될 때 실행될 함수
+        $(".selectAll").change(function() {
+            var isAllChecked = $(this).is(":checked");
+            $(".checkbox").prop("checked", isAllChecked);
+        });
+
+        // 개별 체크박스 상태 변경 시 전체 선택 체크박스 상태 업데이트
+        $(document).on('change', ".checkbox", function() {
+            var checkboxlength = $(".checkbox").length;
+            var checkboxcheckedlength = $(".checkbox:checked").length;
+            var isAllChecked = checkboxcheckedlength === checkboxlength;
+            if (checkboxlength-2 === checkboxcheckedlength) {
+                isAllChecked = true;
+            }
+            $(".selectAll").prop("checked", isAllChecked);
+        });
+    });
+
+    /* */
+    $("#add-to-cart-form").on('submit', function (e) {
+        e.preventDefault(); // 폼 기본 제출 막기
+
+        var form = $(this);
+        var url = form.attr('action');
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: form.serialize(), // 폼 데이터를 직렬화
+            success: function (data) {
+                alert("장바구니에 담겼습니다."); // 성공 알림
+            },
+            error: function (xhr, status, error) {
+                alert("장바구니 추가 에러 발생"); // 에러 알림
+            }
+        });
+    });
+
+    /* 찜 하기 기능*/
+    $(".favorite").click(function () {
+        var productID = $(this).data("product-id");
+        $.ajax({
+            type: "POST",
+            url: "/favorite/toggle",
+            data: { productID: productID },
+            success: function(response) {
+                alert(response.message);
+                window.location.reload();
+            },
+            error: function(xhr, status, error) {
+                alert("찜하기 상태 변경에 실패했습니다: " + error);
+            }
+        });
+    });
+    /* 찜 하기 기능*/
+    $(".select-delete").click(function () {
+        e.preventDefault(); // 폼 기본 제출 막기
+        var productIDs = $(".delete-select:checked").map(function() {
+            return $(this).data("product-id");
+        }).get();
+        console.log(productIDs);
+        $.ajax({
+            type: "POST",
+            url: "/favorite/toggle/list",
+            data: { productIDs: productIDs },
+            success: function(response) {
+                alert(response.message);
+                window.location.reload();
+            },
+            error: function(xhr, status, error) {
+                alert("찜하기 상태 변경에 실패했습니다: " + error);
+            }
+        });
+    });
+</script>
 </body>
 </html>

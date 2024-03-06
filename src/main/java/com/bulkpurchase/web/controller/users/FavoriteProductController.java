@@ -32,13 +32,22 @@ public class FavoriteProductController {
         boolean isFavorited = favoriteProductService.toggleFavorite(user, product);
         return new FavoriteResponse(isFavorited);
     }
-    @GetMapping
-    private String favorites(Principal principal, Model model) {
-        User user = userAuthValidator.getCurrentUser(principal);
-        List<FavoriteProduct> favoriteProducts = favoriteProductService.findByUser(user);
-        model.addAttribute("favoriteProducts", favoriteProducts);
 
-        return "users/favoritedProduct";
+    @PostMapping("/toggle/list")
+    @ResponseBody
+    public FavoriteResponse toggleFavoriteList(@RequestParam(value = "productIDs") List<Long> productIDs, Principal principal) {
+        boolean isFavorited = true;
+        for (Long productID : productIDs) {
+            Product product = productService.findById(productID).orElse(null);
+            User user = userAuthValidator.getCurrentUser(principal);
+            boolean toggleFavorite = favoriteProductService.toggleFavorite(user, product);
+            if (!toggleFavorite) {
+                isFavorited = toggleFavorite;
+            }
+        }
+
+        return new FavoriteResponse(isFavorited);
     }
+
 }
 
