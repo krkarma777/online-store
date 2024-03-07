@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.cart;
+package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.cart.ItemAddRequest;
 import com.bulkpurchase.domain.dto.cart.ItemDeleteRequest;
