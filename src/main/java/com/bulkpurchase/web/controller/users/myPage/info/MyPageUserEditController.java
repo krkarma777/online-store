@@ -4,46 +4,42 @@ import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.UserService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/myPage")
+@RequestMapping("/profile/edit")
 public class MyPageUserEditController {
 
     private final UserAuthValidator userAuthValidator;
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
-    @GetMapping("/edit")
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @GetMapping
     public String userEditForm(Model model, Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
         model.addAttribute("user", user);
-        return "users/edit";
+        return "users/myPage/user_info/user_edit";
     }
 
-    @PostMapping("/update")
-    public String userEditForm(@ModelAttribute User user, Principal principal) {
-        String password = user.getPassword();
+    @PostMapping
+    public String userEditForm(User user, Principal principal, @RequestParam("currentPassword") String currentPassword) {
         User existingUser = userAuthValidator.getCurrentUser(principal);
-
-        // 비밀번호가 비어 있지 않으면 해시 처리
-        if (password != null && !password.isEmpty()) {
-            String hashedPassword = passwordEncoder.encode(password);
-            user.setPassword(hashedPassword);
+        if (bCryptPasswordEncoder.matches(currentPassword, existingUser.getPassword())) {
+            existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            existingUser.setAddress(user.getAddress());
+            existingUser.setDetailAddress(user.getDetailAddress());
+            existingUser.setZipCode(user.getZipCode());
+            userService.save(existingUser);
+            return "redirect:/profile/edit?result=success";
         } else {
-            // 기존 비밀번호 유지
-            user.setPassword(existingUser.getPassword());
+            return "redirect:/profile/edit?result=success";
         }
-
-        userService.save(user);
-        return "redirect:/mypage";
     }
 }

@@ -1,24 +1,166 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>마이페이지</title>
-    <!-- Bootstrap CSS -->
+    <title>마이페이지 - 정보 수정</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        .shadow, .form-group {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #fff;
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 20%;
+            text-align: right;
+            margin-right: 10px;
+        }
+        .fc{
+            display: inline-block;
+            width: 75%;
+        }
+        .address-btn {
+            width: auto;
+            padding: 0.375rem 0.75rem;
+        }
+        .form-section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            background-color: #87CEEB;
+            color: white;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+        .section-container {
+            display: flex;
+            background-color: #87CEEB;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .section-content {
+            padding: 20px;
+            background-color: white;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            width: 100%;
+            flex: 4;
+        }
+
+        .center-align {
+            display: flex;
+            justify-content: center; /* 수평 가운데 정렬 */
+            align-items: center; /* 수직 가운데 정렬 */
+        }
+
+        .right-align {
+            display: flex;
+            justify-content: right; /* 수평 가운데 정렬 */
+            align-items: center; /* 수직 가운데 정렬 */
+            margin-right: 17px;
+        }
+
+    </style>
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
 
-<div class="container mt-4">
+<div class="container mt-4 shadow">
     <div class="row">
         <div th:replace="~{common/mypage-sidebar :: sidebar}"></div>
 
         <!-- 메인 컨텐츠 시작 -->
-        <div class="col-md-9">
+        <div class="col-md-8 shadow">
+            <div class="form-section">
+            <h2 class="center-align">개인정보 수정</h2>
+            </div>
+            <form th:action="@{/profile/edit}" th:object="${user}" method="post">
+                <div class="form-section section-container">
+                    <div class="section-title center-align" style="text-align: center">변경할 수 없는 정보</div>
+                    <div class="section-content">
+                        <div class="mb-3">
+                            <label for="realName" class="form-label">이름</label>
+                            <input type="text" class="form-control fc" id="realName" th:field="*{realName}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">이메일</label>
+                            <input type="email" class="form-control fc" id="email" th:field="*{email}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">휴대폰 번호</label>
+                            <input type="text" class="form-control fc" id="phoneNumber" th:field="*{phoneNumber}" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-section section-container">
+                    <div class="section-title center-align">비밀번호 변경</div>
+                    <div class="section-content">
+                        <div class="mb-3">
+                            <label for="current-password" class="form-label">현재 비밀번호</label>
+                            <input type="password" name="currentPassword" class="form-control fc" id="current-password" required>
+                        </div>
+                        <div class="center-align" style="margin-bottom: 15px; color: darkgreen;">(비밀번호는 영문/숫자/특수문자 2가지 이상 조합의 8~20자여야 합니다.)</div>
+                        <div class="mb-3">
+                            <label for="new-password" class="form-label">새 비밀번호</label>
+                            <input type="password" class="form-control fc" th:field="*{password}" id="new-password" th:onkeyup="newPasswordValidate()" required>
+                        </div>
+                        <div id="passwordHelpBlock" style="display: none;">
+                            <p id="lengthCheck" class="text-danger">✖ 영문/숫자/특수문자 2가지 이상 조합 (8~20자)</p>
+                            <p id="sequenceCheck" class="text-danger">✖ 3개 이상 연속되거나 동일한 문자/숫자 제외</p>
+                            <p id="excludeUsername" class="text-danger">✖ 아이디(이메일) 제외</p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="new-password-check" class="form-label">다시 입력</label>
+                            <input type="password" class="form-control fc" id="new-password-check" required>
+                        </div>
+                        <div class="center-align">
+                            <p id="password-match-result"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-section section-container">
+                    <div class="section-title center-align">주소 변경</div>
+                    <div class="section-content">
+                        <div class="mb-3">
+                            <label for="address" class="form-label">주소</label>
+                            <input type="text" class="form-control fc" id="address" th:field="*{address}"
+                                   th:value="*{address}" required>
 
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label for="zipCode" class="form-label">우편 번호</label>
+                            <input type="text" class="form-control fc" id="zipCode" th:field="*{zipCode}" th:value="*{zipCode}" readonly required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="detailAddress" class="form-label">상세 주소</label>
+                            <input type="text" class="form-control fc" id="detailAddress" th:field="*{detailAddress}"
+                                   th:value="*{detailAddress}" required>
+                        </div>
+                        <div class="mb-3 right-align">
+                            <button type="button" class="btn btn-outline-secondary address-btn" onclick="searchAddress()">
+                                주소 검색
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="center-align">
+                    <button type="submit" class="btn btn-primary" onclick="return validateRegisterForm()">정보 수정</button>
+                </div>
+            </form>
         </div>
         <!-- 메인 컨텐츠 끝 -->
     </div>
@@ -26,5 +168,83 @@
 
 <div th:replace="~{common/footer :: footer}"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#new-password, #new-password-check").on("input", function() {
+            validatePasswordsMatch();
+        });
+
+        $("form").on("submit", function(e) {
+            var newPassword = $("#new-password").val();
+            var newPasswordCheck = $("#new-password-check").val();
+            if (newPassword !== newPasswordCheck) {
+                e.preventDefault();
+                alert("새 비밀번호와 다시 입력한 비밀번호가 일치하지 않습니다.");
+                $("#new-password-check").focus();
+            }
+
+            validateRegisterForm(e);
+        });
+
+        // 비밀번호 일치 검사
+        function validatePasswordsMatch() {
+            const newPassword = $("#new-password").val();
+            const newPasswordCheck = $("#new-password-check").val();
+            if (newPassword === newPasswordCheck) {
+                $("#password-match-result").text('✔ 비밀번호가 일치합니다.').css('color', 'green');
+            } else {
+                $("#password-match-result").text('✖ 비밀번호가 일치하지 않습니다.').css('color', 'red');
+            }
+            if (newPasswordCheck === '' && newPassword === '') {
+                $("#password-match-result").text('');
+            }
+        }
+        // 주소 검색
+        function searchAddress() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    $('#address').val(data.address);
+                    $('#zipCode').val(data.zonecode);
+                    $('#detailAddress').focus();
+                }
+            }).open();
+        }
+
+        $(".address-btn").click(searchAddress);
+
+        // 폼 제출 전 유효성 검사
+        function validateRegisterForm() {
+            const password = $('#new-password').val();
+            const address = $('#address').val();
+            const detailAddress = $('#detailAddress').val();
+
+            if (!validatePasswordComplexity(password)) {
+                alert('비밀번호는 영문/숫자/특수문자 2가지 이상 조합의 8~20자여야 합니다.');
+                return false;
+            }
+
+            if (!validateAddress(address) || !validateDetailAddress(detailAddress)) {
+                alert('주소를 정확히 입력해주세요.');
+                return false;
+            }
+
+            return true;
+        }
+
+        function validatePasswordComplexity(password) {
+            const re = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W]).{8,20}$/;
+            return re.test(password);
+        }
+
+        function validateAddress(address) {
+            return address.trim().length > 0;
+        }
+
+        function validateDetailAddress(detailAddress) {
+            return detailAddress.trim().length > 0;
+        }
+    });
+</script>
 </body>
 </html>
