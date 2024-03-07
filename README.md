@@ -1,5 +1,3 @@
-프로젝트 이름
-
 <h1>Seed</h1>
 
 ## Getting Started
@@ -22,7 +20,7 @@ Kakao JS Open API secret key setup<br>
 Kakao login Naver login secret key setup<br>
 
 ## Features and Screenshots
-https://krkarma777.notion.site/SEED-a2c911191c124a29b57b3f1f841c7264?pvs=74
+https://krkarma777.notion.site/SEED-a2c911191c124a29b57b3f1f841c7264
 
 ## Author 
 
