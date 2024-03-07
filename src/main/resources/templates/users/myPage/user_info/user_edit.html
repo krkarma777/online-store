@@ -177,7 +177,7 @@
     $(document).ready(function() {
 
         $("form").submit(function(event) {
-            event.preventDefault(); // 폼 기본 제출 방지
+            event.preventDefault();
 
             updateValidation()
 
@@ -198,18 +198,16 @@
             };
 
             $.ajax({
-                type: "PATCH", // HTTP 메소드
-                url: "/api/users", // API 엔드포인트 URL
-                contentType: "application/json", // 전송할 데이터의 MIME 타입
-                data: JSON.stringify(userData), // JavaScript 객체를 JSON 문자열로 변환
-                dataType: "json", // 서버로부터 기대하는 응답 데이터 타입
+                type: "PATCH",
+                url: "/api/users",
+                contentType: "application/json",
+                data: JSON.stringify(userData),
+                dataType: "json",
                 success: function(response) {
-                    // 요청 성공 시 실행될 콜백 함수
                     alert("사용자 정보가 업데이트되었습니다.");
-                    window.location.reload(); // 페이지 새로고침
+                    window.location.reload();
                 },
                 error: function(xhr, status, error) {
-                    // 요청 실패 시 실행될 콜백 함수
                     alert("업데이트에 실패했습니다: " + xhr.responseText);
                 }
             });
