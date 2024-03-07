@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
@@ -176,141 +177,145 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-    // 이전 입력 값 저장을 위한 변수
-    var previousUsername = '';
-    var previousEmail = '';
+    $(document).ready(function() {
+        // 회원가입 폼 제출 처리
+        $('#registerForm').submit(function(event) {
+            event.preventDefault(); // 기본 폼 제출 동작 방지
 
-    document.addEventListener('DOMContentLoaded', function() {
-        var usernameInput = document.getElementById('username');
-        var emailInput = document.getElementById('email');
+            validateRegisterForm();
+
+            if (isUsernameDuplicate || isEmailDuplicate) {
+                event.preventDefault();
+                alert('중복된 아이디 또는 이메일이 있습니다. 다시 확인해 주세요.');
+
+                return;
+            }
+
+            var userData = {
+                username: $('#username').val(),
+                password: $('#password').val(),
+                realName: $('#realName').val(),
+                email: $('#email').val(),
+                phoneNumber: $('#phoneNumber').val(),
+                address: $('#address').val(),
+                detailAddress: $('#detailAddress').val(),
+                zipCode: $('#zipCode').val(),
+                userType: $('#userType').val(),
+            };
+
+            // AJAX를 사용하여 서버에 회원가입 데이터 전송
+            $.ajax({
+                url: '/api/users',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(userData),
+                success: function(response) {
+                    alert('회원가입이 완료되었습니다.');
+                    window.location.href = '/login'; // 로그인 페이지로 이동
+                },
+                error: function(xhr) {
+                    alert('회원가입 실패: ' + xhr.responseText);
+                }
+            });
+        });
+
+        // 중복 상태를 저장할 변수
+        var isUsernameDuplicate = false;
+        var isEmailDuplicate = false;
+
+        var username;
+        var email;
 
         // 아이디 중복 검사
-        usernameInput.addEventListener('focusout', function() {
-            var currentUsername = this.value;
-            if (currentUsername && currentUsername !== previousUsername) {
-                // 중복 검사 실행
-                checkUsernameAvailability(currentUsername);
-                previousUsername = currentUsername;
+        $('#username').focusout(function() {
+            if (username === $(this).val()){
+                return
+            }
+            username = $(this).val();
+            if(username.length > 0) {
+                $.ajax({
+                    url: '/api/username-check',
+                    type: 'GET',
+                    data: {username: username},
+                    success: function(data) {
+                        const feedbackElement = $("#usernameFeedback");
+                        if (data.isAvailable) {
+                            feedbackElement.css('display', 'none');
+                            isUsernameDuplicate = false;
+                        } else {
+                            feedbackElement.text('이미 사용 중인 아이디입니다.');
+                            feedbackElement.css('display', 'block');
+                            isUsernameDuplicate = true;
+                        }
+                    }
+                });
             }
         });
 
         // 이메일 중복 검사
-        emailInput.addEventListener('focusout', function() {
-            var currentEmail = this.value;
-            if (currentEmail && currentEmail !== previousEmail) {
-                // 중복 검사 실행
-                checkEmailAvailability(currentEmail);
-                previousEmail = currentEmail;
+        $('#email').focusout(function() {
+            if (email === $(this).val()){
+                return
+            }
+            email = $(this).val();
+            if(email.length > 0) {
+                $.ajax({
+                    url: '/api/email-check',
+                    type: 'GET',
+                    data: {email: email},
+                    success: function(data) {
+                        const feedbackElement = $("#emailFeedback");
+                        if (data.isAvailable) {
+                            feedbackElement.css('display', 'none');
+                            isEmailDuplicate = false; // 중복 상태 업데이트
+                        } else {
+                            feedbackElement.text('이미 사용 중인 이메일입니다.');
+                            feedbackElement.css('display', 'block');
+                            isEmailDuplicate = true; // 중복 상태 업데이트
+                        }
+                    }
+                });
             }
         });
-    });
 
-    // 중복 상태를 저장할 변수
-    var isUsernameDuplicate = false;
-    var isEmailDuplicate = false;
-
-    // 아이디 중복 검사 AJAX 요청
-    function checkUsernameAvailability(username) {
-        fetch('/register/check-username', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username: username })
-        })
-            .then(response => response.json())
-            .then(data => {
-                const feedbackElement = document.getElementById('usernameFeedback');
-                if (data.isAvailable) {
-                    feedbackElement.style.display = 'none';
-                    isUsernameDuplicate = false; // 중복 상태 업데이트
-                } else {
-                    feedbackElement.textContent = '이미 사용 중인 아이디입니다.';
-                    feedbackElement.style.display = 'block';
-                    isUsernameDuplicate = true; // 중복 상태 업데이트
+        // 주소 검색
+        $('.address-btn').click(function() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    $('#address').val(data.address);
+                    $('#zipCode').val(data.zonecode);
+                    $('#detailAddress').focus();
                 }
-            })
-            .catch(error => console.error('Error:', error));
-    }
+            }).open();
+        });
 
-    // 이메일 중복 검사 AJAX 요청
-    function checkEmailAvailability(email) {
-        fetch('/register/check-email', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: email })
-        })
-            .then(response => response.json())
-            .then(data => {
-                const feedbackElement = document.getElementById('emailFeedback');
-                if (data.isAvailable) {
-                    feedbackElement.style.display = 'none';
-                    isEmailDuplicate = false; // 중복 상태 업데이트
-                } else {
-                    feedbackElement.textContent = '이미 사용 중인 이메일입니다.';
-                    feedbackElement.style.display = 'block';
-                    isEmailDuplicate = true; // 중복 상태 업데이트
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
+        (function () {
+            'use strict'
 
-    // 폼 제출 이벤트 리스너
-    document.querySelector('.form-signin').addEventListener('submit', function(event) {
-        // 중복 상태를 검사하여, 중복이 있는 경우 폼 제출을 방지
-        if (isUsernameDuplicate || isEmailDuplicate) {
-            event.preventDefault();
-            alert('중복된 아이디 또는 이메일이 있습니다. 다시 확인해 주세요.');
-        }
+            var forms = document.querySelectorAll('.needs-validation')
+
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
     });
-
-    function searchAddress() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                // 우편번호와 주소를 입력 필드에 설정
-                document.getElementById('address').value = data.address; // 주소
-                document.getElementById('zipCode').value = data.zonecode; // 우편번호
-
-                document.getElementById('detailAddress').focus(); // 상세주소 필드로 포커스 이동
-            }
-        }).open();
-    }
-    function showPasswordRequirements() {
-        document.getElementById('passwordHelpBlock').style.display = 'block';
-    }
-
-    function hidePasswordRequirements() {
-        document.getElementById('passwordHelpBlock').style.display = 'none';
-    }
-
-    (function () {
-        'use strict'
-
-        var forms = document.querySelectorAll('.needs-validation')
-
-        Array.prototype.slice.call(forms)
-            .forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-
-                    form.classList.add('was-validated')
-                }, false)
-            })
-    })()
 
     function validatePassword() {
-        var password = document.getElementById('password').value;
-        var username = document.getElementById('username').value; // 사용자 아이디 입력 필드의 id를 'username'으로 가정합니다.
-        var passwordHelpBlock = document.getElementById('passwordHelpBlock');
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var passwordHelpBlock = $("#passwordHelpBlock");
 
         // 비밀번호 필드가 비어 있으면 메시지를 숨깁니다.
         if(password.length === 0) {
-            passwordHelpBlock.style.display = 'none';
+            passwordHelpBlock.css('display', 'none');
             return; // 추가 검증을 수행하지 않고 함수를 종료합니다.
         }
 
@@ -328,33 +333,28 @@
 
         // 하나라도 조건을 만족하지 않으면 메시지 표시
         if (!lengthCheck || !sequenceCheck || !excludeUsername) {
-            passwordHelpBlock.style.display = 'block';
+            passwordHelpBlock.css('display', 'block');
         } else {
-            passwordHelpBlock.style.display = 'none';
+            passwordHelpBlock.css('display', 'none');
         }
     }
-
     function updateRequirement(elementId, isValid) {
-        var element = document.getElementById(elementId);
+        var $element = $('#' + elementId);
         if (isValid) {
-            element.classList.remove('text-danger');
-            element.classList.add('text-success');
-            element.innerHTML = '✔ ' + element.textContent.slice(2); // 체크 아이콘으로 변경
+            $element.removeClass('text-danger').addClass('text-success').html('&#10004; ' + $element.text().slice(2)); // 체크 아이콘으로 변경
         } else {
-            element.classList.remove('text-success');
-            element.classList.add('text-danger');
-            element.innerHTML = '✖ ' + element.textContent.slice(2); // X 아이콘으로 변경
+            $element.removeClass('text-success').addClass('text-danger').html('&#10008; ' + $element.text().slice(2)); // X 아이콘으로 변경
         }
     }
 
     function validateRegisterForm() {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        const realName = document.getElementById('realName').value;
-        const email = document.getElementById('email').value;
-        const phoneNumber = document.getElementById('phoneNumber').value;
-        const address = document.getElementById('address').value;
-        const detailAddress = document.getElementById('detailAddress').value;
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var realName = $("#realName").val();
+        var email = $("#email").val();
+        var phoneNumber = $("#phoneNumber").val();
+        var address = $("#address").val();
+        var detailAddress = $("#detailAddress").val();
 
         // 아이디 유효성 검사
         if (!validateUsername(username)) {
@@ -428,7 +428,6 @@
     function validateDetailAddress(detailAddress) {
         return detailAddress.trim().length > 0;
     }
-
 </script>
 </body>
 </html>

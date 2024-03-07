@@ -29,12 +29,6 @@ public class RegisterController {
         binder.addValidators(userRegisterValidator);
     }
 
-    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new User());
-        return "/users/register";
-    }
-
     @PostMapping("/registerProc")
     public String registerProcess(@ModelAttribute @Validated(RegisterCheck.class) User user, BindingResult bindingResult, Model model) {
 
