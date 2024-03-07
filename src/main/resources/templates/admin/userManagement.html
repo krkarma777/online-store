@@ -94,13 +94,14 @@
             var status = $(this).data("status");
 
             $.ajax({
-                url: "/admin/user/status",
-                type: "POST",
-                data: {
+                url: "/api/users/status",
+                type: "PATCH",contentType: "application/json",
+                data: JSON.stringify({
                     userID: userId,
                     status: status
-                },
+                }),
                 success: function(response){
+                    alert("상태가 성공적으로 변경되었습니다.");
                     window.location.reload(); // 성공 시 페이지 리로드
                 },
                 error: function(xhr, status, error){

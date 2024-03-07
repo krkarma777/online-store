@@ -73,4 +73,16 @@ public class UserService {
     public Optional<User> findByRealNameAndEmail(String realname, String email) {
         return userRepository.findByRealNameAndEmail(realname, email);
     }
+
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
+    public boolean existsById(Long userId) {
+        return userRepository.existsById(userId);
+    }
+
+    public void deleteById(Long userId) {
+        userRepository.deleteById(userId);
+    }
 }
