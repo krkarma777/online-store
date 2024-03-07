@@ -108,20 +108,20 @@ $(document).ready(function () {
 
 function deleteCartItem(itemId) {
     $.ajax({
-        url: '/cart/delete',
-        type: 'POST',
-        data: {itemId: itemId},
+        url: '/cart/item',
+        type: 'DELETE',
+        contentType: 'application/json',
+        data: JSON.stringify({
+                itemId: itemId
+        }),
         success: function (response) {
-            // 삭제 성공 시 페이지에서 해당 항목 제거
-            // 예: $('#item-' + itemId).remove();
-            alert('상품이 삭제되었습니다.');
+            alert(response.message);
             $('#item-' + itemId).remove();
             updateCartSummary();
         },
         error: function (xhr, status, error) {
-            // 에러 처리, 서버로부터의 응답을 바탕으로 메시지를 표시
-            var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : '삭제 중 오류가 발생했습니다.';
-            alert('삭제 중 오류가 발생했습니다.');
+            var errorMessage = JSON.parse(xhr.responseText).message;
+            alert(errorMessage);
         }
     });
 }
@@ -133,43 +133,44 @@ function deleteSelectedItems() {
     });
 
     $.ajax({
-        url: '/cart/deleteSelected',
-        type: 'POST',
-        traditional: true,
-        data: {itemIds: selectedItems},
+        url: '/cart/item',
+        type: 'DELETE',
+        contentType: 'application/json',
+        data: JSON.stringify({
+                itemIds: selectedItems
+        }),
         success: function (response) {
-            // 성공 처리
-            alert('선택된 상품이 삭제되었습니다.');
-            location.reload(); // 페이지 새로고침
+            alert(response.message);
+            location.reload();
             updateCartSummary();
         },
-        error: function (error) {
-            // 실패 처리
-            alert('삭제 중 오류가 발생했습니다.');
+        error: function (xhr, status, error) {
+            var errorMessage = JSON.parse(xhr.responseText).message;
+            alert(errorMessage);
         }
     });
 }
 
 function updateCartItemQuantity(itemId, quantity) {
     $.ajax({
-        url: '/cart/update',
-        type: 'POST',
-        data: {
+        url: '/cart/item',
+        type: 'PATCH',
+        contentType: 'application/json',
+        data: JSON.stringify({
             itemId: itemId,
             quantity: quantity
-        },
+        }),
         success: function (response) {
             var price = parseFloat($("tr[id='item-" + itemId + "']").find("td:eq(2)").text().replace('원', '').replace(',', '')); // 가격을 텍스트로 가져오는 대신에 숫자로 파싱하여 계산
             var newTotal = price * quantity;
             $("tr[id='item-" + itemId + "']").find(".item-total").text(newTotal + '원'); // 총 가격을 계산하여 텍스트로 설정
             updateCartSummary();
         },
-        error: function (error) {
-            alert('수량 업데이트 중 오류가 발생했습니다.');
+        error: function (xhr, status, error) {
+            var errorMessage = JSON.parse(xhr.responseText).message;
+            alert(errorMessage);
         }
     });
-
-
 
 // 페이지가 준비된 후 초기 한 번만 장바구니 요약을 업데이트합니다.
     $(document).ready(function () {
@@ -184,4 +185,3 @@ function updateCartItemQuantity(itemId, quantity) {
     });
     updateCartSummary();
 }
-
