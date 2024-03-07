@@ -113,9 +113,11 @@
                     <div class="buttons mt-4">
 
                         <form id="add-to-cart-form" action="/cart/add" method="post">
-                            <input type="number" name="quantity" value="1" class="form-control w-auto d-inline-block"/>
+                            <input type="number" name="quantity" value="1" id="quantity" class="form-control w-auto d-inline-block"/>
                             <input type="hidden" name="productID" th:value="${product.productID}"/>
-                            <button type="submit" class="btn btn-custom-success">장바구니에 추가</button>
+                            <button type="submit" class="btn btn-custom-success" id="add-to-cart"
+                                    th:data-product-id="${product.productID}">
+                                장바구니에 추가</button>
                             <button id="order-button" type="button" class="btn btn-custom-primary">바로 주문하기</button>
                         </form>
 
@@ -369,21 +371,26 @@
             });
         });
 
-        $("#add-to-cart-form").on('submit', function (e) {
-            e.preventDefault(); // 폼 기본 제출 막기
+        $("#add-to-cart").on('click', function (e) {
+            event.preventDefault(e);
 
-            var form = $(this);
-            var url = form.attr('action');
+            const productID = $(this).data("product-id");
+            const quantity = $("#quantity").val();
 
             $.ajax({
                 type: "POST",
-                url: url,
-                data: form.serialize(), // 폼 데이터를 직렬화
-                success: function (data) {
-                    alert("장바구니에 담겼습니다."); // 성공 알림
+                url: "/cart/item",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    productID: productID,
+                    quantity: quantity
+                }),
+                success: function (response) {
+                    alert(response.message);
                 },
                 error: function (xhr, status, error) {
-                    alert("장바구니 추가 에러 발생"); // 에러 알림
+                    var errorMessage = JSON.parse(xhr.responseText).message;
+                    alert(errorMessage);
                 }
             });
         });

@@ -1,5 +1,8 @@
 package com.bulkpurchase.web.controller.cart;
 
+import com.bulkpurchase.domain.dto.cart.ItemAddRequest;
+import com.bulkpurchase.domain.dto.cart.ItemDeleteRequest;
+import com.bulkpurchase.domain.dto.cart.ItemUpdateRequest;
 import com.bulkpurchase.domain.entity.cart.Cart;
 import com.bulkpurchase.domain.entity.cart.CartItem;
 import com.bulkpurchase.domain.entity.product.Product;
@@ -11,10 +14,7 @@ import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/cart/item")
 @RequiredArgsConstructor
 public class CartController {
 
@@ -32,13 +32,11 @@ public class CartController {
     private final ProductService productService;
     private final UserAuthValidator userAuthValidator;
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addToCart(@RequestParam(value = "productID") Long productID,
-                                            @RequestParam(value = "quantity") Integer quantity,
-                                            Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "사용자 인증이 필요합니다."));
-        }
+    @PostMapping
+    public ResponseEntity<?> addToCart(@RequestBody ItemAddRequest itemAddRequest,
+                                       Principal principal) {
+        Long productID = itemAddRequest.getProductID();
+        Integer quantity = itemAddRequest.getQuantity();
 
         Optional<Product> productOpt = productService.findById(productID);
         if (productOpt.isEmpty()) {
@@ -48,7 +46,6 @@ public class CartController {
         User user = userAuthValidator.getCurrentUser(principal);
         Cart cart = cartService.cartFindOrCreate(user);
 
-        // 장바구니에서 해당 상품 검색
         List<CartItem> existingItems = cartItemService.findByCartAndProduct(cart, productOpt.get());
 
         if (!existingItems.isEmpty()) {
@@ -61,59 +58,46 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "상품이 장바구니에 추가되었습니다."));
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<?> deleteCartItem(@RequestParam(value = "itemId") Long itemId, Principal principal) {
-        if (principal == null) {
-            return createErrorResponse(HttpStatus.UNAUTHORIZED, "사용자 인증이 필요합니다.");
-        }
+    @DeleteMapping
+    public ResponseEntity<?> deleteCartItem(@RequestBody ItemDeleteRequest itemDeleteRequest,
+                                            Principal principal) {
+        System.out.println("itemDeleteRequest = " + itemDeleteRequest);
+        List<Long> itemIds = itemDeleteRequest.getItemIds();
+        Long itemId = itemDeleteRequest.getItemId();
+        if (itemIds.isEmpty() && itemId != null) {
+            User user = userAuthValidator.getCurrentUser(principal);
 
-        User user = userAuthValidator.getCurrentUser(principal);
-        if (user == null) {
-            return createErrorResponse(HttpStatus.UNAUTHORIZED, "사용자를 찾을 수 없습니다.");
-        }
+            Optional<CartItem> cartItemOpt = cartItemService.findById(itemId);
+            if (cartItemOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "상품을 찾을 수 없습니다."));
+            }
 
-        Optional<CartItem> cartItemOpt = cartItemService.findById(itemId);
-        if (cartItemOpt.isEmpty()) {
-            return createErrorResponse(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다.");
-        }
+            CartItem cartItem = cartItemOpt.get();
+            if (!cartItem.getCart().getUser().equals(user)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "이 상품을 삭제할 권한이 없습니다."));
+            }
 
-        CartItem cartItem = cartItemOpt.get();
-        // 사용자의 장바구니와 상품의 장바구니가 일치하는지 확인
-        if (!cartItem.getCart().getUser().equals(user)) {
-            return createErrorResponse(HttpStatus.FORBIDDEN, "이 상품을 삭제할 권한이 없습니다.");
+            cartItemService.deleteCartItemById(itemId);
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "상품이 삭제되었습니다."));
+        } else if (itemId == null && !itemIds.isEmpty()) {
+            cartItemService.deleteCartItemsByIds(itemIds);
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "상품이 삭제되었습니다."));
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "상품을 선택해주십시오."));
         }
-        cartItemService.deleteCartItemById(itemId);
-        return ResponseEntity.ok("상품이 삭제되었습니다.");
     }
 
+    @PatchMapping
+    public ResponseEntity<?> updateItem(@RequestBody ItemUpdateRequest itemUpdateRequest) {
+        Optional<CartItem> byId = cartItemService.findById(itemUpdateRequest.getItemId());
 
-    @PostMapping("/deleteSelected")
-    public ResponseEntity<?> deleteSelectedItems(@RequestParam(value = "itemIds") List<Long> itemIds, Principal principal) {
-        if (principal == null) return createErrorResponse(HttpStatus.UNAUTHORIZED, "사용자 인증이 필요합니다.");
-
-        cartItemService.deleteCartItemsByIds(itemIds);
-        return ResponseEntity.ok("선택한 상품들이 삭제되었습니다.");
-    }
-
-    @PostMapping("/update")
-    public ResponseEntity<?> updateItem(@RequestParam(value = "itemId") Long itemId,
-                                                 @RequestParam(value = "quantity") Integer quantity,
-                                                 Principal principal) {
-
-        if (principal == null) return createErrorResponse(HttpStatus.UNAUTHORIZED, "사용자 인증이 필요합니다.");
-
-        Optional<CartItem> byId = cartItemService.findById(itemId);
         if (byId.isEmpty()) {
-            return createErrorResponse(HttpStatus.NOT_FOUND, "해당 아이템이 존재하지 않습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "해당 아이템이 존재하지 않습니다."));
         } else {
             CartItem cartItem = byId.get();
-            cartItem.setQuantity(quantity);
+            cartItem.setQuantity(itemUpdateRequest.getQuantity());
             cartItemService.saveCartItem(cartItem);
-            return ResponseEntity.ok("수정되었습니다.");
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "상품이 수정되었습니다."));
         }
-    }
-
-    private ResponseEntity<?> createErrorResponse(HttpStatus status, String message) {
-        return ResponseEntity.status(status).body(message);
     }
 }
