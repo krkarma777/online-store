@@ -1,5 +1,6 @@
 package com.bulkpurchase.web.controller.api;
 
+import com.bulkpurchase.domain.dto.user.UserStatusRequest;
 import com.bulkpurchase.domain.entity.user.RegisterCheck;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.RegisterService;
@@ -12,8 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
@@ -29,11 +30,6 @@ public class UserController {
     private final UserService userService;
     private final UserAuthValidator userAuthValidator;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @InitBinder
-    protected void initBinder(WebDataBinder binder) {
-        binder.addValidators(userRegisterValidator);
-    }
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Validated(RegisterCheck.class) User user,
@@ -60,6 +56,18 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Error: Password does not match");
         }
+    }
+
+    @PatchMapping("/status")
+    public ResponseEntity<?> changeStatus(@RequestBody UserStatusRequest userStatusRequest) {
+        User user = userService.findByUserid(userStatusRequest.getUserID())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        user.setStatus(userStatusRequest.getStatus());
+
+        userService.save(user);
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{userId}")
