@@ -146,6 +146,27 @@
 <div th:replace="~{common/navBar :: content}"></div>
 
 <div class="container mt-4">
+    <!-- 프로모션 및 이벤트 안내 -->
+    <section class="promotions mb-4">
+        <h2 class="section-header">프로모션 및 이벤트</h2>
+        <div class="row">
+            <div class="col">
+                <p>최신 프로모션과 이벤트 소식을 확인하세요.</p>
+                <!-- 목업 이벤트 내용 -->
+                <div class="promotion-mockup" style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+                    <h4>봄맞이 대박 할인!</h4>
+                    <p>이번 봄에는 우리 상품을 특별 할인가에 만나보세요. 최대 50%까지 할인!</p>
+                    <a href="#" class="btn btn-success">자세히 보기</a>
+                </div>
+                <div class="promotion-mockup mt-3" style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
+                    <h4>신규 회원 특별 혜택</h4>
+                    <p>지금 회원으로 가입하시면 첫 구매에 한해 20% 할인 쿠폰을 드립니다.</p>
+                    <a href="#" class="btn btn-info">회원 가입하기</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- 인기 상품 섹션 -->
     <section class="popular-products mb-4">
         <h2 class="section-header">인기 상품</h2>
@@ -196,28 +217,6 @@
             </ul>
         </div>
     </section>
-
-    <!-- 프로모션 및 이벤트 안내 -->
-    <section class="promotions mb-4">
-        <h2 class="section-header">프로모션 및 이벤트</h2>
-        <div class="row">
-            <div class="col">
-                <p>최신 프로모션과 이벤트 소식을 확인하세요.</p>
-                <!-- 목업 이벤트 내용 -->
-                <div class="promotion-mockup" style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
-                    <h4>봄맞이 대박 할인!</h4>
-                    <p>이번 봄에는 우리 상품을 특별 할인가에 만나보세요. 최대 50%까지 할인!</p>
-                    <a href="#" class="btn btn-success">자세히 보기</a>
-                </div>
-                <div class="promotion-mockup mt-3" style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
-                    <h4>신규 회원 특별 혜택</h4>
-                    <p>지금 회원으로 가입하시면 첫 구매에 한해 20% 할인 쿠폰을 드립니다.</p>
-                    <a href="#" class="btn btn-info">회원 가입하기</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
 </div>
 
 <div th:replace="~{common/footer :: footer1}"></div>
