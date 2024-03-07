@@ -154,7 +154,11 @@
                                 주소 검색
                             </button>
                         </div>
-
+                        <input type="hidden" th:field="*{userID}" th:value="*{userID}">
+                        <input type="hidden" th:field="*{username}" th:value="*{username}">
+                        <input type="hidden" th:field="*{role}" th:value="*{role}">
+                        <input type="hidden" th:field="*{userGrade}" th:value="*{userGrade}">
+                        <input type="hidden" th:field="*{phoneNumber}" th:value="*{phoneNumber}">
                     </div>
                 </div>
                 <div class="center-align">
@@ -171,21 +175,73 @@
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
     $(document).ready(function() {
+
+        $("form").submit(function(event) {
+            event.preventDefault(); // 폼 기본 제출 방지
+
+            updateValidation()
+
+            var userData = {
+                "userID":$("#userID").val(),
+                "username": $("#username").val(),
+                "password": $("#new-password").val(),
+                "email": $("#email").val(),
+                "realName": $("#realName").val(),
+                "role": $("#role").val(),
+                "userGrade": $("#userGrade").val(),
+                "phoneNumber": $("#phoneNumber").val(),
+                "address": $("#address").val(),
+                "detailAddress": $("#detailAddress").val(),
+                "zipCode": $("#zipCode").val(),
+                "status": $("#status").val(),
+                "currentPassword": $("#current-password").val()
+            };
+
+            $.ajax({
+                type: "PATCH", // HTTP 메소드
+                url: "/api/users", // API 엔드포인트 URL
+                contentType: "application/json", // 전송할 데이터의 MIME 타입
+                data: JSON.stringify(userData), // JavaScript 객체를 JSON 문자열로 변환
+                dataType: "json", // 서버로부터 기대하는 응답 데이터 타입
+                success: function(response) {
+                    // 요청 성공 시 실행될 콜백 함수
+                    alert("사용자 정보가 업데이트되었습니다.");
+                    window.location.reload(); // 페이지 새로고침
+                },
+                error: function(xhr, status, error) {
+                    // 요청 실패 시 실행될 콜백 함수
+                    alert("업데이트에 실패했습니다: " + xhr.responseText);
+                }
+            });
+        });
+
         $("#new-password, #new-password-check").on("input", function() {
             validatePasswordsMatch();
         });
 
-        $("form").on("submit", function(e) {
+        function updateValidation() {
             var newPassword = $("#new-password").val();
             var newPasswordCheck = $("#new-password-check").val();
+            const password = $('#new-password').val();
+            const address = $('#address').val();
+            const detailAddress = $('#detailAddress').val();
+
             if (newPassword !== newPasswordCheck) {
                 e.preventDefault();
                 alert("새 비밀번호와 다시 입력한 비밀번호가 일치하지 않습니다.");
                 $("#new-password-check").focus();
             }
 
-            validateRegisterForm(e);
-        });
+            if (!validatePasswordComplexity(password)) {
+                alert('비밀번호는 영문/숫자/특수문자 2가지 이상 조합의 8~20자여야 합니다.');
+                return false;
+            }
+
+            if (!validateAddress(address) || !validateDetailAddress(detailAddress)) {
+                alert('주소를 정확히 입력해주세요.');
+                return false;
+            }
+        }
 
         // 비밀번호 일치 검사
         function validatePasswordsMatch() {
@@ -213,24 +269,6 @@
 
         $(".address-btn").click(searchAddress);
 
-        // 폼 제출 전 유효성 검사
-        function validateRegisterForm() {
-            const password = $('#new-password').val();
-            const address = $('#address').val();
-            const detailAddress = $('#detailAddress').val();
-
-            if (!validatePasswordComplexity(password)) {
-                alert('비밀번호는 영문/숫자/특수문자 2가지 이상 조합의 8~20자여야 합니다.');
-                return false;
-            }
-
-            if (!validateAddress(address) || !validateDetailAddress(detailAddress)) {
-                alert('주소를 정확히 입력해주세요.');
-                return false;
-            }
-
-            return true;
-        }
 
         function validatePasswordComplexity(password) {
             const re = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W]).{8,20}$/;
