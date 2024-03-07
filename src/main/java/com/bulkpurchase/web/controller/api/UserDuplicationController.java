@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class RegisterDuplicationController {
+public class UserDuplicationController {
 
     private final UserService userService;
 
