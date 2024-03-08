@@ -31,16 +31,15 @@ public class Inquiry {
     @Column(nullable = false)
     private InquiryStatus status = InquiryStatus.PENDING;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "CLOB")
     private String inquiryContent;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "CLOB")
     private String responseContent;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private LocalDateTime inquiryDate = LocalDateTime.now();
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column
     private LocalDateTime responseDate;
 }
