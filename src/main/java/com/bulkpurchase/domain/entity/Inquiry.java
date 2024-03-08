@@ -29,7 +29,7 @@ public class Inquiry {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private InquiryStatus status;
+    private InquiryStatus status = InquiryStatus.PENDING;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String inquiryContent;
