@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.seller;
 
-import com.bulkpurchase.domain.dto.inquiry.ReplyRequestDTO;
+import com.bulkpurchase.domain.dto.inquiry.InquiryReplyRequestDTO;
 import com.bulkpurchase.domain.dto.product.ProductInquiryDTO;
 import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import com.bulkpurchase.domain.entity.user.User;
@@ -37,7 +37,7 @@ public class SellerInquiryManageController {
     }
 
     @PostMapping("/inquiries/reply")
-    public ResponseEntity<?> inquiryReply(@RequestBody ReplyRequestDTO replyRequest) {
+    public ResponseEntity<?> inquiryReply(@RequestBody InquiryReplyRequestDTO replyRequest) {
         try {
             ProductInquiry inquiry = productInquiryService.replyToInquiry(replyRequest.getInquiryID(), replyRequest.getReplyContent());
             return ResponseEntity.ok().body("답변이 성공적으로 등록되었습니다.");
