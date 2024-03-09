@@ -1,5 +1,6 @@
 package com.bulkpurchase.domain.entity.user;
 
+import com.bulkpurchase.domain.dto.user.ShippingAddressDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,4 +33,17 @@ public class ShippingAddress {
 
     @Column(nullable = false)
     private String phoneNumber;
+
+    public ShippingAddress() {
+    }
+
+    public ShippingAddress(ShippingAddressDTO shippingAddressDTO, User user) {
+        this.id = shippingAddressDTO.getId();
+        this.user = user;
+        this.recipientName = shippingAddressDTO.getRecipientName();
+        this.address = shippingAddressDTO.getAddress();
+        this.detailAddress = shippingAddressDTO.getDetailAddress();
+        this.zipCode = shippingAddressDTO.getZipCode();
+        this.phoneNumber = shippingAddressDTO.getPhoneNumber();
+    }
 }

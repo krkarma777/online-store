@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,5 +25,9 @@ public class ShippingAddressService {
 
     public void delete(Long id) {
         shippingAddressRepository.deleteById(id);
+    }
+
+    public Optional<ShippingAddress> findByUserAndId(User user, Long id) {
+        return shippingAddressRepository.findByUserAndId(user, id);
     }
 }
