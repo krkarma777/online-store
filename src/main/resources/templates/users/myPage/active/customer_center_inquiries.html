@@ -18,13 +18,77 @@
 
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9">
-            구현중인 컨텐츠입니다.
+            <h2 class="mb-4">고객센터 문의</h2>
+
+            <!-- 문의 목록 -->
+            <div>
+                <h4>문의 목록</h4>
+                <div th:if="${inquiries.isEmpty()}">
+                    문의가 없습니다.
+                </div>
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action" th:each="inquiry : ${inquiries}" th:href="@{/inquiry/{inquiryID}(inquiryID=${inquiry.inquiryID})}">
+                        <h5 class="mb-1" th:text="${inquiry.title}">문의 제목</h5>
+                        <small th:text="${inquiry.inquiryDate}">문의 날짜</small>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 문의 생성 폼 -->
+            <div class="mt-5">
+                <h4>문의하기</h4>
+                <form th:action="@{/inquiry}" id="inquiryForm" method="post">
+                    제목 : <input type="text" name="title" id="title">
+                    <div class="form-group">
+                        <label for="inquiryType">문의 유형</label>
+                        <select class="form-control" id="inquiryType" name="type">
+                            <option value="GENERAL">일반 문의</option>
+                            <option value="COMPLAINT">불만 사항</option>
+                            <option value="TECH_SUPPORT">기술 지원</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="inquiryContent">문의 내용</label>
+                        <textarea class="form-control" id="inquiryContent" name="inquiryContent" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">문의하기</button>
+                </form>
+            </div>
         </div>
         <!-- 메인 컨텐츠 끝 -->
     </div>
 </div>
 
 <div th:replace="~{common/footer :: footer}"></div>
+<script>
+    $(document).ready(function() {
+        $('#inquiryForm').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = {
+                title: $('#title').val(),
+                inquiryContent: $('#inquiryContent').val(),
+                inquiryType: $('#inquiryType').val()
+            };
+
+            $.ajax({
+                url: '/api/inquiry',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    alert(response.message);
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    alert(error);
+                    // 실패 시 처리할 로직 추가
+                }
+            });
+        });
+    });
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
