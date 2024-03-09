@@ -153,3 +153,15 @@ hr {
     background-color: #fff;
     margin-bottom: 20px;
 }
+.center-align {
+    display: flex;
+    justify-content: center; /* 수평 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+}
+
+.right-align {
+    display: flex;
+    justify-content: right; /* 수평 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+    margin-right: 17px;
+}

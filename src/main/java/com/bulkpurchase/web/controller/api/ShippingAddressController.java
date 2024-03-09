@@ -4,6 +4,7 @@ import com.bulkpurchase.domain.dto.user.ShippingAddressDTO;
 import com.bulkpurchase.domain.entity.user.ShippingAddress;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.user.ShippingAddressService;
+import com.bulkpurchase.domain.service.user.UserService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class ShippingAddressController {
 
     private final ShippingAddressService shippingAddressService;
     private final UserAuthValidator userAuthValidator;
+    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<List<ShippingAddressDTO>> shippingAddressListForm(Principal principal) {
@@ -51,7 +53,7 @@ public class ShippingAddressController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String,String>> create(@RequestBody ShippingAddressDTO shippingAddressDTO, Principal principal) {
+    public ResponseEntity<Map<String, String>> create(@RequestBody ShippingAddressDTO shippingAddressDTO, Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
         List<ShippingAddress> addressList = shippingAddressService.findByUser(user);
         if (addressList.size() == 5) {
@@ -62,7 +64,7 @@ public class ShippingAddressController {
     }
 
     @PatchMapping
-    public ResponseEntity<Map<String,String>> update(@RequestBody ShippingAddressDTO shippingAddressDTO, Principal principal) {
+    public ResponseEntity<Map<String, String>> update(@RequestBody ShippingAddressDTO shippingAddressDTO, Principal principal) {
 
         User user = userAuthValidator.getCurrentUser(principal);
         Optional<ShippingAddress> shippingAddressOpt = shippingAddressService.findByUserAndId(user, shippingAddressDTO.getId());
@@ -76,7 +78,7 @@ public class ShippingAddressController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String,String>> delete(@PathVariable("id") Long id , Principal principal) {
+    public ResponseEntity<Map<String, String>> delete(@PathVariable("id") Long id, Principal principal) {
 
         User user = userAuthValidator.getCurrentUser(principal);
         Optional<ShippingAddress> shippingAddressOpt = shippingAddressService.findByUserAndId(user, id);
@@ -87,5 +89,19 @@ public class ShippingAddressController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "배송지를 삭제할 권한이 없습니다."));
         }
+    }
+
+    @PostMapping("/set-primary/{id}")
+    public ResponseEntity<Map<String, String>> setPrimaryAddress(@PathVariable("id") Long id, Principal principal) {
+        User user = userAuthValidator.getCurrentUser(principal);
+        Optional<ShippingAddress> shippingAddressOpt = shippingAddressService.findByUserAndId(user, id);
+        if (shippingAddressOpt.isPresent()) {
+            ShippingAddress shippingAddress = shippingAddressOpt.get();
+            user.setUserAddress(shippingAddress);
+            userService.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "대표 배송지 등록에 성공하셨습니다."));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다."));
+        } 
     }
 }

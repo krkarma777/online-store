@@ -8,6 +8,56 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        .btn-custom-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .table-custom {
+            border-collapse: separate;
+            border-spacing: 0 15px;
+            width: 100%;
+        }
+
+        .table-custom thead th {
+            background-color: #f8f9fa;
+            border: none;
+        }
+
+        .table-custom tbody tr {
+            background-color: #fff;
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+
+        .table-custom td, .table-custom th {
+            padding: 15px;
+            text-align: left;
+            border: none;
+        }
+
+        .table-custom td:first-child,
+        .table-custom th:first-child {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+
+        .table-custom td:last-child,
+        .table-custom th:last-child {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
@@ -17,15 +67,16 @@
         <div th:replace="~{common/mypage-sidebar :: sidebar}"></div>
 
         <!-- 메인 컨텐츠 시작 -->
-        <div class="col-md-9">
-            <h2>배송지 관리</h2>
-            <div>
+        <div class="col-md-9 shadow">
+            <h2 class="center-align">배송지 관리</h2>
+            <div class="right-align">
                 <button id="create-shipping-address" class="btn btn-primary">새 배송지 추가</button>
             </div>
             <div class="mt-3">
-                <table class="table">
+                <table class="table table-custom">
                     <thead>
                     <tr>
+                        <th scope="col">선택</th>
                         <th scope="col">수령인</th>
                         <th scope="col">주소</th>
                         <th scope="col">상세 주소</th>
@@ -39,6 +90,9 @@
                     </tbody>
 
                 </table>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button id="applyPrimaryAddress" class="btn-custom-primary">대표 배송지 적용</button>
+                </div>
             </div>
         </div>
         <!-- 메인 컨텐츠 끝 -->
@@ -147,8 +201,9 @@
                     var tableBody = $('#addressList');
                     tableBody.empty();
 
-                    response.forEach(function(address) {
+                    response.forEach(function(address, index) {
                         var row = $('<tr></tr>');
+                        row.append($('<td></td>').html('<input type="radio" name="primaryAddress" value="' + address.id + '">')); // 라디오 버튼으로 수정하여 한 번에 하나만 선택 가능하게 함
                         row.append($('<td></td>').text(address.recipientName));
                         row.append($('<td></td>').text(address.address));
                         row.append($('<td></td>').text(address.detailAddress));
@@ -156,14 +211,35 @@
                         row.append($('<td></td>').text(address.phoneNumber));
                         row.append($('<td></td>').html('<a href="#" class="btn btn-sm btn-secondary update-btn" data-address-id="'+address.id+'">수정</a> ' +
                             '<a href="#" class="btn btn-sm btn-danger delete-btn" data-address-id="'+address.id+'">삭제</a>'));
-                        tableBody.append(row);
+                        $('#addressList').append(row);
                     });
+
                 },
                 error: function(error) {
                     alert('배송지 정보를 불러오는 데 실패했습니다.');
                 }
             });
         }
+
+        $('#applyPrimaryAddress').click(function() {
+            var selectedAddressId = $('input[name="primaryAddress"]:checked').val();
+            if (!selectedAddressId) {
+                alert('대표 배송지로 설정할 주소를 선택해주세요.');
+                return;
+            }
+
+            $.ajax({
+                url: '/api/shipping-address/set-primary/' + selectedAddressId,
+                type: 'POST',
+                success: function(response) {
+                    alert(response.message);
+                    location.reload();
+                },
+                error: function(error) {
+                    alert(error.responseJSON.message);
+                }
+            });
+        });
 
         $('#create-shipping-address').click(function() {
             $('#createAddressModal').modal('show');

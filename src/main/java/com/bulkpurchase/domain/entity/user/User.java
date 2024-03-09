@@ -99,4 +99,13 @@ public class User {
     public UserStatus getOppositeStatus() {
         return this.status == UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE;
     }
+
+    public User() {
+    }
+
+    public void setUserAddress(ShippingAddress shippingAddress) {
+        this.address = shippingAddress.getAddress();
+        this.detailAddress = shippingAddress.getDetailAddress();
+        this.zipCode = shippingAddress.getZipCode();
+    }
 }
