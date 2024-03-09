@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,10 +25,29 @@ public class ShippingAddressController {
     private final UserAuthValidator userAuthValidator;
 
     @GetMapping
-    public ResponseEntity<List<ShippingAddress>> shippingAddressListForm(Principal principal) {
+    public ResponseEntity<List<ShippingAddressDTO>> shippingAddressListForm(Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
         List<ShippingAddress> addressList = shippingAddressService.findByUser(user);
-        return ResponseEntity.status(HttpStatus.OK).body(addressList);
+        List<ShippingAddressDTO> shippingAddressDTOS = new ArrayList<>();
+        for (ShippingAddress shippingAddress : addressList) {
+            ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO(shippingAddress);
+            shippingAddressDTOS.add(shippingAddressDTO);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(shippingAddressDTOS);
+    }
+
+    @GetMapping("/one")
+    public ResponseEntity<?> shippingAddressForUpdate(@RequestParam("addressId") Long addressId, Principal principal) {
+
+        User user = userAuthValidator.getCurrentUser(principal);
+        Optional<ShippingAddress> shippingAddressOpt = shippingAddressService.findByUserAndId(user, addressId);
+        if (shippingAddressOpt.isPresent()) {
+            ShippingAddress shippingAddress = shippingAddressOpt.get();
+            ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO(shippingAddress);
+            return ResponseEntity.status(HttpStatus.OK).body(shippingAddressDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다."));
+        }
     }
 
     @PostMapping
@@ -55,8 +75,8 @@ public class ShippingAddressController {
         }
     }
 
-    @DeleteMapping
-    public ResponseEntity<Map<String,String>> delete(@RequestBody Long id, Principal principal) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String,String>> delete(@PathVariable("id") Long id , Principal principal) {
 
         User user = userAuthValidator.getCurrentUser(principal);
         Optional<ShippingAddress> shippingAddressOpt = shippingAddressService.findByUserAndId(user, id);
