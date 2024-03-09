@@ -31,6 +31,9 @@ public class Inquiry {
     @Column(nullable = false)
     private InquiryStatus status = InquiryStatus.PENDING;
 
+    @Column(nullable = false, length = 255)
+    private String title;
+
     @Column(nullable = false, columnDefinition = "CLOB")
     private String inquiryContent;
 

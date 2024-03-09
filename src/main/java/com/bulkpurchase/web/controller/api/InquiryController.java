@@ -1,5 +1,6 @@
 package com.bulkpurchase.web.controller.api;
 
+import com.bulkpurchase.domain.dto.inquiry.InquiryCreateRequestDTO;
 import com.bulkpurchase.domain.entity.Inquiry;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.InquiryService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,10 +22,20 @@ public class InquiryController {
     private final UserAuthValidator userAuthValidator;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Inquiry inquiry, Principal principal) {
+    public ResponseEntity<?> create(@RequestBody InquiryCreateRequestDTO inquiryCreateRequestDTO, Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
+
+        Inquiry inquiry = new Inquiry();
+        System.out.println("inquiryCreateRequestDTO = " + inquiryCreateRequestDTO);
+
+        inquiry.setTitle(inquiryCreateRequestDTO.getTitle());
+        inquiry.setInquiryContent(inquiryCreateRequestDTO.getInquiryContent());
+        inquiry.setType(inquiryCreateRequestDTO.getInquiryType());
         inquiry.setUser(user);
+
         Inquiry save = inquiryService.save(inquiry);
-        return ResponseEntity.status(HttpStatus.CREATED).body(save);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("response", "문의가 성공적으로 작성되었습니다."));
     }
+
 }
