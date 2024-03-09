@@ -146,3 +146,10 @@ hr {
 .mypage-sidebar {
     width: 70%;
 }
+.shadow {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #fff;
+    margin-bottom: 20px;
+}

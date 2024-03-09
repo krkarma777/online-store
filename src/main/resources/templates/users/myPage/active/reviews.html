@@ -55,7 +55,7 @@
     <div class="row">
         <div th:replace="~{common/mypage-sidebar :: sidebar}"></div>
         <!-- 메인 컨텐츠 시작 -->
-        <div class="col-md-9">
+        <div class="col-md-9 shadow">
             <h2 class="mb-4">내 리뷰 목록</h2>
             <div th:each="reviewDetail : ${reviewDetailDTOS}">
                 <div class="card">
