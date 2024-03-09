@@ -22,11 +22,19 @@ public class CustomerCenterController {
     private final UserAuthValidator userAuthValidator;
 
     @GetMapping("/inquiries")
-    public String inquiriesForm(Model model, Principal principal) {
+    public String inquiries(Model model, Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
         List<Inquiry> inquiries = inquiryService.findByUser(user);
         model.addAttribute("inquiries", inquiries);
 
         return "users/myPage/active/customer_center_inquiries";
+    }
+    @GetMapping("/inquiries/new")
+    public String inquiriesForm(Model model, Principal principal) {
+        User user = userAuthValidator.getCurrentUser(principal);
+        List<Inquiry> inquiries = inquiryService.findByUser(user);
+        model.addAttribute("inquiries", inquiries);
+
+        return "users/myPage/active/customer_center_inquiry_create";
     }
 }
