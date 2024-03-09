@@ -26,7 +26,6 @@ public class InquiryController {
         User user = userAuthValidator.getCurrentUser(principal);
 
         Inquiry inquiry = new Inquiry();
-        System.out.println("inquiryCreateRequestDTO = " + inquiryCreateRequestDTO);
 
         inquiry.setTitle(inquiryCreateRequestDTO.getTitle());
         inquiry.setInquiryContent(inquiryCreateRequestDTO.getInquiryContent());
