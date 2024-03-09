@@ -34,7 +34,7 @@ public class InquiryController {
 
         Inquiry save = inquiryService.save(inquiry);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("response", "문의가 성공적으로 작성되었습니다."));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "문의가 성공적으로 작성되었습니다."));
     }
 
 }
