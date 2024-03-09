@@ -43,23 +43,29 @@ public class ShippingAddressController {
 
     @PatchMapping
     public ResponseEntity<Map<String,String>> update(@RequestBody ShippingAddressDTO shippingAddressDTO, Principal principal) {
-        if (shippingAddressDTO.getId() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "존재하지 않는 배송지입니다."));
-        }
+
         User user = userAuthValidator.getCurrentUser(principal);
-        shippingAddressService.save(new ShippingAddress(shippingAddressDTO, user));
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "배송지 수정에 성공하셨습니다."));
+        Optional<ShippingAddress> shippingAddressOpt = shippingAddressService.findByUserAndId(user, shippingAddressDTO.getId());
+
+        if (shippingAddressOpt.isPresent()) {
+            shippingAddressService.save(new ShippingAddress(shippingAddressDTO, user));
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "배송지 수정에 성공하셨습니다."));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "배송지를 삭제할 권한이 없습니다."));
+        }
     }
 
     @DeleteMapping
     public ResponseEntity<Map<String,String>> delete(@RequestBody Long id, Principal principal) {
+
         User user = userAuthValidator.getCurrentUser(principal);
         Optional<ShippingAddress> shippingAddressOpt = shippingAddressService.findByUserAndId(user, id);
+
         if (shippingAddressOpt.isPresent()) {
             shippingAddressService.delete(id);
             return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "삭제에 성공하셨습니다."));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "삭제할 권한이 없거나 이미 존재하지 않는 배송지입니다."));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "배송지를 삭제할 권한이 없습니다."));
         }
     }
 }
