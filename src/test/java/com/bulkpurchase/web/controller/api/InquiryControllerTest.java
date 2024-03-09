@@ -34,6 +34,6 @@ public class InquiryControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(inquiryDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.response").value("문의가 성공적으로 작성되었습니다."));
+                .andExpect(jsonPath("$.message").value("문의가 성공적으로 작성되었습니다."));
     }
 }
