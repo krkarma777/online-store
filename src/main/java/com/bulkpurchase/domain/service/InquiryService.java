@@ -30,4 +30,8 @@ public class InquiryService {
     public List<Inquiry> findByUser(User user) {
         return inquiryRepository.findByUser(user);
     }
+
+    public Optional<Inquiry> findByUserAndInquiryID(User user, Long inquiryID) {
+        return inquiryRepository.findByUserAndInquiryID(user, inquiryID);
+    }
 }

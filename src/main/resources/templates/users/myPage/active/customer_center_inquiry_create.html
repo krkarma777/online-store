@@ -8,6 +8,30 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        #inquiryForm input, #inquiryForm textarea, #inquiryForm select {
+            border-radius: 5px;
+        }
+
+        #inquiryForm textarea {
+            resize: vertical;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
@@ -18,12 +42,12 @@
 
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow">
-            <h2 class="mb-4">고객센터 문의</h2>
+            <h2 class="mb-4 center-align">고객센터 문의</h2>
             <!-- 문의 생성 폼 -->
             <div class="mt-5">
-                <h4>문의하기</h4>
                 <form th:action="@{/inquiry}" id="inquiryForm" method="post">
-                    제목 : <input type="text" name="title" id="title">
+                    <label for="inquiryType">제목</label>
+                    <input class="form-control" type="text" name="title" id="title">
                     <div class="form-group">
                         <label for="inquiryType">문의 유형</label>
                         <select class="form-control" id="inquiryType" name="type">
@@ -34,7 +58,7 @@
                     </div>
                     <div class="form-group">
                         <label for="inquiryContent">문의 내용</label>
-                        <textarea class="form-control" id="inquiryContent" name="inquiryContent" rows="3"></textarea>
+                        <textarea class="form-control" id="inquiryContent" name="inquiryContent" rows="12"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">문의하기</button>
                 </form>
