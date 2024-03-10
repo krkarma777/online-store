@@ -8,6 +8,27 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        /* 문의 목록 커스텀 스타일 */
+        .inquiry-list-header {
+            border-bottom: 2px solid #007bff;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+        }
+
+        .list-group-item-action:hover {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            transform: scale(1.02);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .inquiry-date {
+            display: block;
+            margin-top: 5px;
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
@@ -17,25 +38,25 @@
         <div th:replace="~{common/mypage-sidebar :: sidebar}"></div>
 
         <!-- 메인 컨텐츠 시작 -->
-        <div class="col-md-9 shadow">
-            <h2 class="mb-4">고객센터 문의</h2>
+        <div class="col-md-9 shadow p-4">
+            <h2 class="mb-4 center-align">고객센터 문의</h2>
 
             <!-- 문의 목록 -->
             <div>
-                <h4>문의 목록</h4>
+                <h4 class="inquiry-list-header">문의 목록</h4>
                 <div th:if="${inquiries.isEmpty()}">
                     문의가 없습니다.
                 </div>
                 <div class="list-group">
                     <a href="#" class="list-group-item list-group-item-action" th:each="inquiry : ${inquiries}" th:href="@{/inquiry/{inquiryID}(inquiryID=${inquiry.inquiryID})}">
                         <h5 class="mb-1" th:text="${inquiry.title}">문의 제목</h5>
-                        <small th:text="${inquiry.inquiryDate}">문의 날짜</small>
+                        <small class="inquiry-date" th:text="${#temporals.format(inquiry.inquiryDate, 'yyyy년 MM월 dd일')}">문의 날짜</small>
                     </a>
                 </div>
             </div>
-        <!-- 메인 컨텐츠 끝 -->
+            <!-- 메인 컨텐츠 끝 -->
+        </div>
     </div>
-</div>
 
 <div th:replace="~{common/footer :: footer}"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
