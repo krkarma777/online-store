@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>마이페이지</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <style>
+        .inquiry-card, .response-card {
+            margin-bottom: 20px;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .inquiry-card {
+            background-color: #f8f9fa;
+        }
+        .response-card {
+            background-color: #e2f0d9;
+        }
+        .content-box {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            height: 200px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .timeline:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 40px;
+            width: 2px;
+            margin-left: -1.5px;
+            background-color: #e9ecef;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding-left: 60px;
+        }
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: 28px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 3px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+
+<div class="container mt-4">
+    <div class="row">
+        <div th:replace="~{common/mypage-sidebar :: sidebar}"></div>
+        <div class="col-md-9 shadow">
+            <div id="inquiryDetails"></div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{common/footer :: footer}"></div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function() {
+        var inquiryID = [[${inquiryID}]];
+        $.ajax({
+            url: '/api/inquiry',
+            type: 'GET',
+            data: { inquiryID: inquiryID },
+            success: function(response) {
+                var inquiry = response;
+                var formattedInquiryDate = new Date(inquiry.inquiryDate[0], inquiry.inquiryDate[1] - 1, inquiry.inquiryDate[2], inquiry.inquiryDate[3], inquiry.inquiryDate[4]).toLocaleString();
+
+                var responseContent = inquiry.responseContent ? `<div class="content-box">${inquiry.responseContent}</div>` : "답변이 없습니다.";
+                var responseDate = inquiry.responseDate ? new Date(inquiry.responseDate[0], inquiry.responseDate[1] - 1, inquiry.responseDate[2], inquiry.responseDate[3], inquiry.responseDate[4]).toLocaleString() : "";
+
+                var htmlContent = `
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="inquiry-card">
+                                <h3 class="center-align">문의: ${inquiry.title}</h3>
+                                <div class="detail-row">
+                                    <p>문의 유형: ${inquiry.type}</p>
+                                    <p>${formattedInquiryDate}</p>
+                                </div>
+                                <div class="content-box">${inquiry.inquiryContent}</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="response-card">
+                                <h4 class="center-align">답변</h4>
+                                <p class="right-align">${responseDate}</p>
+                                <div class="content-box">${responseContent}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $('#inquiryDetails').html(htmlContent);
+            },
+            error: function(xhr, status, error) {
+                console.error(error.responseJSON ? error.responseJSON.message : error);
+            }
+        });
+    });
+    /*]]>*/
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
