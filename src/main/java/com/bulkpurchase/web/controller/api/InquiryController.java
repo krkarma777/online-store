@@ -28,6 +28,11 @@ public class InquiryController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody InquiryCreateRequestDTO inquiryCreateRequestDTO, Principal principal) {
+        if (inquiryCreateRequestDTO.getInquiryContent() == null ||
+                inquiryCreateRequestDTO.getTitle() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "필수 입력 필드가 누락되었습니다."));
+        }
+
         User user = userAuthValidator.getCurrentUser(principal);
 
         Inquiry inquiry = new Inquiry();
@@ -76,7 +81,7 @@ public class InquiryController {
             InquiryDetailResponseDTO inquiryDetailResponseDTO = new InquiryDetailResponseDTO(inquiry);
             return ResponseEntity.ok(inquiryDetailResponseDTO);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "비정상적인 요청입니다."));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "문의가 존재하지 않습니다."));
         }
     }
 }
