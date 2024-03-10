@@ -22,7 +22,6 @@ public class AdminCustomerCenterController {
 
     @GetMapping("/inquiry")
     public String inquiryManage(Model model, @RequestParam(value = "page",required = false) Integer page) {
-        System.out.println("page = " + page);
         if (page == null) {
             page = 1;
         }
@@ -32,8 +31,6 @@ public class AdminCustomerCenterController {
         Pageable pageable = PageRequest.of(page-1, pageSize, sort);
         Page<Inquiry> inquiryList = inquiryService.findAll(pageable);
         model.addAttribute("inquiryList", inquiryList);
-        int totalPages = inquiryList.getTotalPages();
-        System.out.println("totalPages = " + totalPages);
         return "admin/InquiryManage";
     }
 }
