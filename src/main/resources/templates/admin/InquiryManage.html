@@ -24,6 +24,7 @@
                 <th>상태</th>
                 <th>문의 날짜</th>
                 <th>답변 날짜</th>
+                <th>행동</th>
             </tr>
             </thead>
             <tbody>
@@ -34,6 +35,10 @@
                 <td th:text="${inquiry.status.description}">대기중</td>
                 <td th:text="${#temporals.format(inquiry.inquiryDate, 'yyyy년 MM월 dd일')}">2023-03-10</td>
                 <td th:text="${inquiry.responseDate}">-</td>
+                <td>
+                    <button class="btn btn-primary" th:if="${inquiry.status.description} == '대기 중'"
+                            data-bs-toggle="modal" data-bs-target="#replyModal" th:data-inquiryId="${inquiry.inquiryID}">답변</button>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -62,8 +67,33 @@
     </nav>
 
 </div>
-
+<!-- 답변 모달창 -->
+<div>
+    <div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="replyModalLabel">문의 답변</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="replyText" class="col-form-label">답변:</label>
+                            <textarea class="form-control" id="replyText"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-primary">답변 전송</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
