@@ -1,5 +1,6 @@
 package com.bulkpurchase.domain.entity;
 
+import com.bulkpurchase.domain.dto.inquiry.InquiryReplyDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.inquiry.InquiryStatus;
 import com.bulkpurchase.domain.enums.inquiry.InquiryType;
@@ -45,4 +46,10 @@ public class Inquiry {
 
     @Column
     private LocalDateTime responseDate;
+
+    public void setReply(InquiryReplyDTO inquiryReplyDTO) {
+        this.status = inquiryReplyDTO.getStatus();
+        this.responseContent = inquiryReplyDTO.getResponseContent();
+        this.responseDate = inquiryReplyDTO.getResponseDate();
+    }
 }
