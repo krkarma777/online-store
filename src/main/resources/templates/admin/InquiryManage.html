@@ -34,10 +34,10 @@
                 <td th:text="${inquiry.type.description}">일반</td>
                 <td th:text="${inquiry.status.description}">대기중</td>
                 <td th:text="${#temporals.format(inquiry.inquiryDate, 'yyyy년 MM월 dd일')}">2023-03-10</td>
-                <td th:text="${inquiry.responseDate}">-</td>
+                <td th:text="${#temporals.format(inquiry.responseDate, 'yyyy년 MM월 dd일')}">2023-03-10</td>
                 <td>
-                    <button class="btn btn-primary" th:if="${inquiry.status.description} == '대기 중'"
-                            data-bs-toggle="modal" data-bs-target="#replyModal" th:data-inquiryId="${inquiry.inquiryID}">답변</button>
+                    <button class="btn btn-primary response-modal-btn" th:if="${inquiry.status.description} == '대기 중'"
+                            data-bs-toggle="modal" data-bs-target="#replyModal" th:data-id="${inquiry.inquiryID}">답변</button>
                 </td>
             </tr>
             </tbody>
@@ -84,9 +84,10 @@
                         </div>
                     </form>
                 </div>
+                <input type="hidden" name="inquiryID" id="inquiryID">
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button type="button" class="btn btn-primary">답변 전송</button>
+                    <button type="button" class="btn btn-primary response-submit-btn">답변 전송</button>
                 </div>
             </div>
         </div>
@@ -95,5 +96,41 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+
+        $('.response-modal-btn').click(function() {
+            let data = $(this).data("id");
+            console.log("data",data)
+            $("#inquiryID").val(data)
+        });
+
+        $('.response-submit-btn').click(function(e) {
+
+            e.preventDefault();
+
+            let inquiryID = $("#inquiryID").val();
+            let responseContent = $("#replyText").val();
+
+            $.ajax({
+                url: "/api/inquiry/response",
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    inquiryID: inquiryID,
+                    responseContent: responseContent
+                }),
+                success: function(response) {
+                    alert(response.message);
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    alert(error.responseJSON.message);
+                }
+            });
+        });
+
+    });
+</script>
 </body>
 </html>

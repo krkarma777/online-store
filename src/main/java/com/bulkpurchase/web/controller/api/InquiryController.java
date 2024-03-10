@@ -47,7 +47,7 @@ public class InquiryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "문의가 성공적으로 작성되었습니다."));
     }
 
-    @PostMapping("/response-inquiry")
+    @PostMapping("/response")
     public ResponseEntity<?> inquiryReply(@RequestBody InquiryReplyDTO inquiryReplyDTO) {
         Optional<Inquiry> inquiryOpt = inquiryService.findById(inquiryReplyDTO.getInquiryID());
         if (inquiryOpt.isPresent()) {
