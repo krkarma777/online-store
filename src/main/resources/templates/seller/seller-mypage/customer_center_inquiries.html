@@ -48,7 +48,7 @@
                     문의가 없습니다.
                 </div>
                 <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-action" th:each="inquiry : ${inquiries}" th:href="@{/seller/inquiry/{inquiryID}(inquiryID=${inquiry.inquiryID})}">
+                    <a href="#" class="list-group-item list-group-item-action" th:each="inquiry : ${inquiries}" th:href="@{/seller/inquiries/{inquiryID}(inquiryID=${inquiry.inquiryID})}">
                         <h5 class="mb-1" th:text="${inquiry.title}">문의 제목</h5>
                         <small class="inquiry-date" th:text="${#temporals.format(inquiry.inquiryDate, 'yyyy년 MM월 dd일')}">문의 날짜</small>
                     </a>
