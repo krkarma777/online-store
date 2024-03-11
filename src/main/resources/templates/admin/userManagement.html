@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>유저 관리</title>
+    <title>마이페이지</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/css/adminPage.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
         .container {
             padding-top: 20px;
@@ -50,40 +52,52 @@
     </style>
 </head>
 <body>
-<div th:replace="~{admin/common/navBar :: content}"></div>
-<div class="container mt-5">
-    <h2>유저 관리</h2>
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>번호</th>
-                <th>아이디</th>
-                <th>이름</th>
-                <th>이메일</th>
-                <th>역할</th>
-                <th>상태</th>
-                <th>조치</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user : ${users}">
-                <td th:text="${user.userID}"></td>
-                <td th:text="${user.username}"></td>
-                <td th:text="${user.realName}"></td>
-                <td th:text="${user.email}"></td>
-                <td th:text="${user.role.getDescription()}"></td>
-                <td th:text="${user.status.getDescription()}"></td>
-                <td>
-                    <button class="btn btn-info btn-sm change-status" th:data-userid="${user.userID}" th:data-status="${user.oppositeStatus}">상태 변경</button>
-                    <button class="btn btn-danger btn-sm change-status" th:data-userid="${user.userID}" data-status="BANNED">차단</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+<div th:replace="~{common/navBar :: content}"></div>
 
+<div class="container mt-4">
+    <div class="row">
+        <div th:replace="~{common/admin-page-sidebar :: sidebar}"></div>
+
+        <!-- 메인 컨텐츠 시작 -->
+        <div class="col-md-9 shadow">
+            <h2>유저 관리</h2>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>아이디</th>
+                        <th>이름</th>
+                        <th>이메일</th>
+                        <th>역할</th>
+                        <th>상태</th>
+                        <th>조치</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.userID}"></td>
+                        <td  class="username" th:text="${user.username}"></td>
+                        <td th:text="${user.realName}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.role.getDescription()}"></td>
+                        <td th:text="${user.status.getDescription()}"></td>
+                        <td>
+                            <button class="btn btn-info btn-sm change-status" th:data-userid="${user.userID}"
+                                    th:data-status="${user.oppositeStatus}">상태 변경
+                            </button>
+                            <button class="btn btn-danger btn-sm change-status" th:data-userid="${user.userID}"
+                                    data-status="BANNED">차단
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- 메인 컨텐츠 끝 -->
+</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
@@ -108,6 +122,15 @@
                     alert("상태 변경 실패: " + error);
                 }
             });
+        });
+
+
+        // 유저 아이디 길이 조정
+        $(".username").each(function() {
+            var text = $(this).text();
+            if (text.length > 15) {
+                $(this).text(text.substring(0, 15) + "...");
+            }
         });
     });
 </script>

@@ -3,18 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>카테고리 관리</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/css/adminPage.css">
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-
-        .container {
-            padding-top: 20px;
-            background-color: #fff;
-            box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            border-radius: 0.5rem;
-        }
-
         ul.category-list {
             padding-left: 0;
             list-style: none;
@@ -67,7 +62,7 @@
             color: #007bff;
         }
 
-        .dropdown-menu {
+        .category-dropdown-menu {
             padding: 0;
             margin: 0;
             border-radius: 0.25rem;
@@ -75,15 +70,15 @@
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
 
-        .dropdown-item {
+        .category-dropdown-item {
             padding: 0.5rem 1rem;
         }
 
-        .dropdown-item:hover, .dropdown-item.active {
+        .category-dropdown-item:hover, .category-dropdown-item.active {
             background-color: #f8f9fa;
         }
 
-        .dropdown-toggle::after {
+        .category-dropdown-toggle::after {
             margin-left: 0.5rem;
         }
 
@@ -104,15 +99,6 @@
             border-right: none;
         }
 
-        .category-item.dropdown {
-            position: relative;
-        }
-
-        .dropdown-toggle {
-            width: 100%;
-            text-align: left;
-        }
-
         /* 추가된 스타일 */
         .category-column {
             border-right: 1px solid #dee2e6;
@@ -126,81 +112,92 @@
             position: relative;
         }
 
-        .dropdown-toggle {
+        .category-dropdown-toggle {
             width: 100%;
             text-align: left;
         }
     </style>
 </head>
 <body>
-<div th:replace="~{admin/common/navBar :: content}"></div>
-<div class="container mt-5 shadow-lg p-3 mb-5 bg-body rounded">
-    <h2>카테고리 관리</h2>
-    <div class="mb-3">
-        <form th:action="@{/admin/category/save}" class="form-inline" method="post">
-            <div class="input-group">
-                <span id="selectedParent" class="input-group-text">부모 카테고리 없음</span>
-                <input type="text" id="name" name="name" class="form-control" placeholder="새 카테고리 이름" required>
-                <input type="hidden" name="parent" id="parentInput">
-                <button type="submit" class="btn btn-primary ml-2">카테고리 추가</button>
-            </div>
+<div th:replace="~{common/navBar :: content}"></div>
 
-        </form>
-    </div>
+<div class="container mt-4">
     <div class="row">
-        <div class="col-6 category-column">
-            <ul class="category-list">
-                <!-- 카테고리 항목 1-8 -->
-                <li th:each="category, iterStat : ${categories}"
-                    th:if="${iterStat.count <= 8}"
-                    class="list-group-item category-item dropdown">
-                    <a href="#" class="dropdown-toggle" th:class="parentCategory" data-bs-toggle="dropdown"
-                       th:text="${category.name}" th:data-category-id="${category.categoryID}">카테고리 이름</a>
-                    <ul th:if="${not #lists.isEmpty(category.children)}" class="dropdown-menu">
-                        <li th:each="child : ${category.children}">
-                            <a class="dropdown-item parentCategory" th:text="${child.name}" href="#"
-                               th:data-category-id="${child.categoryID}"></a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <div class="col-6 category-column">
-            <ul class="category-list">
-                <!-- 카테고리 항목 9-15 -->
-                <li th:each="category, iterStat : ${categories}"
-                    th:if="${iterStat.count > 8}"
-                    class="list-group-item category-item dropdown">
-                    <a href="#" class="dropdown-toggle" th:class="parentCategory" data-bs-toggle="dropdown"
-                       th:text="${category.name}" th:data-category-id="${category.categoryID}">카테고리 이름</a>
-                    <ul th:if="${not #lists.isEmpty(category.children)}" class="dropdown-menu">
-                        <li th:each="child : ${category.children}">
-                            <a class="dropdown-item parentCategory" th:text="${child.name}" href="#"
-                               th:data-category-id="${child.categoryID}"></a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+        <div th:replace="~{common/admin-page-sidebar :: sidebar}"></div>
+        <div class="col-md-9 shadow">
+                <h2>카테고리 관리</h2>
+                <div class="mb-3">
+                    <form th:action="@{/admin/category/save}" class="form-inline" method="post">
+                        <div class="input-group">
+                            <span id="selectedParent" class="input-group-text">부모 카테고리 없음</span>
+                            <input type="text" id="name" name="name" class="form-control" placeholder="새 카테고리 이름"
+                                   required>
+                            <input type="hidden" name="parent" id="parentInput">
+                            <button type="submit" class="btn btn-primary ml-2">카테고리 추가</button>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="row">
+                    <div class="col-6 category-column">
+                        <ul class="category-list">
+                            <!-- 카테고리 항목 1-8 -->
+                            <li th:each="category, iterStat : ${categories}"
+                                th:if="${iterStat.count <= 8}"
+                                class="list-group-item category-item dropdown category-dropdown">
+                                <a href="#" class="dropdown-toggle category-dropdown-toggle" th:class="parentCategory"
+                                   data-bs-toggle="dropdown"
+                                   th:text="${category.name}" th:data-category-id="${category.categoryID}">카테고리 이름</a>
+                                <ul th:if="${not #lists.isEmpty(category.children)}"
+                                    class="category-dropdown-menu dropdown-menu">
+                                    <li th:each="child : ${category.children}">
+                                        <a class="category-dropdown-item dropdown-item parentCategory"
+                                           th:text="${child.name}" href="#"
+                                           th:data-category-id="${child.categoryID}"></a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-6 category-column">
+                        <ul class="category-list">
+                            <!-- 카테고리 항목 9-15 -->
+                            <li th:each="category, iterStat : ${categories}"
+                                th:if="${iterStat.count > 8}"
+                                class="list-group-item category-item category-dropdown dropdown">
+                                <a href="#" class="category-dropdown-toggle dropdown-toggle" th:class="parentCategory"
+                                   data-bs-toggle="dropdown"
+                                   th:text="${category.name}" th:data-category-id="${category.categoryID}">카테고리 이름</a>
+                                <ul th:if="${not #lists.isEmpty(category.children)}"
+                                    class="category-dropdown-menu dropdown-menu">
+                                    <li th:each="child : ${category.children}">
+                                        <a class="category-dropdown-item dropdown-item parentCategory"
+                                           th:text="${child.name}" href="#"
+                                           th:data-category-id="${child.categoryID}"></a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-</div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $('.parentCategory').on('click', function (e) {
-            e.preventDefault();
-            const categoryId = $(this).data('category-id');
-            const categoryName = $(this).text();
-            $('.parentCategory').not(this).parent().removeClass('active');
-            $(this).parent().toggleClass('active');
-            $('#parentInput').val(categoryId);
-            $('#selectedParent').text(categoryName);
-        });
-    });
-</script>
+        <script>
+            $(document).ready(function () {
+                $('.parentCategory').on('click', function (e) {
+                    e.preventDefault();
+                    const categoryId = $(this).data('category-id');
+                    const categoryName = $(this).text();
+                    $('.parentCategory').not(this).parent().removeClass('active');
+                    $(this).parent().toggleClass('active');
+                    $('#parentInput').val(categoryId);
+                    $('#selectedParent').text(categoryName);
+                });
+            });
+        </script>
+        <div th:replace="~{common/footer :: footer}"></div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
