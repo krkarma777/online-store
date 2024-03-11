@@ -107,8 +107,12 @@
     </style>
 </head>
 <body>
-<div th:replace="~{seller/common/navBar :: content}"></div>
-<div class="container mt-5">
+<div th:replace="~{common/navBar :: content}"></div>
+<div class="container mt-4">
+    <div class="row">
+        <div th:replace="~{common/seller-page-sidebar :: sidebar}"></div>
+        <!-- 메인 컨텐츠 시작 -->
+        <div class="col-md-9 shadow">
     <div class="page-title">쿠폰 적용 상품 설정</div>
     <form id="couponForm" action="/seller/coupon/select" method="post">
         <input type="hidden" name="couponID" th:value="${couponID}">
@@ -151,6 +155,9 @@
             </div>
         </div>
     </div>
+</div>
+</div>
+<!-- 메인 컨텐츠 끝 -->
 </div>
 
 <script th:inline="javascript">

@@ -27,8 +27,12 @@
 
 </style>
 <body>
-<div th:replace="~{seller/common/navBar :: content}"></div>
+<div th:replace="~{common/navBar :: content}"></div>
 <div class="container mt-4">
+    <div class="row">
+        <div th:replace="~{common/seller-page-sidebar :: sidebar}"></div>
+        <!-- 메인 컨텐츠 시작 -->
+        <div class="col-md-9 shadow">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>쿠폰 목록</h2>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCouponModal">쿠폰 생성</button>
@@ -224,6 +228,9 @@
         </div>
     </div>
 </div>
+        </div>
+        <!-- 메인 컨텐츠 끝 -->
+    </div>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

@@ -9,94 +9,111 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f8f9fa;
-        }
         .container {
             padding-top: 20px;
         }
+
         .chart-container {
             padding: 20px;
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
+
         .chart {
             margin-bottom: 40px;
         }
+
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
+
         .header h2 {
             margin: 0;
             color: #333;
         }
+
         .filter-container {
             margin-bottom: 20px;
         }
+
         .filters {
             display: flex;
             gap: 20px;
         }
+
         .export-buttons {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
         }
+
         .btn {
             font-size: 14px;
             padding: 5px 10px;
         }
+
         .btn-export {
             color: #fff;
             background-color: #007bff;
             border-color: #007bff;
         }
+
         .btn-export:hover {
             color: #fff;
             background-color: #0056b3;
             border-color: #004085;
         }
+
+        .bottom-chart {
+            max-width: 50%;
+            margin: auto;
+        }
     </style>
 </head>
 <body>
-<div th:replace="~{seller/common/navBar :: content}"></div>
-<div class="container">
-    <div class="header">
-        <h2>판매량 통계</h2>
-        <div class="export-buttons">
-            <button class="btn btn-export">PDF 다운로드</button>
-            <button class="btn btn-export">Excel 다운로드</button>
-        </div>
-    </div>
-    <div class="filter-container">
-        <div class="filters">
-            <input type="date" class="form-control" id="startDate" placeholder="시작 날짜">
-            <input type="date" class="form-control" id="endDate" placeholder="종료 날짜">
-            <select class="form-select" id="categorySelect">
-                <option selected>전체 카테고리</option>
-                <option value="1">카테고리 1</option>
-                <option value="2">카테고리 2</option>
-            </select>
-        </div>
-    </div>
+<div th:replace="~{common/navBar :: content}"></div>
+<div class="container mt-4">
     <div class="row">
-        <div class="col chart-container">
-            <canvas id="last30DaysSalesChart" class="chart"></canvas>
-        </div>
-        <div class="col chart-container">
-            <canvas id="last12MonthsSalesChart" class="chart"></canvas>
-        </div>
-        <div class="col chart-container">
-            <canvas id="last3YearsSalesChart" class="chart"></canvas>
+        <div th:replace="~{common/seller-page-sidebar :: sidebar}"></div>
+        <!-- 메인 컨텐츠 시작 -->
+        <div class="col-md-9 shadow">
+            <div class="header">
+                <h2>판매량 통계</h2>
+                <div class="export-buttons">
+                    <button class="btn btn-export">PDF 다운로드</button>
+                    <button class="btn btn-export">Excel 다운로드</button>
+                </div>
+            </div>
+            <div class="filter-container">
+                <div class="filters">
+                    <input type="date" class="form-control" id="startDate" placeholder="시작 날짜">
+                    <input type="date" class="form-control" id="endDate" placeholder="종료 날짜">
+                    <select class="form-select" id="categorySelect">
+                        <option selected>전체 카테고리</option>
+                        <option value="1">카테고리 1</option>
+                        <option value="2">카테고리 2</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col chart-container">
+                    <canvas id="last30DaysSalesChart" class="chart"></canvas>
+                </div>
+                <div class="col chart-container">
+                    <canvas id="last12MonthsSalesChart" class="chart"></canvas>
+                </div>
+                <div class="col chart-container bottom-chart">
+                    <canvas id="last3YearsSalesChart" class="chart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
+    <!-- 메인 컨텐츠 끝 -->
 </div>
-
 <script th:inline="javascript">
     /*<![CDATA[*/
     const last30DaysSales = /*[[${last30DaysSales}]]*/ [];
@@ -145,7 +162,6 @@
             }
         }
     });
-
 
 
     // 지난 12개월 판매 데이터 차트
