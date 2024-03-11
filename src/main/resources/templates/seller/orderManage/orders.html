@@ -49,7 +49,7 @@
                                    style="text-decoration: none; color: black;"><span
                                     th:text="${orderDetail.order.orderID}"></span></a></td>
                             <td><a th:href="'/product/'+${orderDetail.product.productID}"
-                                   style="text-decoration: none; color: black;"><span
+                                   style="text-decoration: none; color: black;"><span class="product-name"
                                     th:text="${orderDetail.product.productName}"></span></a></td>
                             <td th:text="${orderDetail.quantity}"></td>
                             <td th:text="${orderDetail.order.status.getDescription()}"></td>
@@ -86,5 +86,14 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(".product-name").each(function () {
+        var text = $(this).text();
+        console.log(text);
+        if (text.length > 15) {
+            $(this).text(text.substring(0, 15) + "...");
+        }
+    });
+</script>
 </body>
 </html>

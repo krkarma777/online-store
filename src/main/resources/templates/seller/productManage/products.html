@@ -10,9 +10,11 @@
             background-color: #007bff;
             color: #ffffff;
         }
+
         .table td {
             vertical-align: middle;
         }
+
         .btn-custom {
             margin-right: 5px;
         }
@@ -27,51 +29,64 @@
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow">
 
-    <h2 class="mb-4 center-align">상품 관리</h2>
-    <div class="d-flex justify-content-end mb-3">
-        <a href="/product/add" class="btn btn-primary">상품 추가</a>
-    </div>
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead>
-            <tr>
-                <th>상품번호</th>
-                <th>카테고리</th>
-                <th>상품명</th>
-                <th>가격</th>
-                <th>재고</th>
-                <th>작업</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="product : ${products}">
-                <td th:text="${product.productID}"></td>
-                <td th:text="${product.category != null ? product.category.name : '없음'}"></td>
-                <td><a th:href="'/product/'+${product.productID}" style="text-decoration: none; color: black;"><span th:text="${product.productName}"></span></a></td>
-                <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                <td th:text="${product.stock}"></td>
-                <td>
-                    <a th:href="@{/product/update/{productID}(productID=${product.productID})}" class="btn btn-sm btn-outline-secondary btn-custom">수정</a>
-                    <a th:if="${product.status.name() == 'ACTIVE'}"
-                       th:href="@{/product/delete/{productID}(productID=${product.productID})}"
-                       class="btn btn-sm btn-outline-danger btn-custom"
-                       onclick="return confirm('판매 중지 하시겠습니까?')">판매 중지</a>
-                    <a th:if="${product.status.name() == 'INACTIVE'}"
-                       th:href="@{/product/reactivate/{productID}(productID=${product.productID})}"
-                       class="btn btn-sm btn-outline-success"
-                       onclick="return confirm('판매를 재개하시겠습니까?')">판매 재개</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+            <h2 class="mb-4 center-align">상품 관리</h2>
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/product/add" class="btn btn-primary">상품 추가</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>상품번호</th>
+                        <th>카테고리</th>
+                        <th>상품명</th>
+                        <th>가격</th>
+                        <th>재고</th>
+                        <th>작업</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${products}">
+                        <td th:text="${product.productID}"></td>
+                        <td th:text="${product.category != null ? product.category.name : '없음'}"></td>
+                        <td><a th:href="'/product/'+${product.productID}"
+                               style="text-decoration: none; color: black;"><span class="product-name"
+                                                                                  th:text="${product.productName}"></span></a>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
+                        <td th:text="${product.stock}"></td>
+                        <td>
+                            <a th:href="@{/product/update/{productID}(productID=${product.productID})}"
+                               class="btn btn-sm btn-outline-secondary btn-custom">수정</a>
+                            <a th:if="${product.status.name() == 'ACTIVE'}"
+                               th:href="@{/product/delete/{productID}(productID=${product.productID})}"
+                               class="btn btn-sm btn-outline-danger btn-custom"
+                               onclick="return confirm('판매 중지 하시겠습니까?')">판매 중지</a>
+                            <a th:if="${product.status.name() == 'INACTIVE'}"
+                               th:href="@{/product/reactivate/{productID}(productID=${product.productID})}"
+                               class="btn btn-sm btn-outline-success"
+                               onclick="return confirm('판매를 재개하시겠습니까?')">판매 재개</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <!-- 메인 컨텐츠 끝 -->
     </div>
+    <!-- 메인 컨텐츠 끝 -->
+</div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(".product-name").each(function () {
+        var text = $(this).text();
+        console.log(text);
+        if (text.length > 15) {
+            $(this).text(text.substring(0, 15) + "...");
+        }
+    });
+</script>
 </body>
 </html>
