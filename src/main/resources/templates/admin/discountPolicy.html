@@ -22,6 +22,49 @@
         }
         .btn-warning, .btn-danger {
             margin: 5px;
+        }  /* 버튼 스타일 개선 */
+        .btn {
+            margin: 4px;
+            box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+        }
+        .btn:hover {
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,.2);
+        }
+
+        .table thead th {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        /* 테이블 셀 가독성 향상 */
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        /* 상태에 따른 텍스트 색상 */
+        .status-active {
+            color: #28a745; /* 진행중 */
+        }
+        .status-inactive {
+            color: #dc3545; /* 종료 */
+        }
+
+        /* 모달 폼 스타일 개선 */
+        .modal-body .form-group {
+            margin-bottom: 1rem;
+        }
+        .modal-body .form-control {
+            box-shadow: none; /* 폼 필드의 외곽선 제거 */
+        }
+        .modal-body .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+
+        /* 모달 헤더 색상 개선 */
+        .modal-header {
+            background-color: #0062cc;
+            color: #fff;
         }
     </style>
 </head>
@@ -34,8 +77,10 @@
 
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow">
-    <h2 class="mb-4">전역 할인 관리 시스템</h2>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#discountModal">할인 정책 추가</button>
+        <h2 class="mb-4 center-align">전역 할인 관리 시스템</h2>
+            <div class="right-align">
+                <button type="button" class="btn btn-primary right-align" data-bs-toggle="modal" data-bs-target="#discountModal">할인 정책 추가</button>
+            </div>
 
     <!-- 할인 정책 테이블 -->
     <div class="mt-3">

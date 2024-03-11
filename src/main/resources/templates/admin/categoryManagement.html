@@ -25,11 +25,6 @@
             border-color: #007bff;
         }
 
-        .btn-primary:hover, .btn-primary:focus {
-            background-color: #0056b3;
-            border-color: #004085;
-        }
-
         .form-control {
             display: block;
             width: 100%;
@@ -74,9 +69,7 @@
             padding: 0.5rem 1rem;
         }
 
-        .category-dropdown-item:hover, .category-dropdown-item.active {
-            background-color: #f8f9fa;
-        }
+
 
         .category-dropdown-toggle::after {
             margin-left: 0.5rem;
@@ -101,7 +94,10 @@
 
         /* 추가된 스타일 */
         .category-column {
-            border-right: 1px solid #dee2e6;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 컬럼에 그림자 추가 */
+            background-color: #f9f9f9; /* 배경색 추가 */
+            padding: 15px; /* 패딩 추가 */
+            border-radius: 8px; /* 모서리 둥글게 */
         }
 
         .category-column:last-child {
@@ -115,6 +111,27 @@
         .category-dropdown-toggle {
             width: 100%;
             text-align: left;
+        }
+
+        .form-control:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+
+        .btn-primary:hover, .btn-primary:focus {
+            color: #fff;
+            background-color: #004085; /* 더 진한 색으로 변경 */
+            border-color: #003366; /* 더 진한 테두리 색으로 변경 */
+        }
+
+        .category-dropdown-menu {
+            margin-top: 0.5rem; /* 드롭다운 메뉴와 항목 간격 조정 */
+        }
+
+        .category-dropdown-item:hover, .category-dropdown-item.active {
+            background-color: #007bff; /* 활성 항목 색상 변경 */
+            color: #fff; /* 활성 항목 텍스트 색상 변경 */
         }
     </style>
 </head>

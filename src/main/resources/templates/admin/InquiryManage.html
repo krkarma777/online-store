@@ -9,6 +9,58 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
 </head>
+<style>
+    /* 모달 창 스타일링 */
+    .modal-header {
+        background-color: #007bff;
+        color: #fff;
+    }
+    .modal-footer {
+        border-top: 1px solid #dee2e6;
+    }
+
+    /* 버튼 스타일링 */
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+    .btn-secondary:hover {
+        background-color: #545b62;
+        border-color: #4e555b;
+    }
+
+    /* 테이블 스타일링 개선 */
+    .table-bordered {
+        border: 1px solid #dee2e6;
+    }
+    .table thead th {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+    .table-hover tbody tr:hover {
+        background-color: #f2f2f2;
+    }
+
+    /* 페이지네이션 스타일 개선 */
+    .pagination a {
+        color: #007bff;
+    }
+    .pagination li.active a, .pagination li.active a:hover {
+        background-color: #007bff;
+        color: #fff;
+    }
+    .pagination li.disabled a {
+        color: #6c757d;
+    }
+</style>
 <body>
 
 <div th:replace="~{common/navBar :: content}"></div>
@@ -18,7 +70,7 @@
         <div th:replace="~{common/admin-page-sidebar :: sidebar}"></div>
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow">
-    <h2 class="mb-4">문의 목록</h2>
+    <h2 class="mb-4 center-align">문의 목록</h2>
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead class="table-dark">
