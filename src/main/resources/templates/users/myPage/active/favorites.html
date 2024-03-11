@@ -131,17 +131,16 @@
         $.ajax({
             type: "POST",
             url: "/cart/item",
-            data: {
+            contentType: "application/json",
+            data: JSON.stringify({
                 productID: productID,
                 quantity: quantity
-            },
-            dataType: 'json',
+            }),
             success: function (response) {
                 alert(response.message);
             },
             error: function (xhr, status, error) {
-                var errorMessage = JSON.parse(xhr.responseText).message;
-                alert(errorMessage);
+                alert(error.responseJSON.message);
             }
         });
     });

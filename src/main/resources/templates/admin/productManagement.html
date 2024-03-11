@@ -1,84 +1,94 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-    <meta charset="UTF-8">
     <title>제품 관리</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-        body {
-            background-color: #f4f7f6;
-        }
-        .container {
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
         h2 {
             color: #333;
             margin-bottom: 20px;
         }
+
         .table {
             margin-top: 20px;
         }
+
         .table thead th {
             background-color: #e9ecef;
             color: #495057;
         }
+
         .table-hover tbody tr:hover {
             background-color: #f8f9fa;
         }
+
         .btn-success {
             margin-bottom: 20px;
         }
+
         .btn-info, .btn-success {
-            box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
-<div th:replace="~{admin/common/navBar :: content}"></div>
-<div class="container mt-5">
-    <h2>제품 관리</h2>
-    <div class="my-3">
-        <a href="/admin/product/add" class="btn btn-success">제품 추가</a>
-    </div>
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>제품명</th>
-                <th>판매자</th>
-                <th>가격</th>
-                <th>재고량</th>
-                <th>카테고리</th>
-                <th>상태</th>
-                <th>조치</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="product : ${products}" th:data-product-id="${product.productID}">
-                <td th:text="${productStat.index + 1}"></td>
-                <td><a th:href="'/product/'+${product.productID}"> <span th:text="${product.productName}"></span></a></td>
-                <td th:text="${product.user.username}"></td>
-                <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'">가격</td>
-                <td th:text="${product.stock}"></td>
-                <td th:text="${product.category.name}"></td>
-                <td th:text="${product.status.description}"></td>
-                <td>
-                    <a href="#" class="btn btn-info btn-sm change-status" th:data-product-id="${product.productID}" th:data-status="${product.getOppositeStatus}">상태 변경</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+<div th:replace="~{common/navBar :: content}"></div>
+
+<div class="container mt-4">
+    <div class="row">
+        <div th:replace="~{common/admin-page-sidebar :: sidebar}"></div>
+
+        <!-- 메인 컨텐츠 시작 -->
+        <div class="col-md-9 shadow">
+            <h2 class="center-align">제품 관리</h2>
+            <div class="my-3 right-align">
+                <a href="/admin/product/add" class="btn btn-success">제품 추가</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>제품명</th>
+                        <th>판매자</th>
+                        <th>가격</th>
+                        <th>재고량</th>
+                        <th>카테고리</th>
+                        <th>상태</th>
+                        <th>조치</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${products}" th:data-product-id="${product.productID}">
+                        <td th:text="${productStat.index + 1}"></td>
+                        <td><a th:href="'/product/'+${product.productID}">
+                            <span class="product-name" th:text="${product.productName}"></span></a></td>
+                        <td th:text="${product.user.username}"></td>
+                        <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'">가격</td>
+                        <td th:text="${product.stock}"></td>
+                        <td th:text="${product.category.name}"></td>
+                        <td th:text="${product.status.description}"></td>
+                        <td>
+                            <a href="#" class="btn btn-info btn-sm change-status"
+                               th:data-product-id="${product.productID}" th:data-status="${product.getOppositeStatus}">상태
+                                변경</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 메인 컨텐츠 끝 -->
     </div>
 </div>
 <script>
-    $(document).ready(function(){
-        $(".change-status").click(function(){
+    $(document).ready(function () {
+        $(".change-status").click(function () {
             const productID = $(this).data("productId");
             const status = $(this).data("status"); // 새로운 상태로 업데이트해야 할 상태 값
 
@@ -89,14 +99,20 @@
                     productID: productID,
                     status: status
                 },
-                success: function(response){
+                success: function (response) {
                     window.location.href = "/admin/product"; // 성공 시 리다이렉트할 경로
                 },
-                error: function(xhr, status, error){
+                error: function (xhr, status, error) {
                     console.log(productID);
                     alert("상태 변경 실패: " + error);
                 }
             });
+        });
+        $(".product-name").each(function() {
+            var text = $(this).text();
+            if (text.length > 15) {
+                $(this).text(text.substring(0, 15) + "...");
+            }
         });
     });
 </script>

@@ -1,59 +1,58 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>관리자 대시보드</title>
+    <title>마이페이지</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-    .navbar {
-        position: fixed; /* 추가: 고정 위치 설정 */
-        width: 100%; /* 추가: 화면 전체 너비로 설정 */
-        z-index: 2; /* 추가: 에디터보다 위에 나타나도록 설정 */
-        top: 0; /* 수정: 브라우저 상단에 고정 */
-    }
-    .logo {
-        width: auto;
-        height: 50px;
-    }
-</style>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
 </head>
 <body>
-    <div th:replace="~{admin/common/navBar :: content}"></div>
-<div class="container mt-5">
-    <h1>환영합니다, 관리자님!</h1>
+<div th:replace="~{common/navBar :: content}"></div>
+
+<div class="container mt-4">
     <div class="row">
-        <div class="col-md-4">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-header">사용자 수</div>
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${totalUsers}+'명'">0명</h5>
-                    <p class="card-text">새로운 가입자를 관리하세요.</p>
+        <div th:replace="~{common/admin-page-sidebar :: sidebar}"></div>
+
+        <!-- 메인 컨텐츠 시작 -->
+        <div class="col-md-9 shadow">
+            <h1>환영합니다, 관리자님!</h1>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-header">사용자 수</div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${totalUsers}+'명'">0명</h5>
+                            <p class="card-text">새로운 가입자를 관리하세요.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-header">제품 수</div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${totalProducts}+'개'">0개</h5>
+                            <p class="card-text">제품 목록을 업데이트하세요.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-warning mb-3">
+                        <div class="card-header">진행 중인 주문</div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${totalInProgressOrders}+'건'">0건</h5>
+                            <p class="card-text">주문 상태를 확인하세요.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-header">제품 수</div>
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${totalProducts}+'개'">0개</h5>
-                    <p class="card-text">제품 목록을 업데이트하세요.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-header">진행 중인 주문</div>
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${totalInProgressOrders}+'건'">0건</h5>
-                    <p class="card-text">주문 상태를 확인하세요.</p>
-                </div>
-            </div>
-        </div>
+        <!-- 메인 컨텐츠 끝 -->
     </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<div th:replace="~{common/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
