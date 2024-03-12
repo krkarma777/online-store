@@ -22,4 +22,9 @@ public class MyPageController {
         model.addAttribute("inquiryID", inquiryID);
         return "users/myPage/active/customer_center_inquiry";
     }
+
+    @GetMapping("/favorites")
+    public String favorites() {
+        return "users/myPage/active/favorites";
+    }
 }

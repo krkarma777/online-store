@@ -13,22 +13,27 @@
             width: 100px;
             height: auto;
         }
+
         .product-details {
             display: flex;
             align-items: center;
         }
+
         .product-actions {
             margin-left: auto;
         }
+
         .product-item {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease-in-out;
             border-radius: 5px;
             background-color: #f9f9f9;
         }
+
         .product-item:hover {
             transform: scale(1.03);
         }
+
         .select-actions {
             background-color: #e1f5fe;
             padding: 10px;
@@ -36,12 +41,15 @@
             border: 1px solid #b3e5fc;
             margin-bottom: 20px; /* Adjust based on layout */
         }
+
         .select-actions hr {
             margin: 10px 0;
         }
+
         .checkbox {
             margin-right: 15px;
         }
+
         .margin-left {
             margin-left: 20px;
         }
@@ -56,45 +64,19 @@
 
         <div class="col-md-9 shadow">
             <h2>내가 찜한 상품 목록</h2>
-            <p>내가 찜한 상품 목록을 확인하실 수 있습니다.</p>
-            <form id="check-list-form">
-                <div class="select-actions">
-                    <input type="checkbox" id="selectAll1" class="checkbox selectAll">
-                    <label for="selectAll1">전체선택</label>
-                    <button class="btn btn-outline-primary btn-sm margin-left select-delete">선택삭제</button>
-                </div>
+            <div class="select-actions">
+                <input type="checkbox" id="selectAll1" class="checkbox selectAll">
+                <label for="selectAll1">전체선택</label>
+                <button class="btn btn-outline-primary btn-sm margin-left select-delete">선택삭제</button>
+            </div>
+            <div id="favoritesList">
 
-                <div th:each="favoriteProduct : ${favoriteProducts}" class="mb-3">
-                    <div class="product-item p-3 d-flex align-items-center">
-                        <input type="checkbox" name="productIDs"  th:data-product-id="${favoriteProduct.product.productID}" class="checkbox delete-select">
-                        <label th:for="${'chk' + favoriteProduct.product.productID}"></label>
-                        <div class="col-md-4">
-                            <a th:href="@{/product/{id}(id=${favoriteProduct.product.productID})}">
-                                <img th:if="${not #lists.isEmpty(favoriteProduct.product.imageUrls)}" th:src="@{'/uploaded-images/'+${favoriteProduct.product.imageUrls[0]}}" class="product-image" alt="Product Image">
-                                <img th:unless="${not #lists.isEmpty(favoriteProduct.product.imageUrls)}" src="@{/img/logo.png}" class="product-image" alt="Default Image">
-                            </a>
-                        </div>
-                        <div class="col-md-8">
-                            <div>
-                                <p th:text="${favoriteProduct.product.productName}">Product Name</p>
-                                <p th:text="${#numbers.formatDecimal(favoriteProduct.product.price, 0, 'COMMA', 0, 'POINT')} + '원'">Product Price</p>
-                            </div>
-                            <div class="product-actions">
-                                <button type="button" class="btn btn-primary btn-sm add-to-cart"
-                                        th:data-product-id="${favoriteProduct.product.productID}">장바구니 담기</button>
-                                <button type="button" class="btn btn-danger btn-sm favorite"
-                                        th:data-product-id="${favoriteProduct.product.productID}">삭제</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="select-actions">
-                    <input type="checkbox" id="selectAll2" class="checkbox selectAll">
-                    <label for="selectAll2">전체선택</label>
-                    <button class="btn btn-outline-primary btn-sm margin-left select-delete">선택삭제</button>
-                </div>
-            </form>
+            </div>
+            <div class="select-actions">
+                <input type="checkbox" id="selectAll2" class="checkbox selectAll">
+                <label for="selectAll2">전체선택</label>
+                <button class="btn btn-outline-primary btn-sm margin-left select-delete">선택삭제</button>
+            </div>
         </div>
     </div>
 </div>
@@ -104,19 +86,63 @@
 
 <script>
 
-    $(document).ready(function() {
+    $(document).ready(function () {
+        loadFavorites(1); // 첫 페이지 로드
+
+        function loadFavorites(page) {
+            $.ajax({
+                type: 'GET',
+                url: `/api/favorite/list?page=${page}`,
+                success: function (response) {
+                    renderFavorites(response.favoriteProductDTOs);
+                },
+                error: function (error) {
+                    console.error('Error loading favorites:', error);
+                }
+            });
+        }
+
+        function renderFavorites(favorites) {
+            const container = $('#favoritesList');
+            // 이전에 렌더링된 내용을 지우고 새로운 내용을 추가합니다.
+            container.find('.product-item').remove();
+
+            favorites.forEach(function (favorite) {
+                const favoriteItemHTML = `
+                <div class="mb-3 product-item p-3 d-flex align-items-center">
+                    <input type="checkbox" name="productIDs" data-product-id="${favorite.product.productID}" class="checkbox delete-select">
+                    <div class="col-md-4">
+                        <a href="/product/${favorite.product.productID}">
+                            <img src="/uploaded-images/${favorite.product.imageUrl}" class="product-image" alt="Product Image">
+                        </a>
+                    </div>
+                    <div class="col-md-8">
+                        <p>${favorite.product.name}</p>
+                        <p>${favorite.product.price}원</p>
+                        <div class="product-actions">
+                            <button type="button" class="btn btn-primary btn-sm add-to-cart" data-product-id="${favorite.product.productID}">장바구니 담기</button>
+                            <button type="button" class="btn btn-danger btn-sm favorite" data-product-id="${favorite.product.productID}">삭제</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+                container.append(favoriteItemHTML);
+            });
+        }
+
+
         // 전체 선택 체크박스의 상태가 변경될 때 실행될 함수
-        $(".selectAll").change(function() {
+        $(".selectAll").change(function () {
             var isAllChecked = $(this).is(":checked");
             $(".checkbox").prop("checked", isAllChecked);
         });
 
         // 개별 체크박스 상태 변경 시 전체 선택 체크박스 상태 업데이트
-        $(document).on('change', ".checkbox", function() {
+        $(document).on('change', ".checkbox", function () {
             var checkboxlength = $(".checkbox").length;
             var checkboxcheckedlength = $(".checkbox:checked").length;
             var isAllChecked = checkboxcheckedlength === checkboxlength;
-            if (checkboxlength-2 === checkboxcheckedlength) {
+            if (checkboxlength - 2 === checkboxcheckedlength) {
                 isAllChecked = true;
             }
             $(".selectAll").prop("checked", isAllChecked);
@@ -151,12 +177,12 @@
         $.ajax({
             type: "POST",
             url: "/api/favorite",
-            data: { productID: productID },
-            success: function(response) {
+            data: {productID: productID},
+            success: function (response) {
                 alert(response.message);
                 window.location.reload();
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 alert("찜하기 상태 변경에 실패했습니다: " + error);
             }
         });
@@ -164,23 +190,23 @@
     /* 찜 하기 기능*/
     $(".select-delete").click(function (e) {
         e.preventDefault(); // 폼 기본 제출 막기
-        var productIDs = $(".delete-select:checked").map(function() {
+        var productIDs = $(".delete-select:checked").map(function () {
             return $(this).data("product-id");
         }).get();
         $.ajax({
             type: "delete",
             url: "/api/favorite/list",
             contentType: "application/json",
-            data: JSON.stringify({ productIDs: productIDs }),
-            success: function(response) {
+            data: JSON.stringify({productIDs: productIDs}),
+            success: function (response) {
                 alert(response.message);
                 window.location.reload();
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 alert("찜하기 상태 변경에 실패했습니다: " + error);
             }
         });
-    });
+    })
 </script>
 </body>
 </html>

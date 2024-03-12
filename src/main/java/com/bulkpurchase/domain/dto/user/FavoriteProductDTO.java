@@ -1,5 +1,6 @@
 package com.bulkpurchase.domain.dto.user;
 
+import com.bulkpurchase.domain.dto.product.ProductViewDTO;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import lombok.Getter;
@@ -15,12 +16,12 @@ public class FavoriteProductDTO {
 
     private LocalDateTime favoritedAt;
 
-    private Product product;
+    private ProductViewDTO product;
 
     public FavoriteProductDTO(FavoriteProduct favoriteProduct) {
         this.id = favoriteProduct.getId();
         this.favoritedAt = favoriteProduct.getFavoritedAt();
-        this.product = favoriteProduct.getProduct();
+        this.product = new ProductViewDTO(favoriteProduct.getProduct());
     }
 
     public FavoriteProductDTO() {
