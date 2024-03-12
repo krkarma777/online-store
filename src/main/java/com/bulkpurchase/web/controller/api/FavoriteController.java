@@ -19,8 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,17 +58,24 @@ public class FavoriteController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> favoriteList(@RequestParam(value = "page", required = false) Integer page, Principal principal) {
-        if (page == null) {
-            page = 1;
-        }
+    public ResponseEntity<?> favoriteList(@RequestParam(value = "page", defaultValue = "1") Integer page, Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
-        Sort sort = Sort.by(Sort.Direction.fromString("DESC"), "id");
-        int pageSize = 10;
-        Pageable pageable = PageRequest.of(page - 1, pageSize, sort);
-        Page<FavoriteProduct> favoriteProducts = favoriteProductService.findByUser(user, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(favoriteProducts);
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+
+        Page<FavoriteProduct> favoriteProductsPage = favoriteProductService.findByUser(user, pageable);
+        List<FavoriteProductDTO> favoriteProductDTOs = favoriteProductsPage.getContent().stream()
+                .map(FavoriteProductDTO::new)
+                .collect(Collectors.toList());
+
+        Map<String, Object> responsePayload = Map.of(
+                "totalPages", favoriteProductsPage.getTotalPages(),
+                "favoriteProductDTOs", favoriteProductDTOs
+        );
+
+        return ResponseEntity.ok(responsePayload);
     }
+
 
     @GetMapping
     public ResponseEntity<?> favoriteOne(@RequestParam(value = "id") Long id, Principal principal) {
