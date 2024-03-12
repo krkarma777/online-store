@@ -150,7 +150,7 @@
         const productID = $(this).data("product-id");
         $.ajax({
             type: "POST",
-            url: "/favorite/toggle",
+            url: "/api/favorite",
             data: { productID: productID },
             success: function(response) {
                 alert(response.message);
@@ -162,16 +162,16 @@
         });
     });
     /* 찜 하기 기능*/
-    $(".select-delete").click(function () {
+    $(".select-delete").click(function (e) {
         e.preventDefault(); // 폼 기본 제출 막기
         var productIDs = $(".delete-select:checked").map(function() {
             return $(this).data("product-id");
         }).get();
-        console.log(productIDs);
         $.ajax({
-            type: "POST",
-            url: "/favorite/toggle/list",
-            data: { productIDs: productIDs },
+            type: "delete",
+            url: "/api/favorite/list",
+            contentType: "application/json",
+            data: JSON.stringify({ productIDs: productIDs }),
             success: function(response) {
                 alert(response.message);
                 window.location.reload();
