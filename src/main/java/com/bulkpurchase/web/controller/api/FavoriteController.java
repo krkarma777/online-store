@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,11 +33,15 @@ public class FavoriteController {
 
     @PostMapping
     @ResponseBody
-    public FavoriteResponse toggleFavorite(@RequestParam(value = "productID") Long productID, Principal principal) {
-        Product product = productService.findById(productID).orElse(null);
+    public ResponseEntity<?> toggleFavorite(@RequestParam(value = "productID") Long productID, Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
-        boolean isFavorited = favoriteProductService.toggleFavorite(user, product);
-        return new FavoriteResponse(isFavorited);
+        Optional<Product> productOpt = productService.findById(productID);
+        if (productOpt.isPresent()) {
+            boolean isFavorited = favoriteProductService.toggleFavorite(user, productOpt.get());
+            return ResponseEntity.ok(new FavoriteResponse(isFavorited));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "정상적인 요청이 아닙니다."));
+        }
     }
 
     @DeleteMapping("/list")
