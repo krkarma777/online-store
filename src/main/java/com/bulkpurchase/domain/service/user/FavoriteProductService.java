@@ -57,4 +57,8 @@ public class FavoriteProductService {
     public Page<FavoriteProduct> findByUser(User user, Pageable page) {
         return favoriteProductRepository.findByUser(user, page);
     }
+
+    public Optional<FavoriteProduct> findByUserAndId(User user, Long id) {
+        return favoriteProductRepository.findByUserAndId(user, id);
+    }
 }
