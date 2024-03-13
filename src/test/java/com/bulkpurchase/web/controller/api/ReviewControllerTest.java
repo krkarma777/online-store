@@ -1,7 +1,9 @@
 package com.bulkpurchase.web.controller.api;
 
+import com.bulkpurchase.domain.dto.review.ReviewResponseDTO;
 import com.bulkpurchase.domain.dto.review.ReviewUpdateRequestDTO;
 import com.bulkpurchase.domain.dto.review.ReviewWriteRequestDTO;
+import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.review.Review;
@@ -21,10 +23,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -156,5 +159,50 @@ class ReviewControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestDTO)))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    void reviewDetail_WhenReviewExists_ShouldReturnReview() throws Exception {
+        // Given
+        long reviewId = 1L;
+        Review review = createTestReview(reviewId);
+        ReviewResponseDTO expectedResponseDTO = new ReviewResponseDTO(review);
+
+        given(reviewService.findById(reviewId)).willReturn(Optional.of(review));
+
+        // When & Then
+        mockMvc.perform(get("/api/review/{reviewID}", reviewId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    private Review createTestReview(long reviewId) {
+        Product product = new Product();
+        product.setImageUrls(List.of("test"));
+
+        Order order = new Order();
+        order.setOrderID(1L);
+
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setOrder(order);
+
+        Review review = new Review(product, new User(), "testReview", 5, orderDetail);
+        review.setReviewID(reviewId);
+
+        return review;
+    }
+
+    @Test
+    @WithMockUser
+    void reviewDetail_WhenReviewDoesNotExist_ShouldReturnBadRequest() throws Exception {
+        // Given
+        given(reviewService.findById(anyLong())).willReturn(Optional.empty());
+
+        // When & Then
+        mockMvc.perform(get("/api/review/{reviewID}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(content().json("{\"message\":\"존재하지 않는 리뷰입니다.\"}"));
     }
 }
