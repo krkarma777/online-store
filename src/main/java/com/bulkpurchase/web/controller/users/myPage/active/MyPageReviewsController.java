@@ -36,7 +36,6 @@ public class MyPageReviewsController {
         int totalPages = reviewDetailDTOS.getTotalPages();
         model.addAttribute("reviewDetailDTOS", reviewDetailDTOS);
         model.addAttribute("totalPages", totalPages);
-        return "users/myPage/active/reviews";
+        return "users/myPage/active/review/reviews";
     }
-
 }

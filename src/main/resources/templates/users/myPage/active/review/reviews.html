@@ -62,16 +62,16 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div>
-                                <h5 class="card-title d-inline">상품명: <span th:text="${reviewDetail.review.product.productName}"></span></h5>
+                                <h5 class="card-title d-inline">상품명: <span th:text="${reviewDetail.reviewResponseDTO.productName}"></span></h5>
                             </div>
                             <div class="actions">
-                                <a th:href="@{/review/edit/{id}(id=${reviewDetail.review.reviewID})}" class="btn btn-primary btn-sm">수정</a>
-                                <a th:href="@{/review/delete/{id}(id=${reviewDetail.review.reviewID})}" class="btn btn-danger btn-sm">삭제</a>
+                                <a th:href="@{/myPage/active/review/edit/{id}(id=${reviewDetail.reviewResponseDTO.reviewID})}" class="btn btn-primary btn-sm">수정</a>
+                                <a th:href="@{/myPage/active/review/delete/{id}(id=${reviewDetail.reviewResponseDTO.reviewID})}" class="btn btn-danger btn-sm">삭제</a>
                             </div>
                         </div>
-                        <h6 class="card-subtitle mb-2 text-muted d-inline">작성일: <span th:text="${#dates.format(reviewDetail.review.creationDate, 'yyyy-MM-dd')}"></span></h6>
+                        <h6 class="card-subtitle mb-2 text-muted d-inline">작성일: <span th:text="${#temporals.format(reviewDetail.reviewResponseDTO.creationDate, 'yyyy-MM-dd')}"></span></h6>
                         <div class="review-content">
-                            <p th:text="${reviewDetail.review.content}"></p>
+                            <p th:text="${reviewDetail.reviewResponseDTO.content}"></p>
                         </div>
                         <div class="like-dislike-buttons">
                             <button type="button" class="btn btn-outline-success">좋아요 <span th:text="${reviewDetail.likeCount}">0</span></button>
