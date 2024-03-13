@@ -45,14 +45,15 @@
             <!-- 사용자가 선택한 별점 값을 저장할 숨겨진 입력 필드 추가 -->
             <input type="hidden" id="ratingInput" name="rating" value="0" th:field="${review.rating}" required>
         </div>
-
+        <input type="hidden" name="productID" id="productID" th:value="${productID}">
+        <input type="hidden" name="orderDetailID" id="orderDetailID" th:value="${orderDetailID}">
         <div class="form-section">
             <div class="form-section-header">이미지 업로드</div>
             <label for="image" class="custom-file-upload">파일 선택</label>
             <input type="file" id="image" multiple style="display: none;"/>
             <ul class="image-list" id="file-list"></ul>
         </div>
-        <button type="submit" class="btn btn-primary">리뷰 제출</button>
+        <button type="button" class="btn btn-primary" id="submitReview">리뷰 제출</button>
     </form>
         </div>
         <!-- 메인 컨텐츠 끝 -->
@@ -60,7 +61,36 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    $(document).ready(function() {
+
+        $('#submitReview').click(function(e) {
+            e.preventDefault(); // 기본 폼 제출 이벤트 방지
+
+            // 리뷰 데이터 수집
+            var reviewData = {
+                content: $('#reviewContent').val(),
+                rating: $('#ratingInput').val(),
+                productID: $('#productID').val(),
+                orderDetailID: $('#orderDetailID').val()
+            };
+
+            // Ajax 요청 설정
+            $.ajax({
+                url: '/api/review',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(reviewData),
+                dataType: 'json',
+                success: function(response) {
+                    alert(response.message);
+                },
+                error: function(xhr, status, error) {
+                    // 요청 실패 시 처리 로직
+                    alert("리뷰 작성에 실패하였습니다. " + error);
+                }
+            });
+        });
+
         const starRatingContainer = document.querySelector('.star-rating');
         const ratingInput = document.getElementById('ratingInput'); // 평점 값을 저장할 입력 필드
 

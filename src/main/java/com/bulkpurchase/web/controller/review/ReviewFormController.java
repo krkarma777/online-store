@@ -43,7 +43,16 @@ public class ReviewFormController {
             return "redirect:/review/" + existingReview.get().getReviewID();
         } else {
             model.addAttribute("review", new Review());
+            model.addAttribute("productID", productID);
+            model.addAttribute("orderDetailID", orderDetailID);
             return "users/myPage/active/review/reviewForm";
         }
+    }
+
+    @GetMapping("/myPage/active/review/detail/{reviewId}")
+    public String reviewDetail(@PathVariable("reviewId") Long reviewId, Model model) {
+        Review review = reviewService.findById(reviewId).orElse(null);
+        model.addAttribute("review", review);
+        return "users/myPage/active/review/reviewDetail";
     }
 }
