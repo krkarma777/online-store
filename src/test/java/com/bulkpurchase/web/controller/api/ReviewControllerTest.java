@@ -3,6 +3,7 @@ package com.bulkpurchase.web.controller.api;
 import com.bulkpurchase.domain.dto.review.ReviewWriteRequestDTO;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
+import com.bulkpurchase.domain.entity.review.Review;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.product.ProductService;
@@ -23,7 +24,9 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -66,7 +69,39 @@ class ReviewControllerTest {
         mockMvc.perform(post("/api/review")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(content().json("{\"message\":\"리뷰가 성공적으로 작성되었습니다.\"}"));
+    }
+
+    @Test
+    @WithMockUser
+    public void deleteReview_WhenReviewExists_ShouldReturnOk() throws Exception {
+        // Given
+        Long reviewID = 1L;
+        User user = new User();
+        Review review = new Review();
+        given(userAuthValidator.getCurrentUser(any())).willReturn(user);
+        given(reviewService.findByReviewIDAndUser(reviewID, user)).willReturn(Optional.of(review));
+
+        // When & Then
+        mockMvc.perform(delete("/api/review/{reviewID}", reviewID))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"message\":\"리뷰가 삭제되었습니다.\"}"));
+    }
+
+    @Test
+    @WithMockUser
+    public void deleteReview_WhenReviewDoesNotExist_ShouldReturnNotFound() throws Exception {
+        // Given
+        Long reviewID = 1L;
+        User user = new User();
+        given(userAuthValidator.getCurrentUser(any())).willReturn(user);
+        given(reviewService.findByReviewIDAndUser(reviewID, user)).willReturn(Optional.empty());
+
+        // When & Then
+        mockMvc.perform(delete("/api/review/{reviewID}", reviewID))
+                .andExpect(status().isNotFound())
+                .andExpect(content().json("{\"message\":\"존재하지 않는 리뷰입니다.\"}"));
     }
 
 }
