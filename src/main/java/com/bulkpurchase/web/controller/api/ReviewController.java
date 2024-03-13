@@ -91,7 +91,7 @@ public class ReviewController {
     public ResponseEntity<?>  reviewDetail(@PathVariable("reviewID") Long reviewID) {
         Optional<Review> reviewOpt = reviewService.findById(reviewID);
         if (reviewOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "존재하지 않는 리뷰입니다."));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "존재하지 않는 리뷰입니다."));
         }
         Review review = reviewOpt.get();
         ReviewResponseDTO reviewResponseDTO = new ReviewResponseDTO(review);

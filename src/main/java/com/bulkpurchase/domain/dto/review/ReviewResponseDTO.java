@@ -19,7 +19,7 @@ public class ReviewResponseDTO {
     private Integer rating;
     private LocalDateTime creationDate;
     private List<String> imageUrls;
-    private OrderDetail orderDetail;
+    private Long orderId;
 
     public ReviewResponseDTO(Review review) {
         this.reviewID = review.getReviewID();
@@ -29,7 +29,7 @@ public class ReviewResponseDTO {
         this.rating = review.getRating();
         this.creationDate = review.getCreationDate();
         this.imageUrls = review.getImageUrls();
-        this.orderDetail = review.getOrderDetail();
+        this.orderId = review.getOrderDetail().getOrder().getOrderID();
     }
 
     public ReviewResponseDTO() {

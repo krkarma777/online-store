@@ -52,15 +52,24 @@ public class Review {
     @JoinColumn(name = "OrderDetailID", nullable = false, unique = true)
     private OrderDetail orderDetail;
 
+    public Review(Product product, User user, String content, Integer rating, OrderDetail orderDetail, List<String> imageUrls) {
+        this.product = product;
+        this.user = user;
+        this.content = content;
+        this.rating = rating;
+        this.orderDetail = orderDetail;
+        this.imageUrls = imageUrls;
+    }
+
+    public Review() {
+    }
+
     public Review(Product product, User user, String content, Integer rating, OrderDetail orderDetail) {
         this.product = product;
         this.user = user;
         this.content = content;
         this.rating = rating;
         this.orderDetail = orderDetail;
-    }
-
-    public Review() {
     }
 
     @Override
