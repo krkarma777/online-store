@@ -65,7 +65,7 @@
                                 <h5 class="card-title d-inline">상품명: <span th:text="${reviewDetail.reviewResponseDTO.productName}"></span></h5>
                             </div>
                             <div class="actions">
-                                <a href="javascript:void(0)" class="btn btn-primary btn-sm" th:onclick="'deleteReview(' + ${reviewDetail.reviewResponseDTO.reviewID} + ')'">수정</a>
+                                <button class="btn btn-primary btn-sm" id="update-modal-btn" data-bs-toggle="modal" data-bs-target="#reviewUpdateModal" th:data-id="${reviewDetail.reviewResponseDTO.reviewID}">수정</button>
                                 <a href="javascript:void(0)" class="btn btn-danger btn-sm" th:onclick="'deleteReview(' + ${reviewDetail.reviewResponseDTO.reviewID} + ')'">삭제</a>
                             </div>
                         </div>
@@ -94,45 +94,88 @@
         <!-- 메인 컨텐츠 끝 -->
     </div>
 </div>
-
+<!-- Review Update Modal -->
+<div class="modal fade" id="reviewUpdateModal" tabindex="-1" aria-labelledby="reviewUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewUpdateModalLabel">리뷰 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateReviewForm">
+                    <div class="mb-3">
+                        <label for="modalReviewContent" class="form-label">리뷰 내용</label>
+                        <textarea class="form-control" id="modalReviewContent" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalReviewRating" class="form-label">평점</label>
+                        <select class="form-select" id="modalReviewRating">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="modalReviewId">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" id="saveReviewChanges">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div th:replace="~{common/footer :: footer}"></div>
 <script>
-    function deleteReview(reviewID) {
-        $.ajax({
-            url: '/api/review/' + reviewID,
-            type: 'DELETE',
-            success: function (response) {
-                alert(response.message);
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                alert("리뷰 삭제 실패: " + error);
-            }
-        });
-    }
+    $(document).ready(function () {
 
-    function updateReview(reviewID) {
-        // Example: assuming you gather data from a form or inputs
-        var data = {
-            content: $("#reviewContent").val(),
-            rating: $("#reviewRating").val()
-        };
+        $("#update-modal-btn").on("click", function (){
+            let id = $(this).data("id");
+            $("#modalReviewId").val(id);
+        })
 
-        $.ajax({
-            url: '/api/review/' + reviewID,
-            type: 'PATCH',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (response) {
-                alert(response.message);
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                // Handle failure
-                alert("리뷰 수정 실패: " + error);
-            }
+        function deleteReview(reviewID) {
+            $.ajax({
+                url: '/api/review/' + reviewID,
+                type: 'DELETE',
+                success: function (response) {
+                    alert(response.message);
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert("리뷰 삭제 실패: " + error);
+                }
+            });
+        }
+
+        $("#saveReviewChanges").on("click", function updateReview() {
+            let reviewID = $("#modalReviewId").val();
+
+            var data = {
+                content: $("#modalReviewContent").val(),
+                rating: $("#modalReviewRating").val()
+            };
+
+            $.ajax({
+                url: '/api/review/' + reviewID,
+                type: 'PATCH',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert(response.message);
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert("리뷰 수정 실패: " + error);
+                }
+            });
         });
-    }
+
+    });
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
