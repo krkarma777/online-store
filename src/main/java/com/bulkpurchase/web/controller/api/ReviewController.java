@@ -77,7 +77,7 @@ public class ReviewController {
         Optional<Review> reviewOpt = reviewService.findByReviewIDAndUser(reviewID, user);
 
         if (reviewOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "존재하지 않는 리뷰입니다."));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "존재하지 않는 리뷰입니다."));
         }
 
         Review review = reviewOpt.get();

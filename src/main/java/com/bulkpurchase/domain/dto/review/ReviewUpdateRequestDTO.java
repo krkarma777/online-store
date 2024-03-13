@@ -8,6 +8,13 @@ import lombok.Setter;
 public class ReviewUpdateRequestDTO {
 
     private String content;
-
     private Integer rating;
+
+    public ReviewUpdateRequestDTO(String content, Integer rating) {
+        this.content = content;
+        this.rating = rating;
+    }
+
+    public ReviewUpdateRequestDTO() {
+    }
 }
