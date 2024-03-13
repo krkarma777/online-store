@@ -1,5 +1,6 @@
 package com.bulkpurchase.web.controller.api;
 
+import com.bulkpurchase.domain.dto.review.ReviewUpdateRequestDTO;
 import com.bulkpurchase.domain.dto.review.ReviewWriteRequestDTO;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
@@ -23,11 +24,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -104,4 +104,57 @@ class ReviewControllerTest {
                 .andExpect(content().json("{\"message\":\"존재하지 않는 리뷰입니다.\"}"));
     }
 
+    @Test
+    @WithMockUser
+    public void update_WhenReviewExists_ShouldReturnOkAndMessage() throws Exception {
+        // Given
+        Long reviewId = 1L;
+        ReviewUpdateRequestDTO requestDTO = new ReviewUpdateRequestDTO("Updated content", 5); // Adjust fields as necessary
+        Review review = new Review();
+        review.setReviewID(reviewId);
+
+        User user = new User();
+        given(userAuthValidator.getCurrentUser(any())).willReturn(user);
+        given(reviewService.findByReviewIDAndUser(eq(reviewId), eq(user))).willReturn(Optional.of(review));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // When & Then
+        mockMvc.perform(patch("/api/review/{reviewID}", reviewId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("리뷰가 수정되었습니다."));
+    }
+
+    @Test
+    @WithMockUser
+    public void update_ReviewDoesNotExist_ShouldReturnNotFound() throws Exception {
+        // Given
+        given(reviewService.findByReviewIDAndUser(any(Long.class), any(User.class))).willReturn(Optional.empty());
+
+        ReviewUpdateRequestDTO requestDTO = new ReviewUpdateRequestDTO();
+        requestDTO.setRating(5);
+        requestDTO.setContent("Non-existent review");
+
+        // When & Then
+        mockMvc.perform(patch("/api/review/{reviewID}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDTO)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void update_UserNotAuthenticated_ShouldReturnUnauthorized() throws Exception {
+        // Given
+        ReviewUpdateRequestDTO requestDTO = new ReviewUpdateRequestDTO();
+        requestDTO.setRating(5);
+        requestDTO.setContent("Unauthorized update attempt");
+
+        // When & Then
+        mockMvc.perform(patch("/api/review/{reviewID}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDTO)))
+                .andExpect(status().isUnauthorized());
+    }
 }
