@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -41,7 +41,7 @@ public class Review {
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private Date creationDate;
+    private LocalDateTime creationDate = LocalDateTime.now();
 
     @ElementCollection
     @CollectionTable(name = "review_image_urls", joinColumns = @JoinColumn(name = "reviewID"))
@@ -51,6 +51,26 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OrderDetailID", nullable = false, unique = true)
     private OrderDetail orderDetail;
+
+    public Review(Product product, User user, String content, Integer rating, OrderDetail orderDetail, List<String> imageUrls) {
+        this.product = product;
+        this.user = user;
+        this.content = content;
+        this.rating = rating;
+        this.orderDetail = orderDetail;
+        this.imageUrls = imageUrls;
+    }
+
+    public Review() {
+    }
+
+    public Review(Product product, User user, String content, Integer rating, OrderDetail orderDetail) {
+        this.product = product;
+        this.user = user;
+        this.content = content;
+        this.rating = rating;
+        this.orderDetail = orderDetail;
+    }
 
     @Override
     public String toString() {

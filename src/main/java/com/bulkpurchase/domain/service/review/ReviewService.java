@@ -83,4 +83,12 @@ public class ReviewService {
                 .collect(Collectors.toList());
         return new PageImpl<>(dtos, page, dtos.size());
     }
+
+    public Optional<Review> findByReviewIDAndUser(Long reviewID, User user) {
+        return reviewRepository.findByReviewIDAndUser(reviewID, user);
+    }
+
+    public void delete(Review review) {
+        reviewRepository.delete(review);
+    }
 }

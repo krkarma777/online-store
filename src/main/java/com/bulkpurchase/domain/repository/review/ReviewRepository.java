@@ -46,4 +46,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "FROM Review r WHERE r.user.userID = :userID " +
             "ORDER BY r.creationDate DESC")
     List<Object[]> findByUser(@Param("userID") Long userID, Pageable page);
+
+    Optional<Review> findByReviewIDAndUser(Long reviewID, User user);
 }
