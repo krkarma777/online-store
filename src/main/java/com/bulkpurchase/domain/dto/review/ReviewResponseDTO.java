@@ -20,6 +20,7 @@ public class ReviewResponseDTO {
     private LocalDateTime creationDate;
     private List<String> imageUrls;
     private Long orderId;
+    private String realName;
 
     public ReviewResponseDTO(Review review) {
         this.reviewID = review.getReviewID();
@@ -30,6 +31,7 @@ public class ReviewResponseDTO {
         this.creationDate = review.getCreationDate();
         this.imageUrls = review.getImageUrls();
         this.orderId = review.getOrderDetail().getOrder().getOrderID();
+        this.realName = review.getUser().getRealName();
     }
 
     public ReviewResponseDTO() {
