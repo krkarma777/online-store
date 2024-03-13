@@ -65,8 +65,8 @@
                                 <h5 class="card-title d-inline">상품명: <span th:text="${reviewDetail.reviewResponseDTO.productName}"></span></h5>
                             </div>
                             <div class="actions">
-                                <a th:href="@{/myPage/active/review/edit/{id}(id=${reviewDetail.reviewResponseDTO.reviewID})}" class="btn btn-primary btn-sm">수정</a>
-                                <a th:href="@{/myPage/active/review/delete/{id}(id=${reviewDetail.reviewResponseDTO.reviewID})}" class="btn btn-danger btn-sm">삭제</a>
+                                <a href="javascript:void(0)" class="btn btn-primary btn-sm" th:onclick="'deleteReview(' + ${reviewDetail.reviewResponseDTO.reviewID} + ')'">수정</a>
+                                <a href="javascript:void(0)" class="btn btn-danger btn-sm" th:onclick="'deleteReview(' + ${reviewDetail.reviewResponseDTO.reviewID} + ')'">삭제</a>
                             </div>
                         </div>
                         <h6 class="card-subtitle mb-2 text-muted d-inline">작성일: <span th:text="${#temporals.format(reviewDetail.reviewResponseDTO.creationDate, 'yyyy-MM-dd')}"></span></h6>
@@ -96,6 +96,44 @@
 </div>
 
 <div th:replace="~{common/footer :: footer}"></div>
+<script>
+    function deleteReview(reviewID) {
+        $.ajax({
+            url: '/api/review/' + reviewID,
+            type: 'DELETE',
+            success: function (response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("리뷰 삭제 실패: " + error);
+            }
+        });
+    }
+
+    function updateReview(reviewID) {
+        // Example: assuming you gather data from a form or inputs
+        var data = {
+            content: $("#reviewContent").val(),
+            rating: $("#reviewRating").val()
+        };
+
+        $.ajax({
+            url: '/api/review/' + reviewID,
+            type: 'PATCH',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                // Handle failure
+                alert("리뷰 수정 실패: " + error);
+            }
+        });
+    }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
