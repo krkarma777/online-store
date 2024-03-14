@@ -1,5 +1,7 @@
 package com.bulkpurchase.web.controller;
 
+import com.bulkpurchase.domain.service.review.ReviewService;
+import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,5 +28,10 @@ public class MyPageController {
     @GetMapping("/favorites")
     public String favorites() {
         return "users/myPage/active/favorites";
+    }
+
+    @GetMapping("/reviews")
+    public String myPageReviews() {
+        return "users/myPage/active/review/reviews";
     }
 }
