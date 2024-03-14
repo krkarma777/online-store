@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>마이페이지</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <!-- Swiper CSS for the image slider -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css"/>
+    <style>
+        .username-masked {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .image-slider-container {
+            margin-bottom: 20px;
+        }
+        .review-content {
+            background-color: #f8f9fa;
+            border-left: 5px solid #0d6efd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #495057;
+        }
+        .like-dislike-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+            margin-bottom: 20px; /* Increased bottom margin for spacing */
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+        .pagination {
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{common/navBar :: content}"></div>
+
+<div class="container mt-4">
+    <div class="row">
+        <div th:replace="~{common/mypage-sidebar :: sidebar}"></div>
+        <!-- 메인 컨텐츠 시작 -->
+        <div class="col-md-9 shadow">
+            <h2 class="mb-4">내 리뷰 목록</h2>
+            <div th:each="reviewDetail : ${reviewDetailDTOS}">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <h5 class="card-title d-inline">상품명: <span th:text="${reviewDetail.reviewResponseDTO.productName}"></span></h5>
+                            </div>
+                            <div class="actions">
+                                <button class="btn btn-primary btn-sm" id="update-modal-btn" data-bs-toggle="modal" data-bs-target="#reviewUpdateModal" th:data-id="${reviewDetail.reviewResponseDTO.reviewID}">수정</button>
+                                <a href="javascript:void(0)" class="btn btn-danger btn-sm" th:onclick="'deleteReview(' + ${reviewDetail.reviewResponseDTO.reviewID} + ')'">삭제</a>
+                            </div>
+                        </div>
+                        <h6 class="card-subtitle mb-2 text-muted d-inline">작성일: <span th:text="${#temporals.format(reviewDetail.reviewResponseDTO.creationDate, 'yyyy-MM-dd')}"></span></h6>
+                        <div class="review-content">
+                            <p th:text="${reviewDetail.reviewResponseDTO.content}"></p>
+                        </div>
+                        <div class="like-dislike-buttons">
+                            <button type="button" class="btn btn-outline-success">좋아요 <span th:text="${reviewDetail.likeCount}">0</span></button>
+                            <button type="button" class="btn btn-outline-danger">싫어요 <span th:text="${reviewDetail.dislikeCount}">0</span></button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="pagination">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li th:each="pageNum : ${#numbers.sequence(1, totalPages)}" class="page-item">
+                            <a th:href="@{/reviews(page=${pageNum})}" class="page-link" th:text="${pageNum}"></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- 메인 컨텐츠 끝 -->
+    </div>
+</div>
+<!-- Review Update Modal -->
+<div class="modal fade" id="reviewUpdateModal" tabindex="-1" aria-labelledby="reviewUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewUpdateModalLabel">리뷰 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateReviewForm">
+                    <div class="mb-3">
+                        <label for="modalReviewContent" class="form-label">리뷰 내용</label>
+                        <textarea class="form-control" id="modalReviewContent" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalReviewRating" class="form-label">평점</label>
+                        <select class="form-select" id="modalReviewRating">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="modalReviewId">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" id="saveReviewChanges">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="~{common/footer :: footer}"></div>
+<script>
+    $(document).ready(function () {
+
+        $("#update-modal-btn").on("click", function (){
+            let id = $(this).data("id");
+            $("#modalReviewId").val(id);
+        })
+
+        $("#saveReviewChanges").on("click", function updateReview() {
+            let reviewID = $("#modalReviewId").val();
+
+            var data = {
+                content: $("#modalReviewContent").val(),
+                rating: $("#modalReviewRating").val()
+            };
+
+            $.ajax({
+                url: '/api/review/' + reviewID,
+                type: 'PATCH',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert(response.message);
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    alert("리뷰 수정 실패: " + error);
+                }
+            });
+        });
+
+    });
+    function deleteReview(reviewID) {
+        $.ajax({
+            url: '/api/review/' + reviewID,
+            type: 'DELETE',
+            success: function (response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("리뷰 삭제 실패: " + error);
+            }
+        });
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

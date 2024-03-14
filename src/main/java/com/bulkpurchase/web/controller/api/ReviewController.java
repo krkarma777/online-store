@@ -72,7 +72,7 @@ public class ReviewController {
     }
 
     @PatchMapping("/{reviewID}")
-    public ResponseEntity<?> update(@PathVariable("reviewID") Long reviewID, ReviewUpdateRequestDTO reviewUpdateRequestDTO, Principal principal) {
+    public ResponseEntity<?> update(@PathVariable("reviewID") Long reviewID, @RequestBody ReviewUpdateRequestDTO reviewUpdateRequestDTO, Principal principal) {
         User user = getUser(principal);
         Optional<Review> reviewOpt = reviewService.findByReviewIDAndUser(reviewID, user);
 

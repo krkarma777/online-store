@@ -25,7 +25,7 @@ public class ReviewFormController {
     private final OrderDetailService orderDetailService;
     private final ReviewService reviewService;
 
-    @GetMapping("/review/write")
+    @GetMapping("/myPage/active/review/write")
     public String reviewWriteForm(@RequestParam("productID") Long productID,
                                   @RequestParam("orderDetailID") Long orderDetailID,
                                   Principal principal, Model model) {
@@ -43,7 +43,16 @@ public class ReviewFormController {
             return "redirect:/review/" + existingReview.get().getReviewID();
         } else {
             model.addAttribute("review", new Review());
-            return "review/reviewForm";
+            model.addAttribute("productID", productID);
+            model.addAttribute("orderDetailID", orderDetailID);
+            return "users/myPage/active/review/reviewForm";
         }
+    }
+
+    @GetMapping("/myPage/active/review/detail/{reviewId}")
+    public String reviewDetail(@PathVariable("reviewId") Long reviewId, Model model) {
+        Review review = reviewService.findById(reviewId).orElse(null);
+        model.addAttribute("review", review);
+        return "users/myPage/active/review/reviewDetail";
     }
 }

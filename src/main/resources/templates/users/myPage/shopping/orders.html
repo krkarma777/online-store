@@ -99,7 +99,7 @@
                             <div class="order-item-actions">
                                 <a th:href="@{/order/tracking(orderID=${orderViewDTO.orderID})}"><button type="button">배송조회</button></a>
                                 <a th:href="@{/order/return(orderID=${orderViewDTO.orderID})}"><button type="button">교환, 반품 신청</button></a>
-                                <a th:href="@{/review/write(productID=${orderDetail.product.productID},orderDetailID=${orderDetail.orderDetailID})}"><button type="button">리뷰 작성하기</button></a>
+                                <a th:href="@{/myPage/active/review/write(productID=${orderDetail.product.productID},orderDetailID=${orderDetail.orderDetailID})}"><button type="button">리뷰 작성하기</button></a>
                             </div>
                         </li>
                     </ul>

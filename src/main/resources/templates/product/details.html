@@ -153,26 +153,26 @@
                 <div class="section-content">
                     <div th:each="reviewDetail : ${reviews}" class="review">
                         <div class="review-author">
-                            <strong th:text="${reviewDetail.review.user.realName}">리뷰 작성자</strong> -
-                            <span th:text="${#dates.format(reviewDetail.review.creationDate, 'yyyy년 MM월 dd일')}">리뷰 작성일</span>
+                            <strong th:text="${reviewDetail.reviewResponseDTO.realName}">리뷰 작성자</strong> -
+                            <span th:text="${#temporals.format(reviewDetail.reviewResponseDTO.creationDate, 'yyyy년 MM월 dd일')}">리뷰 작성일</span>
                         </div>
                         <div class="review-rating">
                             평점:
                             <span th:each="star : ${#numbers.sequence(1,5)}">
-                        <i class="fa" th:class="${star <= reviewDetail.review.rating} ? 'fas fa-star filled-star' : 'far fa-star'"></i>
+                        <i class="fa" th:class="${star <= reviewDetail.reviewResponseDTO.rating} ? 'fas fa-star filled-star' : 'far fa-star'"></i>
                     </span>
                         </div>
                         <div class="review-content">
-                            <p th:text="${reviewDetail.review.content}">리뷰 내용</p>
+                            <p th:text="${reviewDetail.reviewResponseDTO.content}">리뷰 내용</p>
                         </div>
                         <div class="like-dislike-buttons" >
-                            <button type="button" class="btn btn-outline-success btn-like" th:data-review-id="${reviewDetail.review.reviewID}">
+                            <button type="button" class="btn btn-outline-success btn-like" th:data-review-id="${reviewDetail.reviewResponseDTO.reviewID}">
                                 좋아요
-                                <span class="badge bg-success like-count" th:id="'like-count-' + ${reviewDetail.review.reviewID}">0</span>
+                                <span class="badge bg-success like-count" th:id="'like-count-' + ${reviewDetail.reviewResponseDTO.reviewID}">0</span>
                             </button>
-                            <button type="button" class="btn btn-outline-danger btn-dislike" th:data-review-id="${reviewDetail.review.reviewID}">
+                            <button type="button" class="btn btn-outline-danger btn-dislike" th:data-review-id="${reviewDetail.reviewResponseDTO.reviewID}">
                                 싫어요
-                                <span class="badge bg-danger dislike-count" th:id="'dislike-count-' + ${reviewDetail.review.reviewID}">0</span>
+                                <span class="badge bg-danger dislike-count" th:id="'dislike-count-' + ${reviewDetail.reviewResponseDTO.reviewID}">0</span>
                             </button>
                         </div>
                     </div>
