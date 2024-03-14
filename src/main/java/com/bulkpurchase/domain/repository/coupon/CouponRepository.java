@@ -5,6 +5,7 @@ import com.bulkpurchase.domain.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
@@ -12,4 +13,6 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     List<Coupon> findByCreatedBy(User user);
 
     Coupon findByCode(String couponCode);
+
+    Optional<Coupon> findByCouponIDAndCreatedBy(Long couponID, User user);
 }

@@ -25,7 +25,7 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 @Controller
-public class CouponController {
+public class OrderCouponController {
 
     private final UserAuthValidator userAuthValidator;
     private final ApplyCouponService applyCouponService;

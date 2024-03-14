@@ -1,5 +1,7 @@
 package com.bulkpurchase.domain.entity.coupon;
 
+import com.bulkpurchase.domain.dto.coupon.CouponCreateRequestDTO;
+import com.bulkpurchase.domain.dto.coupon.CouponUpdateRequestDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.CouponType;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -10,6 +12,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -22,7 +25,7 @@ public class Coupon {
     private Long couponID;
 
     @Column(nullable = false, unique = true)
-    private String code;
+    private String code = UUID.randomUUID().toString();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -64,6 +67,22 @@ public class Coupon {
     @Column(name = "max_discount_amount", nullable = true)
     private Double maxDiscountAmount;
 
+    public Coupon() {
+    }
+
+    public Coupon(CouponCreateRequestDTO couponCreateRequestDTO) {
+        this.type = couponCreateRequestDTO.getType();
+        this.discount = couponCreateRequestDTO.getDiscount();
+        this.validFrom = couponCreateRequestDTO.getValidFrom();
+        this.validUntil = couponCreateRequestDTO.getValidUntil();
+        this.minimumOrderAmount = couponCreateRequestDTO.getMinimumOrderAmount();
+        this.quantity = couponCreateRequestDTO.getQuantity();
+        this.name = couponCreateRequestDTO.getName();
+        this.description = couponCreateRequestDTO.getDescription();
+        this.maxDiscountAmount = couponCreateRequestDTO.getMaxDiscountAmount();
+    }
+
+
     public void updateDetails(LocalDateTime validUntil, Double minimumOrderAmount, Integer quantity, String name, String description, Double maxDiscountAmount) {
         this.validUntil = validUntil;
         this.minimumOrderAmount = minimumOrderAmount;
@@ -71,5 +90,14 @@ public class Coupon {
         this.name = name;
         this.description = description;
         this.maxDiscountAmount = maxDiscountAmount;
+    }
+
+    public void setUpdateDTO(CouponUpdateRequestDTO couponUpdateRequestDTO) {
+        this.validUntil = couponUpdateRequestDTO.getValidUntil();
+        this.minimumOrderAmount = couponUpdateRequestDTO.getMinimumOrderAmount();
+        this.quantity = couponUpdateRequestDTO.getQuantity();
+        this.name = couponUpdateRequestDTO.getName();
+        this.description = couponUpdateRequestDTO.getDescription();
+        this.maxDiscountAmount = couponUpdateRequestDTO.getMaxDiscountAmount();
     }
 }
