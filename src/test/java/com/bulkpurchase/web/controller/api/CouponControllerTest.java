@@ -24,8 +24,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,6 +69,8 @@ public class CouponControllerTest {
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"message\":\"쿠폰이 정상적으로 생성되었습니다.\"}"));
+
+        verify(couponService, times(1)).save(any(Coupon.class));
     }
 
     @Test
@@ -89,5 +90,20 @@ public class CouponControllerTest {
                 .andExpect(content().json("{\"message\":\"쿠폰이 정상적으로 수정되었습니다.\"}"));
 
         verify(couponService, times(1)).save(any(Coupon.class));
+    }
+
+    @Test
+    @WithMockUser(username = "zxczxc", roles = "자영업자")
+    public void deleteCouponTest() throws Exception {
+        Long couponId = coupon.getCouponID();
+
+        when(userAuthValidator.getCurrentUser(any(Principal.class))).thenReturn(mockUser);
+        when(couponService.findByIdAndUser(couponId, mockUser)).thenReturn(Optional.of(coupon));
+
+        mockMvc.perform(delete("/api/coupon/{couponID}", couponId))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\"message\":\"쿠폰이 정상적으로 삭제되었습니다.\"}"));
+
+        verify(couponService).delete(coupon);
     }
 }
