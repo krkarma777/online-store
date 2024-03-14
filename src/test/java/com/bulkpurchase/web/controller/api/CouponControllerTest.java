@@ -58,7 +58,7 @@ public class CouponControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "qweqwe",roles = "판매자")
+    @WithMockUser(username = "qweqwe", roles = "판매자")
     public void createCouponTest() throws Exception {
         // Given
         CouponCreateRequestDTO requestDTO = new CouponCreateRequestDTO();
@@ -74,7 +74,7 @@ public class CouponControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "zxczxc",roles = "자영업자")
+    @WithMockUser(username = "zxczxc", roles = "자영업자")
     public void updateCouponTest() throws Exception {
         Long couponId = coupon.getCouponID();
 
@@ -105,5 +105,27 @@ public class CouponControllerTest {
                 .andExpect(content().json("{\"message\":\"쿠폰이 정상적으로 삭제되었습니다.\"}"));
 
         verify(couponService).delete(coupon);
+    }
+
+    @Test
+    @WithMockUser(username = "testUser")
+    public void getCouponTest_Success() throws Exception {
+        Long couponID = coupon.getCouponID();
+        when(couponService.findById(eq(couponID))).thenReturn(Optional.of(coupon));
+
+        mockMvc.perform(get("/api/coupon/{couponID}", couponID))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(coupon)));
+    }
+
+    @Test
+    @WithMockUser(username = "testUser")
+    public void getCouponTest_NotFound() throws Exception {
+        Long couponId = 2L;
+        when(couponService.findById(eq(couponId))).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/coupon/{couponID}", couponId))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json("{\"message\":\"쿠폰이 존재하지 않습니다.\"}"));
     }
 }
