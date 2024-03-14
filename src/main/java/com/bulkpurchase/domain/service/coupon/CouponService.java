@@ -4,11 +4,11 @@ import com.bulkpurchase.domain.entity.coupon.Coupon;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.coupon.CouponRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +34,13 @@ public class CouponService {
 
     public Coupon findByCode(String couponCode) {
         return couponRepository.findByCode(couponCode);
+    }
+
+    public Optional<Coupon> findByIdAndUser(Long couponID, User user) {
+        return couponRepository.findByCouponIDAndCreatedBy(couponID, user);
+    }
+
+    public List<Coupon> findAll(Sort sort) {
+        return couponRepository.findAll(sort);
     }
 }
