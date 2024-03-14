@@ -18,6 +18,7 @@ Kakao OAuth setup<br>
 paypal.client.id configuration<br>
 Kakao JS Open API secret key setup<br>
 Kakao login Naver login secret key setup<br>
+PayPal API secret ket setup<br>
 
 ## Features and Screenshots
 
