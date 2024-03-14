@@ -57,41 +57,13 @@
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow">
             <h2 class="mb-4">내 리뷰 목록</h2>
-            <div th:each="reviewDetail : ${reviewDetailDTOS}">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div>
-                                <h5 class="card-title d-inline">상품명: <span th:text="${reviewDetail.reviewResponseDTO.productName}"></span></h5>
-                            </div>
-                            <div class="actions">
-                                <button class="btn btn-primary btn-sm" id="update-modal-btn" data-bs-toggle="modal" data-bs-target="#reviewUpdateModal" th:data-id="${reviewDetail.reviewResponseDTO.reviewID}">수정</button>
-                                <a href="javascript:void(0)" class="btn btn-danger btn-sm" th:onclick="'deleteReview(' + ${reviewDetail.reviewResponseDTO.reviewID} + ')'">삭제</a>
-                            </div>
-                        </div>
-                        <h6 class="card-subtitle mb-2 text-muted d-inline">작성일: <span th:text="${#temporals.format(reviewDetail.reviewResponseDTO.creationDate, 'yyyy-MM-dd')}"></span></h6>
-                        <div class="review-content">
-                            <p th:text="${reviewDetail.reviewResponseDTO.content}"></p>
-                        </div>
-                        <div class="like-dislike-buttons">
-                            <button type="button" class="btn btn-outline-success">좋아요 <span th:text="${reviewDetail.likeCount}">0</span></button>
-                            <button type="button" class="btn btn-outline-danger">싫어요 <span th:text="${reviewDetail.dislikeCount}">0</span></button>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="pagination">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination">
-                        <li th:each="pageNum : ${#numbers.sequence(1, totalPages)}" class="page-item">
-                            <a th:href="@{/reviews(page=${pageNum})}" class="page-link" th:text="${pageNum}"></a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+            <!-- 리뷰들을 동적으로 추가할 부분 -->
+            <div id="reviewsContainer"></div>
+            <!-- 페이지네이션도 Ajax로 처리할 경우 아래 부분도 동적으로 처리 -->
+            <div class="pagination" id="paginationContainer"></div>
         </div>
         <!-- 메인 컨텐츠 끝 -->
+
     </div>
 </div>
 <!-- Review Update Modal -->
@@ -132,10 +104,71 @@
 <script>
     $(document).ready(function () {
 
-        $("#update-modal-btn").on("click", function (){
+        // 페이지 로드 시 리뷰 데이터 로드
+        loadReviews(1); // 예시로 1 페이지를 로드합니다.
+
+        function loadReviews(page) {
+            $.ajax({
+                url: '/api/review?page=' + page,
+                type: 'GET',
+                success: function(response) {
+                    displayReviews(response.content);
+                    setupPagination(response.totalPages, page);
+                },
+                error: function(xhr, status, error) {
+                    console.error("리뷰 로드 실패", error);
+                }
+            });
+        }
+
+        function displayReviews(reviews) {
+            var reviewsContainer = $('#reviewsContainer');
+            reviewsContainer.empty(); // 기존 내용을 지움
+
+            reviews.forEach(function(review) {
+                // 여기서 review는 ReviewDetailDTO 객체의 속성을 가정
+                const reviewElement = `
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <h5 class="card-title d-inline">상품명: <span>${review.reviewResponseDTO.productName}</span></h5>
+                            </div>
+                            <div class="actions">
+                                <button class="btn btn-primary btn-sm" id="update-modal-btn" data-bs-toggle="modal" data-bs-target="#reviewUpdateModal" data-id="${review.reviewResponseDTO.reviewID}">수정</button>
+                                <a href="javascript:void(0)" class="btn btn-danger btn-sm" onclick="deleteReview(${review.reviewResponseDTO.reviewID})">삭제</a>
+                            </div>
+                        </div>
+                        <h6 class="card-subtitle mb-2 text-muted d-inline">작성일: <span>${review.reviewResponseDTO.creationDate}</span></h6>
+                        <div class="review-content">
+                            <p>${review.reviewResponseDTO.content}</p>
+                        </div>
+                        <div class="like-dislike-buttons">
+                            <button type="button" class="btn btn-outline-success">좋아요 <span>${review.likeCount}</span></button>
+                            <button type="button" class="btn btn-outline-danger">싫어요 <span>${review.dislikeCount}</span></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+                reviewsContainer.append(reviewElement);
+            });
+        }
+
+        function setupPagination(totalPages, currentPage) {
+            var paginationContainer = $('#paginationContainer');
+            paginationContainer.empty(); // 기존 페이지네이션을 지움
+
+            for(let i = 1; i <= totalPages; i++) {
+                var pageElement = `<a href="#" class="page-link" onclick="loadReviews(${i})">${i}</a>`;
+                paginationContainer.append(pageElement);
+            }
+        }
+
+        $("#reviewsContainer").on("click", "#update-modal-btn", function() {
             let id = $(this).data("id");
+            console.log(id);
             $("#modalReviewId").val(id);
-        })
+        });
 
         $("#saveReviewChanges").on("click", function updateReview() {
             let reviewID = $("#modalReviewId").val();
