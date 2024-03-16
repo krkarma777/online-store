@@ -82,28 +82,7 @@
                         <span>2019</span>
                     </div>
                 </div>
-
-
                 <!-- 주문 목록 반복 -->
-                <div th:each="orderViewDTO : ${orderViewDTOS}">
-                    <div class="order-date" th:text="${#dates.format(orderViewDTO.orderDate, 'yyyy. MM. dd')} + ' 주문'">2024. 1. 27 주문</div>
-                    <ul class="order-list">
-                        <!-- 주문 상세 목록 반복 -->
-                        <li class="order-item" th:each="orderDetail : ${orderViewDTO.orderDetails}">
-                            <img th:src=" ${'/uploaded-images/'+orderDetail.product.imageUrl}" alt="Product Image" />
-                            <div class="order-item-detail">
-                                <div th:text="'상품명: ' + ${orderDetail.product.name}">상품명: 제품 A</div>
-                                <div th:text="'가격: ' + ${#numbers.formatDecimal(orderDetail.product.price, 0, 'COMMA', 0, 'POINT')} + '원'">가격: 4,100원</div>
-                                <div th:text="'수량: ' + ${orderDetail.quantity} + '개'">수량: 1개</div>
-                            </div>
-                            <div class="order-item-actions">
-                                <a th:href="@{/order/tracking(orderID=${orderViewDTO.orderID})}"><button type="button">배송조회</button></a>
-                                <a th:href="@{/order/return(orderID=${orderViewDTO.orderID})}"><button type="button">교환, 반품 신청</button></a>
-                                <a th:href="@{/myPage/active/review/write(productID=${orderDetail.product.productID},orderDetailID=${orderDetail.orderDetailID})}"><button type="button">리뷰 작성하기</button></a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </div>
         <!-- 메인 컨텐츠 끝 -->
@@ -115,5 +94,54 @@
 <div th:replace="~{common/footer2 :: footer2}"></div>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: '/api/order/list',
+            type: 'GET',
+            success: function(response) {
+                response.forEach(function(order) {
+
+                    var orderDate = new Date(order.orderDate);
+                    var formattedDate = orderDate.toLocaleDateString('ko-KR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+
+                    const orderHtml = `
+                        <div class="order-date">
+                        <a style="text-decoration: none; color: yellowgreen;" href="/order/detail/${order.orderID}">[주문번호 ${order.orderID}]</a>
+                            ${formattedDate}
+                        </div>
+                        <ul class="order-list">
+                            ${order.orderDetails.map(detail => `
+                                <li class="order-item">
+                                    <img src="/uploaded-images/${detail.product.imageUrl}" alt="Product Image">
+                                    <div class="order-item-detail">
+                                        <div>상품명: ${detail.product.name}</div>
+                                        <div>가격: ${detail.product.price.toLocaleString()}원</div>
+                                        <div>수량: ${detail.quantity}개</div>
+                                    </div>
+                                    <div class="order-item-actions">
+                                        <a href="/order/tracking?orderID=${order.orderID}"><button type="button">배송조회</button></a>
+                                        <a href="/order/return?orderID=${order.orderID}"><button type="button">교환, 반품 신청</button></a>
+                                        <a href="/myPage/active/review/write?productID=${detail.product.productID}&orderDetailID=${detail.orderDetailID}"><button type="button">리뷰 작성하기</button></a>
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                    $('.order-container').append(orderHtml);
+                });
+            },
+            error: function(error) {
+                console.log(error);
+                alert('주문 목록을 불러오는데 실패했습니다.');
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
