@@ -14,7 +14,7 @@
         border-radius: 0.25rem; /* 모서리 둥글기 */
         border: 1px solid #ced4da; /* 테두리 색상 */
         background-color: #ffffff; /* 배경색 */
-        box-shadow: inset 0 1px 2px rgba(0,0,0,.075); /* 내부 그림자 효과 */
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, .075); /* 내부 그림자 효과 */
         padding: 0.375rem 0.75rem; /* 내부 여백 */
     }
 
@@ -33,225 +33,334 @@
         <div th:replace="~{common/seller-page-sidebar :: sidebar}"></div>
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>쿠폰 목록</h2>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCouponModal">쿠폰 생성</button>
-    </div>
-    <table class="table table-hover">
-        <thead class="table-dark">
-        <tr>
-            <th>쿠폰 이름</th>
-            <th>쿠폰 설명</th>
-            <th>쿠폰 코드</th>
-            <th>유형</th>
-            <th>할인 금액/비율</th>
-            <th>유효 시작일</th>
-            <th>유효 종료일</th>
-            <th>개수</th>
-            <th>최소 주문 금액</th>
-            <th>작업</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="coupon : ${couponList}">
-            <td th:text="${coupon.name}"></td>
-            <td th:text="${coupon.description}"></td>
-            <td th:text="${coupon.code}"></td>
-            <td th:text="${coupon.type.getDescription()}"></td>
-            <td th:text="${coupon.discount}"></td>
-            <td th:text="${#temporals.format(coupon.validFrom, 'yyyy년 MM월 dd일 hh시 mm분')}"></td>
-            <td th:text="${#temporals.format(coupon.validUntil, 'yyyy년 MM월 dd일 hh시 mm분')}"></td>
-            <td th:text="${coupon.quantity}"></td>
-            <td th:text="${coupon.minimumOrderAmount}"></td>
-            <td>
-                <div class="dropdown">
-                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        작업
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <li><a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editCouponModal" th:data-coupon-id="${coupon.couponID}">쿠폰 수정</a></li>
-                        <li><a th:href="@{'/seller/coupon/delete/' + ${coupon.couponID}}" class="dropdown-item">쿠폰 삭제</a></li>
-                        <li><a th:href="@{'/seller/coupon/select/' + ${coupon.couponID}}" class="dropdown-item">적용되는 상품 관리</a></li>
-                    </ul>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>쿠폰 목록</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCouponModal">쿠폰 생성
+                </button>
+            </div>
+            <table class="table table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th>쿠폰 이름</th>
+                    <th>쿠폰 코드</th>
+                    <th>유형</th>
+                    <th>할인 금액/비율</th>
+                    <th>유효 시작일</th>
+                    <th>유효 종료일</th>
+                    <th>개수</th>
+                    <th>최소 주문 금액</th>
+                    <th>작업</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="coupon : ${couponList}">
+                    <td th:text="${coupon.name}"></td>
+                    <td th:text="${coupon.code}"></td>
+                    <td th:text="${coupon.type.getDescription()}"></td>
+                    <td th:text="${coupon.discount}"></td>
+                    <td th:text="${#temporals.format(coupon.validFrom, 'yyyy년 MM월 dd일 hh시 mm분')}"></td>
+                    <td th:text="${#temporals.format(coupon.validUntil, 'yyyy년 MM월 dd일 hh시 mm분')}"></td>
+                    <td th:text="${coupon.quantity}"></td>
+                    <td th:text="${coupon.minimumOrderAmount}"></td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                    id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                작업
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a href="#" class="dropdown-item" data-bs-toggle="modal" id="editModalBtn"
+                                       data-bs-target="#editCouponModal" th:data-coupon-id="${coupon.couponID}">쿠폰
+                                    수정</a></li>
+                                <li><button th:data-coupon-id="${coupon.couponID}" class="dropdown-item" id="deleteCoupon">쿠폰
+                                    삭제</button></li>
+                                <li><a th:href="@{'/seller/coupon/select/' + ${coupon.couponID}}" class="dropdown-item">적용되는
+                                    상품 관리</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 쿠폰 생성을 위한 모달 창 -->
+            <div class="modal fade" id="createCouponModal" tabindex="-1" aria-labelledby="createCouponModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createCouponModalLabel">새 쿠폰 생성</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form th:object="${coupon}" th:action="@{/coupon/generate}" id="createCouponForm" method="post" class="modal-body">
+
+
+                            <!-- 이름 필드 -->
+                            <div class="form-group">
+                                <label for="name" class="form-label">이름</label>
+                                <input type="text" id="name" name="name" th:field="${coupon.name}" class="form-control"
+                                       placeholder="이름 입력" required>
+                            </div>
+
+                            <!-- 설명 필드 -->
+                            <div class="form-group">
+                                <label for="description" class="form-label">설명</label>
+                                <input type="text" id="description" name="description" th:field="${coupon.description}"
+                                       class="form-control" placeholder="설명 입력" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="minimumOrderAmount">최소 주문 금액</label>
+                                <input type="text" class="form-control" id="minimumOrderAmount"
+                                       placeholder="최소 주문 금액 입력" th:field="${coupon.minimumOrderAmount}" required>
+                            </div>
+                            <!-- 최대할인금액 필드 -->
+                            <div class="form-group">
+                                <label for="maxDiscountAmount" class="form-label">최대할인금액</label>
+                                <input type="number" id="maxDiscountAmount" name="maxDiscountAmount"
+                                       th:field="${coupon.maxDiscountAmount}" class="form-control"
+                                       placeholder="최대할인금액 입력" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="couponType">쿠폰 유형</label>
+                                <select class="form-control" id="couponType" th:field="${coupon.type}" required>
+                                    <option th:value="AMOUNT_DISCOUNT">할인 금액</option>
+                                    <option th:value="PERCENTAGE_DISCOUNT">할인 비율</option>
+                                    <option th:value="FREE_SHIPPING">무료 배송</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="discountValue">할인 값</label>
+                                <input type="text" class="form-control" id="discountValue" placeholder="할인 금액 또는 비율 입력"
+                                       th:field="${coupon.discount}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="validFromDate">유효 시작일</label>
+                                <input type="datetime-local" class="form-control" id="validFromDate"
+                                       name="validFromDateTime" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="validUntilDate">유효 종료일</label>
+                                <input type="datetime-local" class="form-control" id="validUntilDate"
+                                       name="validUntilDateTime" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="quantity">쿠폰 수량</label>
+                                <input type="number" class="form-control" id="quantity" placeholder="쿠폰 수량 입력"
+                                       th:field="${coupon.quantity}" required>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                                <button type="submit" class="btn btn-primary">쿠폰 발행</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            </div>
 
-    <!-- 쿠폰 생성을 위한 모달 창 -->
-    <div class="modal fade" id="createCouponModal" tabindex="-1" aria-labelledby="createCouponModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createCouponModalLabel">새 쿠폰 생성</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <!-- 적용되는 상품 관리 모달 -->
+            <div class="modal fade" id="manageApplicableProductsModal" tabindex="-1"
+                 aria-labelledby="manageApplicableProductsModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="manageApplicableProductsModalLabel">적용되는 상품 관리</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- 상품 검색 및 적용 상품 리스트 표시 영역 -->
+                            <!-- 상품 검색 입력 필드 -->
+                            <input type="text" id="searchProductForCoupon" class="form-control mb-2"
+                                   placeholder="상품명으로 검색">
+                            <!-- 상품 검색 버튼 -->
+                            <button type="button" class="btn btn-primary mb-2" onclick="searchProductForCoupon()">검색
+                            </button>
+                            <!-- 검색 결과 표시 영역 -->
+                            <div id="searchResultsForCoupon" class="mb-2"></div>
+                            <!-- 적용 상품 리스트 표시 -->
+                            <div id="applicableProductsList"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                            <button type="button" class="btn btn-primary" onclick="saveApplicableProducts()">저장</button>
+                        </div>
+                    </div>
                 </div>
-                <form th:object="${coupon}" th:action="@{/coupon/generate}" method="post" class="modal-body">
+            </div>
 
+            <!-- 수정을 위한 모달 창 -->
+            <div class="modal fade" id="editCouponModal" tabindex="-1" aria-labelledby="editCouponModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editCouponModalLabel">쿠폰 수정</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form th:action="@{/coupon/edit}" method="post" id="editCouponForm">
+                            <div class="modal-body">
+                                <input type="hidden" name="couponID" id="editCouponID" required>
+                                <!-- 이름 -->
+                                <div class="mb-3">
+                                    <label for="name">이름</label>
+                                    <input class="form-control" type="text" name="name" th:field="${coupon.name}"
+                                           placeholder="이름 입력" required>
+                                </div>
+                                <!-- 설명 -->
+                                <div class="mb-3">
+                                    <label for="description">설명</label>
+                                    <input class="form-control" type="text" name="description"
+                                           th:field="${coupon.description}" placeholder="설명 입력" required>
+                                </div>
 
-                    <!-- 이름 필드 -->
-                    <div class="form-group">
-                        <label for="name" class="form-label">이름</label>
-                        <input type="text" id="name" name="name" th:field="${coupon.name}" class="form-control" placeholder="이름 입력" required>
-                    </div>
+                                <!-- 최소 주문 금액 -->
+                                <div class="mb-3">
+                                    <label for="editMinimumOrderAmount" class="form-label">최소 주문 금액</label>
+                                    <input type="text" class="form-control" id="editMinimumOrderAmount"
+                                           name="minimumOrderAmount" placeholder="최소 주문 금액을 입력해주세요" required>
+                                </div>
+                                <!-- 최대할인금액 -->
+                                <div class="mb-3">
+                                    <label for="editMaxDiscountAmount">최대할인금액</label>
+                                    <input type="text" class="form-control" id="editMaxDiscountAmount"
+                                           name="maxDiscountAmount" th:field="${coupon.maxDiscountAmount}"
+                                           placeholder="최대할인금액 입력" required>
+                                </div>
+                                <!-- 유효 종료일 -->
+                                <div class="mb-3">
+                                    <label for="editValidUntilDate" class="form-label">유효 종료일</label>
+                                    <input type="datetime-local" class="form-control" id="editValidUntilDate"
+                                           name="validUntilDate" required>
+                                </div>
+                                <!-- 개수 -->
+                                <div class="mb-3">
+                                    <label for="editQuantity" class="form-label">개수</label>
+                                    <input type="number" class="form-control" id="editQuantity" name="quantity"
+                                           required>
+                                </div>
 
-                    <!-- 설명 필드 -->
-                    <div class="form-group">
-                        <label for="description" class="form-label">설명</label>
-                        <input type="text" id="description" name="description" th:field="${coupon.description}" class="form-control" placeholder="설명 입력" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                                <button type="submit" class="btn btn-primary">저장</button>
+                            </div>
+                        </form>
                     </div>
-
-                    <div class="form-group">
-                        <label for="minimumOrderAmount">최소 주문 금액</label>
-                        <input type="text" class="form-control" id="minimumOrderAmount" placeholder="최소 주문 금액 입력" th:field="${coupon.minimumOrderAmount}" required>
-                    </div>
-                    <!-- 최대할인금액 필드 -->
-                    <div class="form-group">
-                        <label for="maxDiscountAmount" class="form-label">최대할인금액</label>
-                        <input type="number" id="maxDiscountAmount" name="maxDiscountAmount" th:field="${coupon.maxDiscountAmount}" class="form-control" placeholder="최대할인금액 입력" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="couponType">쿠폰 유형</label>
-                        <select class="form-control" id="couponType" th:field="${coupon.type}" required>
-                            <option th:value="AMOUNT_DISCOUNT">할인 금액</option>
-                            <option th:value="PERCENTAGE_DISCOUNT">할인 비율</option>
-                            <option th:value="FREE_SHIPPING">무료 배송</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="discountValue">할인 값</label>
-                        <input type="text" class="form-control" id="discountValue" placeholder="할인 금액 또는 비율 입력" th:field="${coupon.discount}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="validFromDate">유효 시작일</label>
-                        <input type="date" class="form-control" id="validFromDate" name="validFromDate" required>
-                        <input type="time" class="form-control" id="validFromTime" name="validFromTime" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="validUntilDate">유효 종료일</label>
-                        <input type="date" class="form-control" id="validUntilDate" name="validUntilDate" required>
-                        <input type="time" class="form-control" id="validUntilTime" name="validUntilTime" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="quantity">쿠폰 수량</label>
-                        <input type="number" class="form-control" id="quantity" placeholder="쿠폰 수량 입력" th:field="${coupon.quantity}" required>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button type="submit" class="btn btn-primary">쿠폰 발행</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- 적용되는 상품 관리 모달 -->
-    <div class="modal fade" id="manageApplicableProductsModal" tabindex="-1" aria-labelledby="manageApplicableProductsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="manageApplicableProductsModalLabel">적용되는 상품 관리</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- 상품 검색 및 적용 상품 리스트 표시 영역 -->
-                    <!-- 상품 검색 입력 필드 -->
-                    <input type="text" id="searchProductForCoupon" class="form-control mb-2" placeholder="상품명으로 검색">
-                    <!-- 상품 검색 버튼 -->
-                    <button type="button" class="btn btn-primary mb-2" onclick="searchProductForCoupon()">검색</button>
-                    <!-- 검색 결과 표시 영역 -->
-                    <div id="searchResultsForCoupon" class="mb-2"></div>
-                    <!-- 적용 상품 리스트 표시 -->
-                    <div id="applicableProductsList"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button type="button" class="btn btn-primary" onclick="saveApplicableProducts()">저장</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 수정을 위한 모달 창 -->
-    <div class="modal fade" id="editCouponModal" tabindex="-1" aria-labelledby="editCouponModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCouponModalLabel">쿠폰 수정</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form th:action="@{/coupon/edit}" method="post">
-                    <div class="modal-body">
-                        <input type="hidden" name="couponID" id="editCouponID" required>
-                        <!-- 이름 -->
-                        <div class="mb-3">
-                            <label for="name">이름</label>
-                            <input class="form-control" type="text" name="name" th:field="${coupon.name}" placeholder="이름 입력" required>
-                        </div>
-                        <!-- 설명 -->
-                        <div class="mb-3">
-                            <label for="description">설명</label>
-                            <input class="form-control" type="text" name="description" th:field="${coupon.description}" placeholder="설명 입력" required>
-                        </div>
-
-                        <!-- 최소 주문 금액 -->
-                        <div class="mb-3">
-                            <label for="editMinimumOrderAmount" class="form-label">최소 주문 금액</label>
-                            <input type="text" class="form-control" id="editMinimumOrderAmount" name="minimumOrderAmount" placeholder="최소 주문 금액을 입력해주세요" required>
-                        </div>
-                        <!-- 최대할인금액 -->
-                        <div class="mb-3">
-                            <label for="maxDiscountAmount">최대할인금액</label>
-                            <input type="text" class="form-control" name="maxDiscountAmount" th:field="${coupon.maxDiscountAmount}" placeholder="최대할인금액 입력" required>
-                        </div>
-                        <!-- 유효 종료일 -->
-                        <div class="mb-3">
-                            <label for="editValidUntilDate" class="form-label">유효 종료일</label>
-                            <input type="date" class="form-control" id="editValidUntilDate" name="validUntilDate" required>
-                            <input type="time" class="form-control" id="editValidUntilTime" name="validUntilTime" required>
-                        </div>
-                        <!-- 개수 -->
-                        <div class="mb-3">
-                            <label for="editQuantity" class="form-label">개수</label>
-                            <input type="number" class="form-control" id="editQuantity" name="quantity" required>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                        <button type="submit" class="btn btn-primary">저장</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <!-- 메인 컨텐츠 끝 -->
 </div>
-        </div>
-        <!-- 메인 컨텐츠 끝 -->
-    </div>
-
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    $('#editCouponModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // 모달을 열기 위해 클릭된 버튼
-        var couponId = button.data('coupon-id');
-        var validUntilDate = button.data('coupon-valid-until-date');
-        var validUntilTime = button.data('coupon-valid-until-time');
-        var quantity = button.data('coupon-quantity');
-        var minimumOrderAmount = button.data('coupon-minimum-order-amount');
+    $(document).ready(function () {
+        $("#editModalBtn").on("click", function () {
+            let id = $(this).data("coupon-id");
 
-        var modal = $(this);
-        modal.find('.modal-body #editCouponID').val(couponId);
-        modal.find('.modal-body #editValidUntilDate').val(validUntilDate);
-        modal.find('.modal-body #editValidUntilTime').val(validUntilTime);
-        modal.find('.modal-body #editQuantity').val(quantity);
-        modal.find('.modal-body #editMinimumOrderAmount').val(minimumOrderAmount);
+            $.ajax({
+                type: "get",
+                url: "/api/coupon/"+id,
+                success: function (response) {
+                    $("#editCouponID").val(response.couponID);
+                    $("#editCouponForm input[name='name']").val(response.name);
+                    $("#editCouponForm input[name='description']").val(response.description);
+                    $("#editMinimumOrderAmount").val(response.minimumOrderAmount);
+                    $("#editMaxDiscountAmount").val(response.maxDiscountAmount);
+                    $("#editValidUntilDate").val(formatDateTime(response.validUntil));
+                    $("#editQuantity").val(response.quantity);
+                },
+                error: function (response) {
+                    alert("Error: " + response.responseJSON.message);
+                }
+            });
+        });
+
+        function formatDateTime(validUntilArray) {
+            var year = validUntilArray[0];
+            var month = validUntilArray[1].toString().padStart(2, '0');
+            var day = validUntilArray[2].toString().padStart(2, '0');
+            var hour = validUntilArray[3].toString().padStart(2, '0');
+            var minute = validUntilArray[4].toString().padStart(2, '0');
+
+            return `${year}-${month}-${day}T${hour}:${minute}`;
+        }
+
+        // 쿠폰 생성
+        $("#createCouponForm").submit(function (event) {
+            event.preventDefault();
+            var formData = {
+                name: $("#name").val(),
+                description: $("#description").val(),
+                minimumOrderAmount: $("#minimumOrderAmount").val(),
+                maxDiscountAmount: $("#maxDiscountAmount").val(),
+                type: $("#couponType").val(),
+                discount: $("#discountValue").val(),
+                validFrom: $("#validFromDate").val(),
+                validUntil: $("#validUntilDate").val(),
+                quantity: $("#quantity").val()
+            };
+            $.ajax({
+                type: "POST",
+                url: "/api/coupon",
+                contentType: "application/json",
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    alert(response.message);
+                    location.reload(); // 성공 시 페이지를 다시 불러옵니다.
+                },
+                error: function (response) {
+                    alert("Error: " + response.responseJSON.message);
+                }
+            });
+        });
+
+        // 쿠폰 수정
+        $("#editCouponForm").submit(function (event) {
+            event.preventDefault();
+            var formData = {
+                name: $("#editCouponForm input[name='name']").val(),
+                description: $("#editCouponForm input[name='description']").val(),
+                minimumOrderAmount: $("#editMinimumOrderAmount").val(),
+                maxDiscountAmount: $("#editMaxDiscountAmount").val(),
+                validUntil: $("#editValidUntilDate").val(),
+                quantity: $("#editQuantity").val()
+                // 쿠폰 유형, 할인 값 등 필요한 나머지 필드 추가
+            };
+            var couponID = $("#editCouponID").val();
+            $.ajax({
+                type: "PUT",
+                url: "/api/coupon/" + couponID,
+                contentType: "application/json",
+                data: JSON.stringify(formData),
+                success: function (response) {
+                    alert(response.message);
+                    location.reload(); // 성공 시 페이지를 다시 불러옵니다.
+                },
+                error: function (response) {
+                    alert("Error: " + response.responseJSON.message);
+                }
+            });
+        });
+
+        // 쿠폰 삭제
+        $(".deleteCoupon").click(function () {
+            var couponID = $(this).attr("data-coupon-id");
+            $.ajax({
+                type: "DELETE",
+                url: "/api/coupon/" + couponID,
+                success: function (response) {
+                    alert(response.message);
+                    location.reload(); // 성공 시 페이지를 다시 불러옵니다.
+                },
+                error: function (response) {
+                    alert("Error: " + response.responseJSON.message);
+                }
+            });
+        });
     });
-
 </script>
 </body>
 </html>
