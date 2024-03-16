@@ -1,7 +1,6 @@
 package com.bulkpurchase.web.controller;
 
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.service.review.ReviewService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -50,5 +49,16 @@ public class MyPageController {
         User user = userAuthValidator.getCurrentUser(principal);
         model.addAttribute("user", user);
         return "users/myPage/user_info/user_edit";
+    }
+
+    @GetMapping("/order/list")
+    public String orders() {
+        return "users/myPage/shopping/orders";
+    }
+
+    @GetMapping("/order/detail/{orderID}")
+    public String orderDetailInfoForSeller(@PathVariable("orderID") Long orderID, Model model) {
+        model.addAttribute("orderID", orderID);
+        return "/users/orderDetailForUser";
     }
 }
