@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/coupon")
-public class CouponController {
+public class CouponAPIController {
 
     private final CouponService couponService;
     private final UserAuthValidator userAuthValidator;

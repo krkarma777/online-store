@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class CouponControllerTest {
+public class CouponAPIControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

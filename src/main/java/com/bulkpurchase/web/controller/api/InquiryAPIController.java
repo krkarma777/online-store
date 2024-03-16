@@ -21,7 +21,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/inquiry")
-public class InquiryController {
+public class InquiryAPIController {
 
     private final InquiryService inquiryService;
     private final UserAuthValidator userAuthValidator;

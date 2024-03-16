@@ -28,7 +28,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/review")
-public class ReviewController {
+public class ReviewAPIController {
 
     private final ReviewService reviewService;
     private final ProductService productService;

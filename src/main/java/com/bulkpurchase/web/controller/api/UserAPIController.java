@@ -23,7 +23,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
-public class UserController {
+public class UserAPIController {
 
     private final RegisterService registerService;
     private final UserRegisterValidator userRegisterValidator;

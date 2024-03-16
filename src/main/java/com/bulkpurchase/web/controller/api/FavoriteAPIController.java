@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/favorite")
-public class FavoriteController {
+public class FavoriteAPIController {
 
     private final UserAuthValidator userAuthValidator;
     private final FavoriteProductService favoriteProductService;

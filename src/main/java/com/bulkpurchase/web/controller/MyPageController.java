@@ -1,5 +1,6 @@
 package com.bulkpurchase.web.controller;
 
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.review.ReviewService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
@@ -9,10 +10,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping
 public class MyPageController {
+
+    private final UserAuthValidator userAuthValidator;
 
     @GetMapping("/delivery/address/manage")
     public String shippingAddressList() {
@@ -38,5 +43,12 @@ public class MyPageController {
     @GetMapping
     public String userCoupons() {
         return "users/myPage/benefit/coupons";
+    }
+
+    @GetMapping("/profile/edit")
+    public String userEditForm(Model model, Principal principal) {
+        User user = userAuthValidator.getCurrentUser(principal);
+        model.addAttribute("user", user);
+        return "users/myPage/user_info/user_edit";
     }
 }

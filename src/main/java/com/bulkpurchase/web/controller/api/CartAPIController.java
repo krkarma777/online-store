@@ -25,7 +25,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/cart/item")
 @RequiredArgsConstructor
-public class CartController {
+public class CartAPIController {
 
     private final CartItemService cartItemService;
     private final CartService cartService;

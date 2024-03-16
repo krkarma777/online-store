@@ -20,7 +20,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/shipping-address")
-public class ShippingAddressController {
+public class ShippingAddressAPIController {
 
     private final ShippingAddressService shippingAddressService;
     private final UserAuthValidator userAuthValidator;
