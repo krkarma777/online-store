@@ -117,97 +117,49 @@ public class OrderService {
     }
 
     public List<OrderViewDTO> getOrderViewModelsByUser(User user) {
-        List<OrderViewDTO> orderViewDTOS = new ArrayList<>();
-
-        List<Order> orders = orderRepository.findByUserOrderByOrderIDDesc(user);
-        for (Order order : orders) {
-            List<OrderDetail> orderDetails = orderDetailRepository.findByOrder(order);
-
-            List<OrderDetailViewDTO> orderDetailViewDTOS = new ArrayList<>();
-            for (OrderDetail orderDetail : orderDetails) {
-                Product product = orderDetail.getProduct();
-                List<String> imageUrls = product.getImageUrls();
-                String imageUrl = null;
-                if (!imageUrls.isEmpty()) {
-                    imageUrl = imageUrls.get(0);
-                }
-                ProductViewDTO productViewDTO = new ProductViewDTO(
-                        product.getProductID(),
-                        product.getProductName(),
-                        product.getPrice(),
-                        product.getDescription(),
-                        imageUrl
-                );
-
-                OrderDetailViewDTO orderDetailViewDTO = new OrderDetailViewDTO(
-                        orderDetail.getOrderDetailID(),
-                        productViewDTO,
-                        orderDetail.getQuantity(),
-                        orderDetail.getPrice()
-                );
-
-                orderDetailViewDTOS.add(orderDetailViewDTO);
-            }
-
-            OrderViewDTO orderViewDTO = new OrderViewDTO(
-                    order.getOrderID(),
-                    order.getOrderDate(),
-                    order.getTotalPrice(),
-                    order.getStatus(),
-                    orderDetailViewDTOS
-            );
-
-            orderViewDTOS.add(orderViewDTO);
-        }
-
-        return orderViewDTOS;
+        return orderRepository.findByUserOrderByOrderIDDesc(user).stream()
+                .map(this::convertToOrderViewDTO)
+                .collect(Collectors.toList());
     }
 
     public List<OrderViewDTO> getOrderViewModels() {
-        List<OrderViewDTO> orderViewDTOS = new ArrayList<>();
+        return orderRepository.findAll().stream()
+                .map(this::convertToOrderViewDTO)
+                .collect(Collectors.toList());
+    }
 
-        List<Order> orders = orderRepository.findAll();
-        for (Order order : orders) {
-            List<OrderDetail> orderDetails = orderDetailRepository.findByOrder(order);
+    private OrderViewDTO convertToOrderViewDTO(Order order) {
+        List<OrderDetailViewDTO> orderDetailViewDTOS = orderDetailRepository.findByOrder(order).stream()
+                .map(this::convertToOrderDetailViewDTO)
+                .collect(Collectors.toList());
 
-            List<OrderDetailViewDTO> orderDetailViewDTOS = new ArrayList<>();
-            for (OrderDetail orderDetail : orderDetails) {
-                Product product = orderDetail.getProduct();
-                List<String> imageUrls = product.getImageUrls();
-                String imageUrl = null;
-                if (!imageUrls.isEmpty()) {
-                    imageUrl = imageUrls.get(0);
-                }
-                ProductViewDTO productViewDTO = new ProductViewDTO(
-                        product.getProductID(),
-                        product.getProductName(),
-                        product.getPrice(),
-                        product.getDescription(),
-                        imageUrl
-                );
+        return new OrderViewDTO(
+                order.getOrderID(),
+                order.getOrderDate(),
+                order.getTotalPrice(),
+                order.getStatus(),
+                orderDetailViewDTOS
+        );
+    }
 
-                OrderDetailViewDTO orderDetailViewDTO = new OrderDetailViewDTO(
-                        orderDetail.getOrderDetailID(),
-                        productViewDTO,
-                        orderDetail.getQuantity(),
-                        orderDetail.getPrice()
-                );
+    private OrderDetailViewDTO convertToOrderDetailViewDTO(OrderDetail orderDetail) {
+        Product product = orderDetail.getProduct();
+        String imageUrl = product.getImageUrls().stream().findFirst().orElse(null);
 
-                orderDetailViewDTOS.add(orderDetailViewDTO);
-            }
+        ProductViewDTO productViewDTO = new ProductViewDTO(
+                product.getProductID(),
+                product.getProductName(),
+                product.getPrice(),
+                product.getDescription(),
+                imageUrl
+        );
 
-            OrderViewDTO orderViewDTO = new OrderViewDTO(
-                    order.getOrderID(),
-                    order.getOrderDate(),
-                    order.getTotalPrice(),
-                    order.getStatus(),
-                    orderDetailViewDTOS
-            );
-
-            orderViewDTOS.add(orderViewDTO);
-        }
-
-        return orderViewDTOS;
+        return new OrderDetailViewDTO(
+                orderDetail.getOrderDetailID(),
+                productViewDTO,
+                orderDetail.getQuantity(),
+                orderDetail.getPrice()
+        );
     }
 
     public List<Order> findAll() {
