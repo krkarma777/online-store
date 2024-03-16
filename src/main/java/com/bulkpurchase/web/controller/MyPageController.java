@@ -34,4 +34,9 @@ public class MyPageController {
     public String myPageReviews() {
         return "users/myPage/active/review/reviews";
     }
+
+    @GetMapping
+    public String userCoupons() {
+        return "users/myPage/benefit/coupons";
+    }
 }

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -17,8 +18,8 @@ public class UserCouponResponseDTO {
     private String code;
     private CouponType type;
     private Double discount;
-    private LocalDateTime validFrom;
-    private LocalDateTime validUntil;
+    private String validFrom;
+    private String validUntil;
     private Double minimumOrderAmount;
     private Integer quantity;
     private String name;
@@ -33,8 +34,9 @@ public class UserCouponResponseDTO {
         this.code = coupon.getCode();
         this.type = coupon.getType();
         this.discount = coupon.getDiscount();
-        this.validFrom = coupon.getValidFrom();
-        this.validUntil = coupon.getValidUntil();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+        this.validFrom = userCoupon.getCoupon().getValidFrom().format(formatter);
+        this.validUntil = userCoupon.getCoupon().getValidUntil().format(formatter);
         this.minimumOrderAmount = coupon.getMinimumOrderAmount();
         this.quantity = coupon.getQuantity();
         this.name = coupon.getName();
