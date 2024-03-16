@@ -161,7 +161,7 @@
             };
 
             $.ajax({
-                url: '/find/coupon', // 쿠폰 정보를 조회할 서버의 URL
+                url: '/api/coupon/order/find', // 쿠폰 정보를 조회할 서버의 URL
                 method: 'POST',
                 contentType: "application/json",
                 data: JSON.stringify({
@@ -202,7 +202,7 @@
 
             // 서버에 쿠폰 적용 요청을 보냄
             $.ajax({
-                url: '/apply/coupon',
+                url: '/api/coupon/order/apply',
                 method: 'POST',
                 data: {
                     productID: productId,

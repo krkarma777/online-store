@@ -1,9 +1,6 @@
 package com.bulkpurchase.web.controller.api;
 
-import com.bulkpurchase.domain.dto.coupon.CouponCreateRequestDTO;
-import com.bulkpurchase.domain.dto.coupon.CouponResponseDTO;
-import com.bulkpurchase.domain.dto.coupon.CouponUpdateRequestDTO;
-import com.bulkpurchase.domain.dto.coupon.UserCouponResponseDTO;
+import com.bulkpurchase.domain.dto.coupon.*;
 import com.bulkpurchase.domain.dto.product.ProductForCouponDTO;
 import com.bulkpurchase.domain.entity.coupon.Coupon;
 import com.bulkpurchase.domain.entity.coupon.CouponApplicableProduct;
@@ -13,7 +10,9 @@ import com.bulkpurchase.domain.service.coupon.CouponApplicableProductService;
 import com.bulkpurchase.domain.service.coupon.CouponService;
 import com.bulkpurchase.domain.service.coupon.UserCouponService;
 import com.bulkpurchase.domain.service.product.ProductService;
+import com.bulkpurchase.domain.validator.coupon.CouponValidatorImpl;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
+import com.bulkpurchase.web.service.coupon.ApplyCouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -37,6 +36,8 @@ public class CouponAPIController {
     private final UserCouponService userCouponService;
     private final CouponApplicableProductService couponApplicableProductService;
     private final ProductService productService;
+    private final ApplyCouponService applyCouponService;
+    private final CouponValidatorImpl couponValidator;
 
 
     @PostMapping
@@ -141,5 +142,35 @@ public class CouponAPIController {
                 .toList();
 
         return ResponseEntity.ok(dtoList);
+    }
+
+    @PostMapping("/order/find")
+    public ResponseEntity<List<CouponOrderSearchDTO>> findCoupon(@RequestBody CouponRequestDTO couponRequest, Principal principal) {
+        Long productID = couponRequest.getProductID();
+        Double totalPrice = couponRequest.getTotalPrice();
+        User user = userAuthValidator.getCurrentUser(principal);
+
+        List<CouponOrderSearchDTO> couponList = userCouponService.findByUser(user).stream()
+                // 스트림으로 변환하고, 쿠폰의 적용 가능한 제품들 중 요청받은 제품 ID와 일치하는 제품이 있는지 확인
+                .filter(userCoupon -> userCoupon.getCoupon().getApplicableProducts().stream()
+                        .anyMatch(applicableProduct -> applicableProduct.getProductId().equals(productID)))
+                // 추가적인 유효성 검사를 통과하는지 확인
+                .filter(userCoupon -> couponValidator.isItValidCoupon(user, userCoupon.getCoupon(), productID, totalPrice))
+                // 조건을 만족하는 경우, CouponOrderSearchDTO 객체로 매핑
+                .map(userCoupon -> new CouponOrderSearchDTO(userCoupon.getCoupon()))
+                .toList();
+
+        return ResponseEntity.ok(couponList);
+    }
+
+
+    @PostMapping("/order/apply")
+    public ResponseEntity<?> applyCoupon(@RequestParam("productID") Long productID,
+                                         @RequestParam("couponID") Long couponID,
+                                         @RequestParam("totalPrice") Double totalPrice,
+                                         Principal principal) {
+        User user = userAuthValidator.getCurrentUser(principal);
+        Double applyPrice = applyCouponService.applyCoupon(user, couponID, productID, totalPrice);
+        return ResponseEntity.ok(applyPrice);
     }
 }
