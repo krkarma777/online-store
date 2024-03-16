@@ -65,17 +65,13 @@
                     <td>
                         <div class="dropdown">
                             <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
-                                    id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                작업
+                                    id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">작업
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <li><a href="#" class="dropdown-item" data-bs-toggle="modal" id="editModalBtn"
-                                       data-bs-target="#editCouponModal" th:data-coupon-id="${coupon.couponID}">쿠폰
-                                    수정</a></li>
-                                <li><button th:data-coupon-id="${coupon.couponID}" class="dropdown-item" id="deleteCoupon">쿠폰
-                                    삭제</button></li>
-                                <li><a th:href="@{'/seller/coupon/select/' + ${coupon.couponID}}" class="dropdown-item">적용되는
-                                    상품 관리</a></li>
+                                       data-bs-target="#editCouponModal" th:data-coupon-id="${coupon.couponID}">쿠폰 수정</a></li>
+                                <li><button th:data-coupon-id="${coupon.couponID}" class="dropdown-item deleteCoupon">쿠폰 삭제</button></li>
+                                <li><a th:href="@{'/seller/coupon/select/' + ${coupon.couponID}}" class="dropdown-item">적용되는 상품 관리</a></li>
                             </ul>
                         </div>
                     </td>
@@ -347,7 +343,7 @@
 
         // 쿠폰 삭제
         $(".deleteCoupon").click(function () {
-            var couponID = $(this).attr("data-coupon-id");
+            const couponID = $(this).data("coupon-id");
             $.ajax({
                 type: "DELETE",
                 url: "/api/coupon/" + couponID,
