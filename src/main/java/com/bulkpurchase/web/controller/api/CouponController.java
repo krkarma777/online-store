@@ -1,6 +1,7 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.coupon.CouponCreateRequestDTO;
+import com.bulkpurchase.domain.dto.coupon.CouponResponseDTO;
 import com.bulkpurchase.domain.dto.coupon.CouponUpdateRequestDTO;
 import com.bulkpurchase.domain.entity.coupon.Coupon;
 import com.bulkpurchase.domain.entity.user.User;
@@ -13,9 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,8 +29,10 @@ public class CouponController {
     private final UserAuthValidator userAuthValidator;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody CouponCreateRequestDTO couponCreateRequestDTO) {
+    public ResponseEntity<?> create(@RequestBody CouponCreateRequestDTO couponCreateRequestDTO, Principal principal) {
+        User user = userAuthValidator.getCurrentUser(principal);
         Coupon coupon = new Coupon(couponCreateRequestDTO);
+        coupon.setCreatedBy(user);
         couponService.save(coupon);
         return ResponseEntity.ok(Map.of("message", "쿠폰이 정상적으로 생성되었습니다."));
     }
@@ -62,13 +67,20 @@ public class CouponController {
         if (couponOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "쿠폰이 존재하지 않습니다."));
         }
-        return ResponseEntity.ok(couponOpt.get());
+        CouponResponseDTO couponResponseDTO = new CouponResponseDTO(couponOpt.get());
+        return ResponseEntity.ok(couponResponseDTO);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> listPage() {
+    public ResponseEntity<List<CouponResponseDTO>> listPage() {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         List<Coupon> couponList = couponService.findAll(sort);
-        return ResponseEntity.ok(couponList);
+
+        List<CouponResponseDTO> dtoList = couponList.stream()
+                .map(CouponResponseDTO::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtoList);
     }
+
 }
