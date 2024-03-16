@@ -1,8 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
-    <title>주문 상세</title>
+    <meta charset="UTF-8">
+    <title>주문 목록 목업</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -36,10 +41,10 @@
         <!-- 주문 정보 -->
         <div class="order-info mb-5">
             <h2>주문 정보</h2>
-            <p>주문 번호: <span th:text="${order.orderID}"></span></p>
-            <p>주문 날짜: <span th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd')}"></span></p>
-            <p>총 가격: <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '원'"></span></p>
-            <p>주문 상태: <span th:text="${order.status.getDescription()}"></span></p>
+            <p>주문 번호: <span id="orderID"></span></p>
+            <p>주문 날짜: <span id="orderDate"></span></p>
+            <p>총 가격: <span id="totalPrice"></span></p>
+            <p>주문 상태: <span id="orderStatus"></span></p>
         </div>
         <!-- 주문 상품 목록 -->
         <div class="order-items mb-5">
@@ -56,31 +61,75 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="orderDetail : ${orderDetailList}">
-                    <td th:text="${orderDetail.product.productName}"></td>
-                    <td th:text="${orderDetail.quantity}"></td>
-                    <td th:text="${#numbers.formatDecimal(orderDetail.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                    <td th:text="${orderDetail.shippingCompany} ?: '정보 없음'"></td>
-                    <td th:text="${orderDetail.shippingNumber} ?: '정보 없음'"></td>
-                    <td th:text="${orderDetail.status.getDescription()}"></td>
-                </tr>
+                <!-- 동적으로 데이터 추가 예정 -->
                 </tbody>
             </table>
         </div>
         <!-- 결제 정보 -->
         <div class="payment-info mb-4">
             <h2>결제 정보</h2>
-            <p>결제 날짜: <span th:text="${payment.paymentDate != null ? #dates.format(payment.paymentDate, 'yyyy-MM-dd') : '결제 정보 없음'}"></span></p>
-            <p>결제 금액: <span th:text="${#numbers.formatDecimal(payment.amount, 0, 'COMMA', 0, 'POINT')} + '원'"></span></p>
-            <p>결제 방법: <span th:text="${payment.paymentMethod}"></span></p>
-            <p>결제 상태: <span th:text="${payment.status}"></span></p>
+            <p>결제 날짜: <span id="paymentDate"></span></p>
+            <p>결제 금액: <span id="paymentAmount"></span></p>
+            <p>결제 방법: <span id="paymentMethod"></span></p>
+            <p>결제 상태: <span id="paymentStatus"></span></p>
         </div>
         <div class="text-center">
             <a href="/" class="btn btn-primary btn-back">홈으로 돌아가기</a>
         </div>
     </div>
 </div>
-
+<div th:replace="~{common/footer :: footer1}"></div>
+<div th:replace="~{common/footer2 :: footer2}"></div>
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var orderId = [[${orderID}]];
+
+    document.addEventListener("DOMContentLoaded", function() {
+        fetchOrderDetails();
+    });
+
+    function fetchOrderDetails() {
+
+        fetch(`/api/order/${orderId}`)
+            .then(response => response.json())
+            .then(data => {
+                updateOrderDetails(data);
+            })
+            .catch(error => console.error('Error fetching order details:', error));
+    }
+
+    function updateOrderDetails(data) {
+        // 주문 정보 업데이트
+        document.querySelector("#orderID").textContent = data.order.orderID;
+        document.querySelector("#orderDate").textContent = data.order.orderDate;
+        document.querySelector("#totalPrice").textContent = `${data.order.totalPrice}원`;
+        document.querySelector("#orderStatus").textContent = data.order.orderStatus;
+
+        // 주문 상품 목록 업데이트
+        const orderItemsContainer = document.querySelector(".order-items tbody");
+        orderItemsContainer.innerHTML = ''; // 기존 목록 초기화
+        data.orderDetailList.forEach(detail => {
+            orderItemsContainer.innerHTML += `
+            <tr>
+                <td>${detail.productName}</td>
+                <td>${detail.quantity}</td>
+                <td>${detail.price}원</td>
+                <td>${detail.shippingCompany || '정보 없음'}</td>
+                <td>${detail.shippingNumber || '정보 없음'}</td>
+                <td>${detail.orderDetailStatus}</td>
+            </tr>
+        `;
+        });
+
+        // 결제 정보 업데이트
+        document.querySelector("#paymentDate").textContent = data.payment.paymentDate || '결제 정보 없음';
+        document.querySelector("#paymentAmount").textContent = `${data.payment.paymentAmount}원`;
+        document.querySelector("#paymentMethod").textContent = data.payment.paymentMethod;
+        document.querySelector("#paymentStatus").textContent = data.payment.paymentStatus;
+    }
+</script>
+
 </body>
 </html>
