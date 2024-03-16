@@ -40,7 +40,7 @@ public class MyPageController {
         return "users/myPage/active/review/reviews";
     }
 
-    @GetMapping
+    @GetMapping("/coupons")
     public String userCoupons() {
         return "users/myPage/benefit/coupons";
     }
