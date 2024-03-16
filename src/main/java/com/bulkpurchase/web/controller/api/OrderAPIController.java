@@ -35,14 +35,14 @@ public class OrderAPIController {
     private final UserAuthValidator userAuthValidator;
 
     @GetMapping("/list")
-    public ResponseEntity<?> myPageForm(Principal principal) {
+    public ResponseEntity<?> orderList(Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
         List<OrderViewDTO> orderViewDTOS = orderService.getOrderViewModelsByUser(user);
         return ResponseEntity.status(HttpStatus.OK).body(orderViewDTOS);
     }
 
     @GetMapping("/{orderID}")
-    public ResponseEntity<?> orderDetailInfoForSeller(@PathVariable("orderID") Long orderID) {
+    public ResponseEntity<?> orderDetail(@PathVariable("orderID") Long orderID) {
         Optional<Order> orderOpt = orderService.findById(orderID);
         if (orderOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "잘못된 요청입니다."));
