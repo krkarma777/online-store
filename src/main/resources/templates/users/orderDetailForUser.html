@@ -35,47 +35,55 @@
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
 
-<div class="container mt-5">
-    <div class="order-details">
-        <h1 class="mb-4">주문 상세보기</h1>
-        <!-- 주문 정보 -->
-        <div class="order-info mb-5">
-            <h2>주문 정보</h2>
-            <p>주문 번호: <span id="orderID"></span></p>
-            <p>주문 날짜: <span id="orderDate"></span></p>
-            <p>총 가격: <span id="totalPrice"></span></p>
-            <p>주문 상태: <span id="orderStatus"></span></p>
+<div class="container mt-4">
+    <div class="row">
+        <div th:replace="~{common/mypage-sidebar :: sidebar}"></div>
+
+        <!-- 메인 컨텐츠 시작 -->
+        <div class="col-md-9">
+            <div class="order-details">
+                <h1 class="mb-4 center-align">주문 상세보기</h1>
+                <!-- 주문 정보 -->
+                <div class="order-info mb-5">
+                    <h2>주문 정보</h2>
+                    <p>주문 번호: <span id="orderID"></span></p>
+                    <p>주문 날짜: <span id="orderDate"></span></p>
+                    <p>총 가격: <span id="totalPrice"></span></p>
+                    <p>주문 상태: <span id="orderStatus"></span></p>
+                </div>
+                <!-- 주문 상품 목록 -->
+                <div class="order-items mb-5">
+                    <h2>주문 상품 목록</h2>
+                    <table class="table">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>상품 이름</th>
+                            <th>수량</th>
+                            <th>가격</th>
+                            <th>배송 회사</th>
+                            <th>운송장 번호</th>
+                            <th>상태</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- 동적으로 데이터 추가 예정 -->
+                        </tbody>
+                    </table>
+                </div>
+                <!-- 결제 정보 -->
+                <div class="payment-info mb-4">
+                    <h2>결제 정보</h2>
+                    <p>결제 날짜: <span id="paymentDate"></span></p>
+                    <p>결제 금액: <span id="paymentAmount"></span></p>
+                    <p>결제 방법: <span id="paymentMethod"></span></p>
+                    <p>결제 상태: <span id="paymentStatus"></span></p>
+                </div>
+                <div class="text-center">
+                    <a href="/order/list" class="btn btn-primary btn-back">이전페이지로 돌아가기</a>
+                </div>
+            </div>
         </div>
-        <!-- 주문 상품 목록 -->
-        <div class="order-items mb-5">
-            <h2>주문 상품 목록</h2>
-            <table class="table">
-                <thead class="table-dark">
-                <tr>
-                    <th>상품 이름</th>
-                    <th>수량</th>
-                    <th>가격</th>
-                    <th>배송 회사</th>
-                    <th>운송장 번호</th>
-                    <th>상태</th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- 동적으로 데이터 추가 예정 -->
-                </tbody>
-            </table>
-        </div>
-        <!-- 결제 정보 -->
-        <div class="payment-info mb-4">
-            <h2>결제 정보</h2>
-            <p>결제 날짜: <span id="paymentDate"></span></p>
-            <p>결제 금액: <span id="paymentAmount"></span></p>
-            <p>결제 방법: <span id="paymentMethod"></span></p>
-            <p>결제 상태: <span id="paymentStatus"></span></p>
-        </div>
-        <div class="text-center">
-            <a href="/" class="btn btn-primary btn-back">홈으로 돌아가기</a>
-        </div>
+        <!-- 메인 컨텐츠 끝 -->
     </div>
 </div>
 <div th:replace="~{common/footer :: footer1}"></div>
