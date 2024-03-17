@@ -39,7 +39,11 @@ public class CartService {
         cartRepository.deleteById(id);
     }
 
-    public void save(Cart cart) {
-        cartRepository.save(cart);
+    public Cart save(Cart cart) {
+        return cartRepository.save(cart);
+    }
+
+    public Cart createCartForUser(User user) {
+        return cartRepository.save(new Cart(user));
     }
 }
