@@ -1,18 +1,14 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.cart.CartItemOrderResponseDTO;
-import com.bulkpurchase.domain.dto.order.OrderDetailResponseDTO;
-import com.bulkpurchase.domain.dto.order.OrderResponseDTO;
-import com.bulkpurchase.domain.dto.order.OrderViewDTO;
-import com.bulkpurchase.domain.dto.order.PaymentResponseDTO;
-import com.bulkpurchase.domain.entity.cart.Cart;
+import com.bulkpurchase.domain.dto.order.*;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.service.cart.CartService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.order.OrderService;
 import com.bulkpurchase.domain.service.order.PaymentService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
+import com.bulkpurchase.web.service.PurchaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +28,7 @@ public class OrderAPIController {
     private final OrderDetailService orderDetailService;
     private final PaymentService paymentService;
     private final UserAuthValidator userAuthValidator;
-    private final CartService cartService;
+    private final PurchaseService purchaseService;
 
     @GetMapping("/list")
     public ResponseEntity<?> orderList(Principal principal) {
@@ -56,22 +52,15 @@ public class OrderAPIController {
     }
 
     @GetMapping("/cart/{cartID}")
-    public ResponseEntity<?> orderForm(@PathVariable(value = "cartID") Long cartID, @RequestParam("itemIDs") List<Long> itemIDs, Principal principal) {
-        Cart cart = cartService.findById(cartID).orElse(null);
-        if (cart == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "장바구니가 존재하지 않습니다."));
-        }
-
+    public ResponseEntity<?> orderForm(@PathVariable("cartID") Long cartID, @RequestParam("itemIDs") List<Long> itemIDs, Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
-        if (!cart.getUser().equals(user)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "잘못된 요청입니다."));
-        }
-
-        List<CartItemOrderResponseDTO> orderResponseDTOS = cart.getItems().stream()
-                .filter(cartItem -> itemIDs.contains(cartItem.getCartItemID()))
-                .map(CartItemOrderResponseDTO::new)
-                .toList();
-
+        List<CartItemOrderResponseDTO> orderResponseDTOS = purchaseService.processCartPurchase(cartID, itemIDs, user);
         return ResponseEntity.ok(orderResponseDTOS);
+    }
+
+    @PostMapping("/direct-purchase")
+    public ResponseEntity<?> directPurchase(@RequestBody DirectPurchaseRequestDTO requestDTO) {
+        DirectPurchaseResponseDTO responseDTO = purchaseService.processDirectPurchase(requestDTO, new User());
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 }
