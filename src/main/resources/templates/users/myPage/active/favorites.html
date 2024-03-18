@@ -149,8 +149,7 @@
         });
     });
 
-    /* */
-    $(".add-to-cart").on('click', function () {
+    $(document).on('click', ".add-to-cart", function () {
         const productID = $(this).data("product-id");
         const quantity = 1;
 

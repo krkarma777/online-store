@@ -38,4 +38,7 @@ public class CartItemService {
         return cartItemRepository.findByCartAndProduct(cart, product);
     }
 
+    public CartItem addProductToCart(Cart cart, Product product, int quantity) {
+        return cartItemRepository.save(new CartItem(cart, product, quantity));
+    }
 }
