@@ -23,16 +23,11 @@ public class PurchaseService {
 
     private final ProductService productService;
     private final CartService cartService;
-    private final CartItemService cartItemService;
 
-    public DirectPurchaseResponseDTO processDirectPurchase(DirectPurchaseRequestDTO requestDTO, User user) {
-        Product product = productService.findById(requestDTO.getProductID())
+    public CartItemOrderResponseDTO processDirectPurchase(Long productID, Integer quantity) {
+        Product product = productService.findById(productID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 상품입니다."));
-
-        Cart cart = cartService.createCartForUser(user);
-        CartItem cartItem = cartItemService.addProductToCart(cart, product, requestDTO.getQuantity());
-
-        return new DirectPurchaseResponseDTO(cart.getCartID(), cartItem.getCartItemID());
+        return new CartItemOrderResponseDTO(productID, product.getProductName(), product.getPrice(), quantity);
     }
 
     public List<CartItemOrderResponseDTO> processCartPurchase(Long cartID, List<Long> itemIDs, User user) {

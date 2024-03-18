@@ -19,4 +19,14 @@ public class CartItemOrderResponseDTO {
         this.price = cartItem.getProduct().getPrice();
         this.quantity = cartItem.getQuantity();
     }
+
+    public CartItemOrderResponseDTO(Long productID, String productName, Double price, int quantity) {
+        this.productID = productID;
+        this.productName = productName;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public CartItemOrderResponseDTO() {
+    }
 }
