@@ -1,18 +1,27 @@
 package com.bulkpurchase.web.service.order;
 
-import com.bulkpurchase.domain.dto.order.OrderFormDataDTO;
+import com.bulkpurchase.domain.dto.order.OrderItemDTO;
+import com.bulkpurchase.domain.dto.order.OrderRequestDTO;
+import com.bulkpurchase.domain.entity.cart.CartItem;
 import com.bulkpurchase.domain.entity.order.Order;
-import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.order.Payment;
 import com.bulkpurchase.domain.entity.product.Product;
+import com.bulkpurchase.domain.entity.user.User;
+import com.bulkpurchase.domain.service.cart.CartItemService;
+import com.bulkpurchase.domain.service.cart.CartService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
+import com.bulkpurchase.domain.service.order.OrderService;
 import com.bulkpurchase.domain.service.order.PaymentService;
 import com.bulkpurchase.domain.service.product.ProductService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,29 +30,28 @@ public class OrderProcessingService {
     private final ProductService productService;
     private final OrderDetailService orderDetailService;
     private final PaymentService paymentService;
+    private final OrderService orderService;
+    private final CartService cartService;
+    private final CartItemService cartItemService;
 
-    public List<OrderDetail> processOrderDetails(Map<Long, Integer> productIdQuantityMap, Order order) {
-        List<OrderDetail> orderDetails = new ArrayList<>();
-        for (Map.Entry<Long, Integer> entry : productIdQuantityMap.entrySet()) {
-            Long productId = entry.getKey();
-            Integer quantity = entry.getValue();
+    @Transactional
+    public Order processOrder(OrderRequestDTO orderRequestDTO, User user) {
+        List<OrderItemDTO> orderItemDTOS = orderRequestDTO.getOrderItemDTOS();
 
-            Optional<Product> productOpt = productService.findById(productId);
-            if (productOpt.isPresent()) {
-                Product product = productOpt.get();
-                OrderDetail orderDetail = orderDetailService.save(order, product, quantity);
-                orderDetails.add(orderDetail);
-            }
-        }
-        return orderDetails;
+        Order order = new Order(user, orderRequestDTO.getTotalPrice());
+        Order savedOrder = orderService.save(order);
+
+        orderItemDTOS.forEach(orderItemDTO -> {
+            Product product = productService.findById(orderItemDTO.getProductId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품이 존재하지 않습니다."));
+            orderDetailService.save(order, product, orderItemDTO.getQuantity());
+        });
+
+        return savedOrder;
     }
 
     public Payment processPayment(Double totalPrice, String paymentMethod, Order order) {
-        Payment payment = new Payment();
-        payment.setOrder(order);
-        payment.setPaymentDate(new Date());
-        payment.setAmount(totalPrice);
-        payment.setPaymentMethod(paymentMethod);
+        Payment payment = new Payment(order, totalPrice, paymentMethod);
         if (paymentMethod.equals("Credit Card") || paymentMethod.equals("Kakao Pay")) {
             payment.setStatus("결제 완료");
         } else if (paymentMethod.equals("Bank Transfer")) {
@@ -52,27 +60,17 @@ public class OrderProcessingService {
         return paymentService.save(payment);
     }
 
-    public OrderFormDataDTO extractFormData(HttpServletRequest request) {
-        Map<String, String[]> paramMap = request.getParameterMap();
-        Map<Long, Integer> productQuantities = new HashMap<>();
-        double totalPrice = 0;
-        String paymentMethod = "";
+    public void cartDelete_AfterOrderComplete(User user, OrderRequestDTO orderRequestDTO) {
+        cartService.findByUser(user).ifPresent(cart -> {
+            Set<Long> orderProductIds = orderRequestDTO.getOrderItemDTOS().stream()
+                    .map(OrderItemDTO::getProductId)
+                    .collect(Collectors.toSet());
 
-        for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
-            String key = entry.getKey();
-            String[] value = entry.getValue();
+            List<CartItem> itemsToDelete = cart.getItems().stream()
+                    .filter(item -> orderProductIds.contains(item.getProduct().getProductID()))
+                    .toList();
 
-            if (key.startsWith("quantity")) {
-                int index = Integer.parseInt(key.substring("quantity".length()));
-                int quantity = Integer.parseInt(value[0]);
-                Long productId = Long.parseLong(request.getParameter("product_" + index));
-                productQuantities.put(productId, quantity);
-            } else if (key.equals("totalPrice")) {
-                totalPrice = Double.parseDouble(value[0]);
-            } else if (key.equals("paymentMethod")) {
-                paymentMethod = value[0];
-            }
-        }
-        return new OrderFormDataDTO(productQuantities, totalPrice, paymentMethod);
+            cartItemService.deleteAll(itemsToDelete);
+        });
     }
 }
