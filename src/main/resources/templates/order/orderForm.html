@@ -134,7 +134,8 @@
         function orderPageLoad() {
             var cartID = [[${cartID}]];
             var itemIDs = /*[[${itemIDs}]]*/ [];
-            console.log(itemIDs);
+            var productID = [[${productID}]];
+            var quantity = [[${quantity}]];
 
             $.ajax({
                 method: "GET",
@@ -142,7 +143,9 @@
                 traditional: true,
                 data: {
                     itemIDs: itemIDs,
-                    cartID: cartID
+                    cartID: cartID,
+                    productID: productID,
+                    quantity: quantity
                 },
                 success: function (response) {
                     response.forEach(function (item, index) {

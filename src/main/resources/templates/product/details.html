@@ -114,7 +114,7 @@
 
                         <form id="add-to-cart-form" action="/cart/add" method="post">
                             <input type="number" name="quantity" value="1" id="quantity" class="form-control w-auto d-inline-block"/>
-                            <input type="hidden" name="productID" th:value="${product.productID}"/>
+                            <input type="hidden" name="productID" id="productID" th:value="${product.productID}"/>
                             <button type="submit" class="btn btn-custom-success" id="add-to-cart"
                                     th:data-product-id="${product.productID}">
                                 장바구니에 추가</button>
@@ -248,7 +248,6 @@
                                         <input type="hidden" name="productID" id="modalProductID" th:value="${productID}">
                                         <button type="submit" class="btn btn-primary">문의하기</button>
                                     </form>
-
                                 </div>
                             </div>
                         </div>
@@ -494,9 +493,12 @@
             });
         });
 
-        document.getElementById("order-button").addEventListener("click", function() {
-            document.getElementById("add-to-cart-form").action = "/order/item/one";
-            document.getElementById("add-to-cart-form").submit();
+        $("#order-button").on("click", function(event) {
+            event.preventDefault();
+            let productID = $("#productID").val();
+            let quantity = $("#quantity").val();
+
+            window.location.href="/order/0?q=&productID="+ productID + "&quantity=" + quantity
         });
 
         $('#answerModal').on('show.bs.modal', function (event) {
