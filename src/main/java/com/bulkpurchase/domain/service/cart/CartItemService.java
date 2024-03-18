@@ -41,4 +41,12 @@ public class CartItemService {
     public CartItem addProductToCart(Cart cart, Product product, int quantity) {
         return cartItemRepository.save(new CartItem(cart, product, quantity));
     }
+
+    public void delete(CartItem item) {
+        cartItemRepository.delete(item);
+    }
+
+    public void deleteAll(List<CartItem> itemsToDelete) {
+        cartItemRepository.deleteAll(itemsToDelete);
+    }
 }
