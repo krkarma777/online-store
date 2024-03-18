@@ -1,7 +1,10 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.cart.CartItemOrderResponseDTO;
-import com.bulkpurchase.domain.dto.order.*;
+import com.bulkpurchase.domain.dto.order.OrderDetailResponseDTO;
+import com.bulkpurchase.domain.dto.order.OrderResponseDTO;
+import com.bulkpurchase.domain.dto.order.OrderViewDTO;
+import com.bulkpurchase.domain.dto.order.PaymentResponseDTO;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -52,15 +56,30 @@ public class OrderAPIController {
     }
 
     @GetMapping("/cart/{cartID}")
-    public ResponseEntity<?> orderForm(@PathVariable("cartID") Long cartID, @RequestParam("itemIDs") List<Long> itemIDs, Principal principal) {
+    public ResponseEntity<?> orderForm(@PathVariable("cartID") Long cartID,
+                                       @RequestParam(value = "itemIDs", required = false) List<Long> itemIDs,
+                                       @RequestParam(value = "productID", required = false) Long productID,
+                                       @RequestParam(value = "quantity", required = false) Integer quantity,
+                                       Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
-        List<CartItemOrderResponseDTO> orderResponseDTOS = purchaseService.processCartPurchase(cartID, itemIDs, user);
-        return ResponseEntity.ok(orderResponseDTOS);
+
+        if (!itemIDs.isEmpty()) {
+            List<CartItemOrderResponseDTO> orderResponseDTOS = purchaseService.processCartPurchase(cartID, itemIDs, user);
+            return ResponseEntity.ok(orderResponseDTOS);
+        } else if (productID != null && quantity != null) {
+            List<CartItemOrderResponseDTO> orderResponseDTOS = new ArrayList<>();
+            CartItemOrderResponseDTO dto = purchaseService.processDirectPurchase(productID, quantity);
+            orderResponseDTOS.add(dto);
+            return ResponseEntity.ok(orderResponseDTOS);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다."));
+        }
     }
 
-    @PostMapping("/direct-purchase")
-    public ResponseEntity<?> directPurchase(@RequestBody DirectPurchaseRequestDTO requestDTO) {
-        DirectPurchaseResponseDTO responseDTO = purchaseService.processDirectPurchase(requestDTO, new User());
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
-    }
+//    @PostMapping("/direct-purchase")
+//    public ResponseEntity<?> directPurchase(@RequestBody DirectPurchaseRequestDTO requestDTO, Principal principal) {
+//        User user = userAuthValidator.getCurrentUser(principal);
+//        DirectPurchaseResponseDTO responseDTO = purchaseService.processDirectPurchase(requestDTO, user);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+//    }
 }
