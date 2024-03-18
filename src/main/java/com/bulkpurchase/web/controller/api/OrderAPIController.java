@@ -1,10 +1,7 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.cart.CartItemOrderResponseDTO;
-import com.bulkpurchase.domain.dto.order.OrderDetailResponseDTO;
-import com.bulkpurchase.domain.dto.order.OrderResponseDTO;
-import com.bulkpurchase.domain.dto.order.OrderViewDTO;
-import com.bulkpurchase.domain.dto.order.PaymentResponseDTO;
+import com.bulkpurchase.domain.dto.order.*;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
@@ -12,6 +9,7 @@ import com.bulkpurchase.domain.service.order.OrderService;
 import com.bulkpurchase.domain.service.order.PaymentService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import com.bulkpurchase.web.service.PurchaseService;
+import com.bulkpurchase.web.service.order.OrderProcessingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +26,21 @@ import java.util.Optional;
 @RequestMapping("/api/order")
 public class OrderAPIController {
 
+    private final UserAuthValidator userAuthValidator;
     private final OrderService orderService;
     private final OrderDetailService orderDetailService;
     private final PaymentService paymentService;
-    private final UserAuthValidator userAuthValidator;
     private final PurchaseService purchaseService;
+    private final OrderProcessingService orderProcessingService;
+
+    @PostMapping
+    public ResponseEntity<?> orderProcessing(@RequestBody OrderRequestDTO orderRequestDTO, Principal principal) {
+        User user = userAuthValidator.getCurrentUser(principal);
+        Order order = orderProcessingService.processOrder(orderRequestDTO, user);
+        orderProcessingService.processPayment(orderRequestDTO.getTotalPrice(), orderRequestDTO.getPaymentMethod(), order);
+        orderProcessingService.cartDelete_AfterOrderComplete(user, orderRequestDTO);
+        return ResponseEntity.ok(order.getOrderID());
+    }
 
     @GetMapping("/list")
     public ResponseEntity<?> orderList(Principal principal) {
@@ -75,11 +83,4 @@ public class OrderAPIController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다."));
         }
     }
-
-//    @PostMapping("/direct-purchase")
-//    public ResponseEntity<?> directPurchase(@RequestBody DirectPurchaseRequestDTO requestDTO, Principal principal) {
-//        User user = userAuthValidator.getCurrentUser(principal);
-//        DirectPurchaseResponseDTO responseDTO = purchaseService.processDirectPurchase(requestDTO, user);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
-//    }
 }
