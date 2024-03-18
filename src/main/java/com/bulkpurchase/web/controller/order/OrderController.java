@@ -20,9 +20,18 @@ public class OrderController {
     private String paypalClientId;
 
     @GetMapping("/{cartID}")
-    public String orderFormByCart(@PathVariable("cartID") Long cartID, @RequestParam("itemId") List<Long> itemIDs, Model model) {
+    public String orderFormByCart(@PathVariable(value = "cartID", required = false) Long cartID,
+                                  @RequestParam(value = "itemId", required = false) List<Long> itemIDs,
+                                  @RequestParam(value = "productID", required = false) Long productID,
+                                  @RequestParam(value = "quantity", required = false) Integer quantity,
+                                  Model model) {
+
         model.addAttribute("cartID", cartID);
         model.addAttribute("itemIDs", itemIDs);
+
+        model.addAttribute("productID", productID);
+        model.addAttribute("quantity", quantity);
+
         model.addAttribute("paypalClientId", paypalClientId);
         return "order/orderForm";
     }
