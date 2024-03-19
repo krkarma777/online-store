@@ -101,18 +101,10 @@
             type: 'GET',
             success: function(response) {
                 response.forEach(function(order) {
-
-                    var orderDate = new Date(order.orderDate);
-                    var formattedDate = orderDate.toLocaleDateString('ko-KR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-
                     const orderHtml = `
                         <div class="order-date">
                         <a style="text-decoration: none; color: yellowgreen;" href="/order/detail/${order.orderID}">[주문번호 ${order.orderID}]</a>
-                            ${formattedDate}
+                            ${order.orderDate}
                         </div>
                         <ul class="order-list">
                             ${order.orderDetails.map(detail => `

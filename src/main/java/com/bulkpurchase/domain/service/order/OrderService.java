@@ -1,13 +1,13 @@
 package com.bulkpurchase.domain.service.order;
 
-import com.bulkpurchase.domain.dto.orderdetail.OrderDetailViewDTO;
 import com.bulkpurchase.domain.dto.order.OrderViewDTO;
+import com.bulkpurchase.domain.dto.orderdetail.OrderDetailViewDTO;
 import com.bulkpurchase.domain.dto.product.ProductViewDTO;
 import com.bulkpurchase.domain.dto.seller.SalesDataDTO;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
-import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.product.Product;
+import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.order.OrderDetailRepository;
 import com.bulkpurchase.domain.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,7 +41,6 @@ public class OrderService {
         order.setUser(user);
         order.setTotalPrice(totalPrice);
         order.setStatus(PENDING);
-        order.setOrderDate(new Date());
         return orderRepository.save(order);
     }
 
