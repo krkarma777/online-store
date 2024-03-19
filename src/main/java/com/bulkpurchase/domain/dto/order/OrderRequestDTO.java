@@ -10,6 +10,6 @@ import java.util.List;
 public class OrderRequestDTO {
 
     private List<OrderItemDTO> orderItemDTOS;
-    private double totalPrice;
+    private Double totalPrice;
     private String paymentMethod;
 }
