@@ -22,7 +22,7 @@ public class Payment {
 
     @Column
     @Temporal(TemporalType.TIMESTAMP)
-    private Date paymentDate;
+    private Date paymentDate = new Date();
 
     @Column(nullable = false)
     private Double amount;
@@ -33,4 +33,13 @@ public class Payment {
     // 결제 상태 필드 추가
     @Column(length = 20, nullable = false)
     private String status; // 예: "APPROVED", "CANCELLED", "PENDING", etc.
+
+    public Payment(Order order, Double amount, String paymentMethod) {
+        this.order = order;
+        this.amount = amount;
+        this.paymentMethod = paymentMethod;
+    }
+
+    public Payment() {
+    }
 }

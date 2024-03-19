@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 @Entity
 @Table(name = "Orders")
 @Getter
@@ -23,14 +23,14 @@ public class Order {
 
     @Column
     @Temporal(TemporalType.TIMESTAMP)
-    private Date orderDate;
+    private LocalDateTime orderDate = LocalDateTime.now();
 
     @Column(nullable = false)
     private Double totalPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
-    private OrderStatus status; // 주문 상태 필드 추가
+    private OrderStatus status = OrderStatus.PENDING; // 주문 상태 필드 추가
 
     @Override
     public String toString() {
@@ -41,6 +41,14 @@ public class Order {
                 ", totalPrice=" + totalPrice +
                 ", status=" + status +
                 '}';
+    }
+
+    public Order(User user, Double totalPrice) {
+        this.user = user;
+        this.totalPrice = totalPrice;
+    }
+
+    public Order() {
     }
 }
 

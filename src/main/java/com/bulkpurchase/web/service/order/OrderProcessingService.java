@@ -1,18 +1,28 @@
 package com.bulkpurchase.web.service.order;
 
-import com.bulkpurchase.domain.dto.order.OrderFormDataDTO;
+import com.bulkpurchase.domain.dto.order.OrderItemDTO;
+import com.bulkpurchase.domain.dto.order.OrderRequestDTO;
+import com.bulkpurchase.domain.entity.cart.CartItem;
 import com.bulkpurchase.domain.entity.order.Order;
-import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.order.Payment;
 import com.bulkpurchase.domain.entity.product.Product;
+import com.bulkpurchase.domain.entity.user.User;
+import com.bulkpurchase.domain.service.cart.CartItemService;
+import com.bulkpurchase.domain.service.cart.CartService;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
+import com.bulkpurchase.domain.service.order.OrderService;
 import com.bulkpurchase.domain.service.order.PaymentService;
 import com.bulkpurchase.domain.service.product.ProductService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,29 +31,29 @@ public class OrderProcessingService {
     private final ProductService productService;
     private final OrderDetailService orderDetailService;
     private final PaymentService paymentService;
+    private final OrderService orderService;
+    private final CartService cartService;
+    private final CartItemService cartItemService;
 
-    public List<OrderDetail> processOrderDetails(Map<Long, Integer> productIdQuantityMap, Order order) {
-        List<OrderDetail> orderDetails = new ArrayList<>();
-        for (Map.Entry<Long, Integer> entry : productIdQuantityMap.entrySet()) {
-            Long productId = entry.getKey();
-            Integer quantity = entry.getValue();
+    @Transactional
+    public Order processOrder(OrderRequestDTO orderRequestDTO, User user) {
+        List<OrderItemDTO> orderItemDTOS = orderRequestDTO.getOrderItemDTOS();
 
-            Optional<Product> productOpt = productService.findById(productId);
-            if (productOpt.isPresent()) {
-                Product product = productOpt.get();
-                OrderDetail orderDetail = orderDetailService.save(order, product, quantity);
-                orderDetails.add(orderDetail);
-            }
-        }
-        return orderDetails;
+        Order order = new Order(user, orderRequestDTO.getTotalPrice());
+        Order savedOrder = orderService.save(order);
+
+        orderItemDTOS.forEach(orderItemDTO -> {
+            Product product = productService.findById(orderItemDTO.getProductID())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품이 존재하지 않습니다."));
+            orderDetailService.save(order, product, orderItemDTO.getQuantity());
+        });
+
+        return savedOrder;
     }
 
-    public Payment processPayment(Double totalPrice, String paymentMethod, Order order) {
-        Payment payment = new Payment();
-        payment.setOrder(order);
-        payment.setPaymentDate(new Date());
-        payment.setAmount(totalPrice);
-        payment.setPaymentMethod(paymentMethod);
+    public Payment processPayment(OrderRequestDTO orderRequestDTO, Order order) {
+        String paymentMethod = orderRequestDTO.getPaymentMethod();
+        Payment payment = new Payment(order, orderRequestDTO.getTotalPrice(), paymentMethod);
         if (paymentMethod.equals("Credit Card") || paymentMethod.equals("Kakao Pay")) {
             payment.setStatus("결제 완료");
         } else if (paymentMethod.equals("Bank Transfer")) {
@@ -52,27 +62,32 @@ public class OrderProcessingService {
         return paymentService.save(payment);
     }
 
-    public OrderFormDataDTO extractFormData(HttpServletRequest request) {
-        Map<String, String[]> paramMap = request.getParameterMap();
-        Map<Long, Integer> productQuantities = new HashMap<>();
-        double totalPrice = 0;
-        String paymentMethod = "";
-
-        for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
-            String key = entry.getKey();
-            String[] value = entry.getValue();
-
-            if (key.startsWith("quantity")) {
-                int index = Integer.parseInt(key.substring("quantity".length()));
-                int quantity = Integer.parseInt(value[0]);
-                Long productId = Long.parseLong(request.getParameter("product_" + index));
-                productQuantities.put(productId, quantity);
-            } else if (key.equals("totalPrice")) {
-                totalPrice = Double.parseDouble(value[0]);
-            } else if (key.equals("paymentMethod")) {
-                paymentMethod = value[0];
-            }
+    public void setTotalPrice(OrderRequestDTO orderRequestDTO) {
+        List<OrderItemDTO> orderItemDTOS = orderRequestDTO.getOrderItemDTOS();
+        double totalPrice = 0D;
+        for (OrderItemDTO orderItemDTO : orderItemDTOS) {
+            Double price = productService.findById(orderItemDTO.getProductID())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품이 존재하지 않습니다.")).getPrice();
+            totalPrice += price * orderItemDTO.getQuantity();
         }
-        return new OrderFormDataDTO(productQuantities, totalPrice, paymentMethod);
+        orderRequestDTO.setTotalPrice(totalPrice);
+    }
+
+    public List<Long> cartDelete_AfterOrderComplete(User user, OrderRequestDTO orderRequestDTO) {
+        List<Long> itemIDs = new ArrayList<>();
+        cartService.findByUser(user).ifPresent(cart -> {
+            Set<Long> orderProductIds = orderRequestDTO.getOrderItemDTOS().stream()
+                    .map(OrderItemDTO::getProductID)
+                    .collect(Collectors.toSet());
+
+            List<CartItem> itemsToDelete = cart.getItems().stream()
+                    .filter(item -> orderProductIds.contains(item.getProduct().getProductID()))
+                    .toList();
+            for (CartItem cartItem : itemsToDelete) {
+                Long cartItemID = cartItem.getCartItemID();
+                itemIDs.add(cartItemID);
+            }
+        });
+        return itemIDs;
     }
 }

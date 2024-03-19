@@ -61,10 +61,9 @@ public class CartAPIController {
     @DeleteMapping
     public ResponseEntity<?> deleteCartItem(@RequestBody ItemDeleteRequest itemDeleteRequest,
                                             Principal principal) {
-        System.out.println("itemDeleteRequest = " + itemDeleteRequest);
         List<Long> itemIds = itemDeleteRequest.getItemIds();
         Long itemId = itemDeleteRequest.getItemId();
-        if (itemIds.isEmpty() && itemId != null) {
+        if (itemIds == null && itemId != null) {
             User user = userAuthValidator.getCurrentUser(principal);
 
             Optional<CartItem> cartItemOpt = cartItemService.findById(itemId);
