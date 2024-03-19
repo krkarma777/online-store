@@ -42,7 +42,7 @@ public class OrderProcessingService {
         Order savedOrder = orderService.save(order);
 
         orderItemDTOS.forEach(orderItemDTO -> {
-            Product product = productService.findById(orderItemDTO.getProductId())
+            Product product = productService.findById(orderItemDTO.getProductID())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품이 존재하지 않습니다."));
             orderDetailService.save(order, product, orderItemDTO.getQuantity());
         });
@@ -50,8 +50,9 @@ public class OrderProcessingService {
         return savedOrder;
     }
 
-    public Payment processPayment(Double totalPrice, String paymentMethod, Order order) {
-        Payment payment = new Payment(order, totalPrice, paymentMethod);
+    public Payment processPayment(OrderRequestDTO orderRequestDTO, Order order) {
+        String paymentMethod = orderRequestDTO.getPaymentMethod();
+        Payment payment = new Payment(order, orderRequestDTO.getTotalPrice(), paymentMethod);
         if (paymentMethod.equals("Credit Card") || paymentMethod.equals("Kakao Pay")) {
             payment.setStatus("결제 완료");
         } else if (paymentMethod.equals("Bank Transfer")) {
@@ -60,10 +61,21 @@ public class OrderProcessingService {
         return paymentService.save(payment);
     }
 
+    public void setTotalPrice(OrderRequestDTO orderRequestDTO) {
+        List<OrderItemDTO> orderItemDTOS = orderRequestDTO.getOrderItemDTOS();
+        double totalPrice = 0D;
+        for (OrderItemDTO orderItemDTO : orderItemDTOS) {
+            Double price = productService.findById(orderItemDTO.getProductID())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "상품이 존재하지 않습니다.")).getPrice();
+            totalPrice += price * orderItemDTO.getQuantity();
+        }
+        orderRequestDTO.setTotalPrice(totalPrice);
+    }
+
     public void cartDelete_AfterOrderComplete(User user, OrderRequestDTO orderRequestDTO) {
         cartService.findByUser(user).ifPresent(cart -> {
             Set<Long> orderProductIds = orderRequestDTO.getOrderItemDTOS().stream()
-                    .map(OrderItemDTO::getProductId)
+                    .map(OrderItemDTO::getProductID)
                     .collect(Collectors.toSet());
 
             List<CartItem> itemsToDelete = cart.getItems().stream()
