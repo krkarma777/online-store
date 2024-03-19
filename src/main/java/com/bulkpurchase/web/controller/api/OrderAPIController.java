@@ -37,9 +37,10 @@ public class OrderAPIController {
     public ResponseEntity<?> orderProcessing(@RequestBody OrderRequestDTO orderRequestDTO, Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
         Order order = orderProcessingService.processOrder(orderRequestDTO, user);
-        orderProcessingService.processPayment(orderRequestDTO.getTotalPrice(), orderRequestDTO.getPaymentMethod(), order);
+        orderProcessingService.setTotalPrice(orderRequestDTO);
+        orderProcessingService.processPayment(orderRequestDTO, order);
         orderProcessingService.cartDelete_AfterOrderComplete(user, orderRequestDTO);
-        return ResponseEntity.ok(order.getOrderID());
+        return ResponseEntity.ok(Map.of("orderID",order.getOrderID(),"message", "주문이 완료되었습니다."));
     }
 
     @GetMapping("/list")
@@ -60,7 +61,7 @@ public class OrderAPIController {
         PaymentResponseDTO paymentResponseDTO = new PaymentResponseDTO(paymentService.findByOrder(order));
         List<OrderDetailResponseDTO> detailResponseDTOS = orderDetailService.findByOrder(order).stream().map(OrderDetailResponseDTO::new).toList();
 
-        return ResponseEntity.ok(Map.of("orderDetailList", detailResponseDTOS,"order", orderResponseDTO,"payment", paymentResponseDTO));
+        return ResponseEntity.ok(Map.of("orderDetailList", detailResponseDTOS, "order", orderResponseDTO, "payment", paymentResponseDTO));
     }
 
     @GetMapping("/cart/{cartID}")
@@ -74,13 +75,14 @@ public class OrderAPIController {
         if (!itemIDs.isEmpty()) {
             List<CartItemOrderResponseDTO> orderResponseDTOS = purchaseService.processCartPurchase(cartID, itemIDs, user);
             return ResponseEntity.ok(orderResponseDTOS);
-        } else if (productID != null && quantity != null) {
+        }
+        if (productID != null && quantity != null) {
             List<CartItemOrderResponseDTO> orderResponseDTOS = new ArrayList<>();
             CartItemOrderResponseDTO dto = purchaseService.processDirectPurchase(productID, quantity);
             orderResponseDTOS.add(dto);
             return ResponseEntity.ok(orderResponseDTOS);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다."));
         }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다."));
+
     }
 }
