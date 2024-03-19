@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -72,7 +73,8 @@ public class OrderProcessingService {
         orderRequestDTO.setTotalPrice(totalPrice);
     }
 
-    public void cartDelete_AfterOrderComplete(User user, OrderRequestDTO orderRequestDTO) {
+    public List<Long> cartDelete_AfterOrderComplete(User user, OrderRequestDTO orderRequestDTO) {
+        List<Long> itemIDs = new ArrayList<>();
         cartService.findByUser(user).ifPresent(cart -> {
             Set<Long> orderProductIds = orderRequestDTO.getOrderItemDTOS().stream()
                     .map(OrderItemDTO::getProductID)
@@ -81,8 +83,11 @@ public class OrderProcessingService {
             List<CartItem> itemsToDelete = cart.getItems().stream()
                     .filter(item -> orderProductIds.contains(item.getProduct().getProductID()))
                     .toList();
-
-            cartItemService.deleteAll(itemsToDelete);
+            for (CartItem cartItem : itemsToDelete) {
+                Long cartItemID = cartItem.getCartItemID();
+                itemIDs.add(cartItemID);
+            }
         });
+        return itemIDs;
     }
 }

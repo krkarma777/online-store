@@ -335,11 +335,30 @@
             contentType: 'application/json',
             data: JSON.stringify(orderData),
             success: function (response) {
+                var itemIDs = response.itemIDs;
+                cartDeleteAfterOrder(itemIDs)
                 alert(response.message);
                 window.location.href = "/order/detail/" + response.orderID;
             },
             error: function (error) {
                 console.error('Error processing order', error);
+            }
+        });
+    }
+
+    function cartDeleteAfterOrder(itemIDs) {
+        $.ajax({
+            url: '/cart/item',
+            type: 'DELETE',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                itemIds: itemIDs
+            }),
+            success: function (response) {
+            },
+            error: function (xhr, status, error) {
+                var errorMessage = JSON.parse(xhr.responseText).message;
+                alert(errorMessage);
             }
         });
     }

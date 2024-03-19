@@ -39,8 +39,12 @@ public class OrderAPIController {
         Order order = orderProcessingService.processOrder(orderRequestDTO, user);
         orderProcessingService.setTotalPrice(orderRequestDTO);
         orderProcessingService.processPayment(orderRequestDTO, order);
-        orderProcessingService.cartDelete_AfterOrderComplete(user, orderRequestDTO);
-        return ResponseEntity.ok(Map.of("orderID",order.getOrderID(),"message", "주문이 완료되었습니다."));
+        List<Long> itemIDs = orderProcessingService.cartDelete_AfterOrderComplete(user, orderRequestDTO);
+        return ResponseEntity.ok(Map.of(
+                "orderID", order.getOrderID(),
+                "message", "주문이 완료되었습니다.",
+                "itemIDs", itemIDs)
+        );
     }
 
     @GetMapping("/list")
