@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.review;
+package com.bulkpurchase.web.controller;
 
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
