@@ -46,13 +46,8 @@ public class ReviewService {
                 (Long) result[2]
         )).collect(Collectors.toList());
     }
-    public List<ReviewDetailDTO> reviewDetailsByUserID(Long reviewID) {
-        List<Object[]> results = reviewRepository.findReviewDetailsWithFeedbackCountsByReviewID(reviewID);
-        return results.stream().map(result -> new ReviewDetailDTO(
-                (Review) result[0],
-                (Long) result[1],
-                (Long) result[2]
-        )).collect(Collectors.toList());
+    public Optional<ReviewDetailDTO> reviewDetailsByReviewID(Long reviewID) {
+        return reviewRepository.findReviewDetailsWithFeedbackCountsByReviewID(reviewID);
     }
 
     public long countByProductID(Long productID) {

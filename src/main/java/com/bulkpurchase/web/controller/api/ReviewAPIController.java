@@ -1,7 +1,6 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.review.ReviewDetailDTO;
-import com.bulkpurchase.domain.dto.review.ReviewResponseDTO;
 import com.bulkpurchase.domain.dto.review.ReviewUpdateRequestDTO;
 import com.bulkpurchase.domain.dto.review.ReviewWriteRequestDTO;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
@@ -89,14 +88,14 @@ public class ReviewAPIController {
 
     @GetMapping("/{reviewID}")
     public ResponseEntity<?>  reviewDetail(@PathVariable("reviewID") Long reviewID) {
-        Optional<Review> reviewOpt = reviewService.findById(reviewID);
+        Optional<ReviewDetailDTO> reviewOpt = reviewService.reviewDetailsByReviewID(reviewID);
         if (reviewOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "존재하지 않는 리뷰입니다."));
         }
-        Review review = reviewOpt.get();
-        ReviewResponseDTO reviewResponseDTO = new ReviewResponseDTO(review);
-        return ResponseEntity.ok(reviewResponseDTO);
+        ReviewDetailDTO review = reviewOpt.get();
+        return ResponseEntity.ok(review);
     }
+
     @GetMapping
     public ResponseEntity<?> reviewList(Principal principal, @RequestParam(value = "page", defaultValue = "1") int page) {
         User user = getUser(principal);

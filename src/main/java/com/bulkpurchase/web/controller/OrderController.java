@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.order;
+package com.bulkpurchase.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

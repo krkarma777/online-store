@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.review;
+package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.user.FeedbackRequestDTO;
 import com.bulkpurchase.web.service.product.ProductFeedbackProcessService;

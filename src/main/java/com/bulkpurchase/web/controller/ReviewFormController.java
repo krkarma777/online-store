@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.review;
+package com.bulkpurchase.web.controller;
 
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
@@ -49,10 +49,9 @@ public class ReviewFormController {
         }
     }
 
-    @GetMapping("/myPage/active/review/detail/{reviewId}")
+    @GetMapping("/review/{reviewId}")
     public String reviewDetail(@PathVariable("reviewId") Long reviewId, Model model) {
-        Review review = reviewService.findById(reviewId).orElse(null);
-        model.addAttribute("review", review);
+        model.addAttribute("reviewId", reviewId);
         return "users/myPage/active/review/reviewDetail";
     }
 }

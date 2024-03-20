@@ -1,5 +1,6 @@
 package com.bulkpurchase.domain.repository.review;
 
+import com.bulkpurchase.domain.dto.review.ReviewDetailDTO;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.review.Review;
 import com.bulkpurchase.domain.entity.user.User;
@@ -27,11 +28,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.product.productID = :productID")
     Double findAverageRatingByProductID(@Param("productID") Long productID);
 
-    @Query("SELECT r, " +
-            "(SELECT COUNT(f) FROM ReviewFeedback f WHERE f.review = r AND f.feedbackType = com.bulkpurchase.domain.enums.FeedbackType.LIKE) AS likeCount, " +
-            "(SELECT COUNT(f) FROM ReviewFeedback f WHERE f.review = r AND f.feedbackType = com.bulkpurchase.domain.enums.FeedbackType.DISLIKE) AS dislikeCount " +
+    @Query("SELECT new com.bulkpurchase.domain.dto.review.ReviewDetailDTO(r, " +
+            "(SELECT COUNT(f) FROM ReviewFeedback f WHERE f.review = r AND f.feedbackType = com.bulkpurchase.domain.enums.FeedbackType.LIKE), " +
+            "(SELECT COUNT(f) FROM ReviewFeedback f WHERE f.review = r AND f.feedbackType = com.bulkpurchase.domain.enums.FeedbackType.DISLIKE)) " +
             "FROM Review r WHERE r.reviewID = :reviewID")
-    List<Object[]> findReviewDetailsWithFeedbackCountsByReviewID(@Param("reviewID") Long reviewID);
+    Optional<ReviewDetailDTO> findReviewDetailsWithFeedbackCountsByReviewID(@Param("reviewID") Long reviewID);
+
 
     @Query("SELECT r, " +
             "(SELECT COUNT(f) FROM ReviewFeedback f WHERE f.review = r AND f.feedbackType = com.bulkpurchase.domain.enums.FeedbackType.LIKE) AS likeCount, " +
