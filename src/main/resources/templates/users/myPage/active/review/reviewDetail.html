@@ -96,50 +96,51 @@
         console.log('reviewContainer exists:', $('#reviewContainer').length > 0)
         reviewDataUpdate();
         // AJAX 요청을 보냅니다.
-        function reviewDataUpdate(){
+        function reviewDataUpdate() {
             $.ajax({
                 url: "/api/review/" + reviewId, // API 엔드포인트 주소를 확인해 주세요.
                 type: "GET",
                 contentType: "application/json",
                 success: function(data) {
-                    var reviewData = data.reviewResponseDTO;
-                    var maskedName = reviewData.realName.charAt(0) + '*' + reviewData.realName.charAt(reviewData.realName.length - 1);
-                    var starRatingHtml = '';
-                    for (var i = 1; i <= 5; i++) {
-                        starRatingHtml += i <= reviewData.rating ? '<i class="bi bi-star-fill"></i> ' : '<i class="bi bi-star"></i> ';
-                    }
+                    const reviewData = data.reviewResponseDTO;
+                    const maskedName = `${reviewData.realName.charAt(0)}*${reviewData.realName.charAt(reviewData.realName.length - 1)}`;
+                    const starRatingHtml = Array.from({length: 5}, (_, i) =>
+                        `<i class="bi ${i < reviewData.rating ? 'bi-star-fill' : 'bi-star'}"></i>`
+                    ).join(' ');
 
-                    var imageSliderHtml = '';
-                    if (reviewData.imageUrls.length > 0) {
-                        imageSliderHtml = '<div class="image-slider-container"><div class="swiper-container"><div class="swiper-wrapper">';
-                        reviewData.imageUrls.forEach(function(url) {
-                            imageSliderHtml += '<div class="swiper-slide"><img src="' + url + '" class="img-fluid" alt="리뷰 이미지"></div>';
-                        });
-                        imageSliderHtml += '</div><div class="swiper-pagination"></div></div></div>';
-                    }
+                    const imageSliderHtml = reviewData.imageUrls.length > 0
+                        ? `<div class="image-slider-container">
+                            <div class="swiper-container">
+                                <div class="swiper-wrapper">
+                                    ${reviewData.imageUrls.map(url =>
+                                    `<div class="swiper-slide"><img src="${url}" class="img-fluid" alt="리뷰 이미지"></div>`
+                                ).join('')}
+                                </div>
+                                <div class="swiper-pagination"></div>
+                            </div>
+                           </div>`
+                                : '';
 
-                    var reviewContentHtml = '<div class="review-content"><p>' + reviewData.content + '</p></div>';
+                    const reviewContentHtml = `<div class="review-content"><p>${reviewData.content}</p></div>`;
 
-                    var likeDislikeButtonsHtml =
-                        '<div class="like-dislike-buttons">' +
-                        '<button type="button" class="btn btn-outline-success btn-like" data-review-id="' + reviewData.reviewID + '">좋아요 <span class="badge bg-success like-count">' + data.likeCount + '</span></button>' +
-                        '<button type="button" class="btn btn-outline-danger btn-dislike" data-review-id="' + reviewData.reviewID + '">싫어요 <span class="badge bg-danger dislike-count">' + data.dislikeCount + '</span></button>' +
-                        '<span class="report-link" onclick="reportReview()">신고하기</span>' +
-                        '</div>';
+                    const likeDislikeButtonsHtml =
+                        `<div class="like-dislike-buttons">
+                            <button type="button" class="btn btn-outline-success btn-like" data-review-id="${reviewData.reviewID}">좋아요 <span class="badge bg-success like-count">${data.likeCount}</span></button>
+                            <button type="button" class="btn btn-outline-danger btn-dislike" data-review-id="${reviewData.reviewID}">싫어요 <span class="badge bg-danger dislike-count">${data.dislikeCount}</span></button>
+                            <span class="report-link" onclick="reportReview()">신고하기</span>
+                        </div>`;
 
                     // 최종적으로 생성할 HTML 문자열
-                    var finalHtml =
-                        '<p class="card-text"><span class="username-masked">' + maskedName + '</span></p>' +
-                        '<div style="display: flex; align-items: center;">' +
-                        starRatingHtml +
-                        '<p class="card-text" style="margin-left: 10px;">' + reviewData.creationDate + '</p>' +
-                        '</div>' +
-                        '<h5 class="card-subtitle mb-2 product-name">상품명: <span>' + reviewData.productName + '</span></h5>' +
-                        imageSliderHtml +
-                        reviewContentHtml +
-                        likeDislikeButtonsHtml;
-
-                    console.log("finalHtml",finalHtml)
+                    const finalHtml =
+                        `<p class="card-text"><span class="username-masked">${maskedName}</span></p>
+                        <div style="display: flex; align-items: center;">
+                            ${starRatingHtml}
+                            <p class="card-text" style="margin-left: 10px;">${reviewData.creationDate}</p>
+                        </div>
+                        <h5 class="card-subtitle mb-2 product-name">상품명: <span>${reviewData.productName}</span></h5>
+                        ${imageSliderHtml}
+                        ${reviewContentHtml}
+                        ${likeDislikeButtonsHtml}`;
 
                     // HTML 요소를 동적으로 페이지에 추가
                     $('#reviewContainer').html(finalHtml);
