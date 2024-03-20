@@ -144,8 +144,8 @@
                             <p>${review.reviewResponseDTO.content}</p>
                         </div>
                         <div class="like-dislike-buttons">
-                            <button type="button" class="btn btn-outline-success">좋아요 <span>${review.likeCount}</span></button>
-                            <button type="button" class="btn btn-outline-danger">싫어요 <span>${review.dislikeCount}</span></button>
+                            <button type="button" class="btn btn-outline-success btn-like" data-review-id="${review.reviewResponseDTO.reviewID}">좋아요 <span>${review.likeCount}</span></button>
+                        '<button type="button" class="btn btn-outline-danger btn-dislike" data-review-id="${review.reviewResponseDTO.reviewID}">싫어요 <span>${review.dislikeCount}</span></button>
                         </div>
                     </div>
                 </div>
@@ -189,6 +189,41 @@
                 },
                 error: function (xhr, status, error) {
                     alert("리뷰 수정 실패: " + error);
+                }
+            });
+        });
+
+        $(document).on('click', ".btn-like", function () {
+            var reviewId = $(this).data('review-id');
+            console.log(reviewId);
+            $.ajax({
+                type: "POST",
+                url: "/review/" + reviewId + "/feedback",
+                data: JSON.stringify({ feedbackType: 'LIKE' }),
+                contentType: "application/json",
+                success: function(response) {
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    // 실패 시 오류 메시지 표시
+                    alert("좋아요 수 업데이트에 실패했습니다: " + error);
+                }
+            });
+        });
+
+        $(document).on('click', ".btn-dislike", function (){
+            var reviewId = $(this).data('review-id');
+            $.ajax({
+                type: "POST",
+                url: "/review/" + reviewId + "/feedback",
+                data: JSON.stringify({ feedbackType: 'DISLIKE' }),
+                contentType: "application/json",
+                success: function(response) {
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    // 실패 시 오류 메시지 표시
+                    alert("싫어요 수 업데이트에 실패했습니다: " + error);
                 }
             });
         });
