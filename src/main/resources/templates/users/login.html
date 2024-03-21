@@ -104,9 +104,9 @@
     }
     .logo {
       display: block;
-      margin: 0 auto;
       width: auto;
-      height: 200px;
+      margin: 10px auto;
+      height: 60px;
     }
     .error-message {
       color: red;
@@ -116,17 +116,14 @@
     .form-check-input {
       margin-top: 10px;
       padding-bottom: -20px;
-
     }
   </style>
 </head>
 <body>
 <div class="container">
-  <a href="/"> <img src="/img/logo.png" class="logo" alt="로고 이미지"/></a>
-  <hr>
   <div class="row justify-content-center">
     <div class="login-container">
-      <div class="login-header">로그인</div>
+      <div class="login-header">  <a href="/"> <img src="/img/logo.png" class="logo" alt="로고 이미지"/></a></div>
       <form action="/login" method="post" class="login-form" id="loginBtn">
         <input type="text" class="form-control" id="username" name="username" placeholder="아이디" required
                th:classappend="${param.error} ? 'is-invalid' : ''">
