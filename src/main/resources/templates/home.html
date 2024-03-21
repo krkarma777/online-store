@@ -7,10 +7,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-        body {
-            margin-top: 20px;
-        }
-
         .product-image {
             width: 100%;
             height: 200px;
@@ -219,6 +215,42 @@
         }
 
 
+        .popular-products, .active-products, .promotions {
+            background-color: #e8f8e9; /* 섹션 배경색을 부드러운 초록색 계열로 통일 */
+        }
+
+        .section-header {
+            color: #2E8B57; /* 섹션 헤더 색상을 진한 초록색으로 조정 */
+        }
+        .rank-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 50px;
+            height: auto;
+            color: white; /* 흰색 텍스트 */
+            padding: 5px 10px;
+        }
+        .card {
+            position: relative; /* 순위 배지를 위한 상대 위치 설정 */
+            border: 1px solid #4CAF50; /* 카드 테두리 색상을 초록색으로 조정 */
+            margin-bottom: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for transform and shadow */
+            cursor: pointer; /* Change cursor to indicate clickable */
+        }
+
+        .card:hover {
+            transform: scale(1.05); /* Slightly increase size */
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3); /* 마우스 오버 시 그림자 색상을 초록색으로 조정 */
+        }
+
+        .promotion-mockup:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3); /* 마우스 오버 시 그림자 색상을 초록색으로 조정 */
+        }
+
+
+
     </style>
 </head>
 <body>
@@ -247,10 +279,9 @@
 
     <!-- 프로모션 및 이벤트 안내 -->
     <section class="promotions mb-4">
-        <h2 class="section-header">프로모션 및 이벤트</h2>
+        <h2 class="section-header">🎁프로모션 및 이벤트🎁</h2>
         <div class="row">
             <div class="col">
-                <p>최신 프로모션과 이벤트 소식을 확인하세요.</p>
                 <!-- 목업 이벤트 내용 -->
                 <div class="promotion-mockup" style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
                     <h4>봄맞이 대박 할인!</h4>
@@ -260,7 +291,7 @@
                 <div class="promotion-mockup mt-3" style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center;">
                     <h4>신규 회원 특별 혜택</h4>
                     <p>지금 회원으로 가입하시면 첫 구매에 한해 20% 할인 쿠폰을 드립니다.</p>
-                    <a href="#" class="btn btn-info">회원 가입하기</a>
+                    <a href="/register" class="btn btn-info">회원 가입하기</a>
                 </div>
             </div>
         </div>
@@ -268,21 +299,27 @@
 
     <!-- 인기 상품 섹션 -->
     <section class="popular-products mb-4">
-        <h2 class="section-header">인기 상품</h2>
+        <h2 class="section-header">🔥인기 상품🔥</h2>
         <div class="row row-cols-1 row-cols-md-4 g-4">
             <!-- Thymeleaf 반복문 사용하여 popularProductList에서 상품 정보 렌더링 -->
-            <div class="col" th:each="popularProduct : ${popularProducts}">
-                <div class="card h-100 center center">
+            <div th:each="popularProduct, iterStat : ${popularProducts}" class="col">
+                <div class="card h-100 center">
+                    <!-- 순위에 따른 뱃지 표시 -->
+                    <div class="rank-badge">
+                        <span th:if="${iterStat.count == 1}">🥇</span>
+                        <span th:if="${iterStat.count == 2}">🥈</span>
+                        <span th:if="${iterStat.count == 3}">🥉</span>
+                        <span th:if="${iterStat.count > 3}">⭐️</span>
+                    </div>
                     <a th:href="'product/'+${popularProduct.productID}">
-                        <!-- 상품 이미지 표시 (상품 이미지가 있을 경우) -->
+                        <!-- 상품 이미지 표시 -->
                         <img th:if="${not #lists.isEmpty(popularProduct.imageUrls)}" th:src="@{'uploaded-images/'+${popularProduct.imageUrls[0]}}" class="card-img-top product-image" alt="Product Image">
-                        <!-- 기본 이미지 표시 (상품 이미지가 없을 경우) -->
                         <img th:unless="${not #lists.isEmpty(popularProduct.imageUrls)}" src="/img/logo.png" class="card-img-top product-image" alt="Default Image">
                     </a>
                     <div class="card-body">
                         <a th:href="'product/'+${popularProduct.productID}">
-                        <h5 class="card-title" th:text="${popularProduct.productName}">상품명</h5>
-                        <p class="card-text" th:text="${#numbers.formatDecimal(popularProduct.price, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
+                            <h5 class="card-title" th:text="${popularProduct.productName}">상품명</h5>
+                            <p class="card-text" th:text="${#numbers.formatDecimal(popularProduct.price, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
                         </a>
                     </div>
                 </div>
@@ -290,9 +327,10 @@
         </div>
     </section>
 
+
     <!-- 추가된 활성 상품 목록 -->
     <section class="active-products mb-4">
-        <h2 class="section-header">상품 목록</h2>
+        <h2 class="section-header">✨상품 목록✨</h2>
         <div class="products">
             <ul class="row">
                 <li class="col" th:each="product : ${activeProduct}">

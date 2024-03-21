@@ -7,11 +7,6 @@
     <script th:src="'https://www.paypal.com/sdk/js?client-id='+${paypalClientId}"></script>
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-        body {
-            padding-top: 60px;
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f8f9fa;
-        }
         .table {
             border-radius: 10px;
             overflow: hidden;
@@ -58,7 +53,7 @@
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
 <div class="container mt-4">
-    <h2 class="mb-3">제품 주문</h2>
+    <h2 class="mb-3 center-align">제품 주문</h2>
 
     <form th:action="@{/order}" method="post" id="orderForm">
         <div class="table-responsive">

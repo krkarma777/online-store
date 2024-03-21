@@ -154,7 +154,7 @@
                     <div th:each="reviewDetail : ${reviews}" class="review">
                         <div class="review-author">
                             <strong th:text="${reviewDetail.reviewResponseDTO.realName}">리뷰 작성자</strong> -
-                            <span th:text="${#temporals.format(reviewDetail.reviewResponseDTO.creationDate, 'yyyy년 MM월 dd일')}">리뷰 작성일</span>
+                            <span th:text="${reviewDetail.reviewResponseDTO.creationDate}">리뷰 작성일</span>
                         </div>
                         <div class="review-rating">
                             평점:

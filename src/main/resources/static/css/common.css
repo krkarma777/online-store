@@ -238,10 +238,13 @@ body {
     font-family: 'S-CoreDream-3Light', sans-serif;
 }
 
-.navbar2 {
-    margin-top: 20px;
-    border-top: 1px solid rgba(0, 0, 0, 0.1); /* 흐릿한 회색 줄 유지 */
+.navbar-top {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 흐릿한 회색 줄 유지 */
+    height: fit-content;
+    margin-bottom: 0;
+}
+
+.navbar2 {
     height: fit-content;
 }
 
