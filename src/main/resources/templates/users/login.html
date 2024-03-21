@@ -101,6 +101,19 @@
       margin-top: 10px;
       padding-bottom: -20px;
     }
+    .center-align {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .center-align a:not(:first-child)::before {
+      content: "•";
+      color: grey;
+      margin-right: 8px;
+    }
   </style>
 </head>
 <body>
@@ -133,7 +146,11 @@
           <a href="/oauth2/authorization/naver" class="social-login-button naver"><img class="social-logo" src="/img/naverIco.png" alt="Naver login"></a>
         </div>
         <hr>
-        <a href="/register" class="login-form-link" style="color: black; text-decoration: none">회원가입</a>
+        <div class="center-align">
+        <a href="/register" class="login-form-link" style="display: inline-block; color: black; text-decoration: none">아이디 찾기</a>
+        <a href="/register" class="login-form-link" style="display: inline-block; color: black; text-decoration: none">비밀번호 찾기</a>
+        <a href="/register" class="login-form-link" style="display: inline-block; color: black; text-decoration: none">회원가입</a>
+        </div>
         <div class="login-form-footer">
           ©SEED. All rights reserved.
         </div>
