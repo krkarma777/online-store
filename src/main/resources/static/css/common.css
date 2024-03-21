@@ -15,6 +15,10 @@
     width: auto;
     height: 50px;
 }
+.nav_img {
+    width: auto;
+    height: 30px;
+}
 body, html {
     height: 100%; /* 전체 높이를 100%로 설정 */
     margin: 0; /* 기본 마진 제거 */
@@ -165,6 +169,82 @@ hr {
     align-items: center; /* 수직 가운데 정렬 */
     margin-right: 17px;
 }
-.container {
-    padding-top: 20px;
+/*.container {*/
+/*    padding-top: 20px;*/
+/*}*/
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.nav-search, .user-actions {
+    display: flex;
+    align-items: center;
+}
+
+.nav-item, .nav-search {
+    margin-right: 15px;
+    list-style: none;
+    text-decoration: none;
+    color: black;
+    padding: 8px;
+}
+
+.nav-search form {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    background-color: white;
+    padding: 5px;
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    padding: 10px;
+    width: 600px;
+    border-radius: 25px;
+}
+
+.search-button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.search-button img {
+    height: 20px;
+    width: 20px;
+}
+
+/* 확장: 포커스 시 검색창 스타일 변경 */
+.search-input:focus {
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+@font-face {
+    font-family: 'S-CoreDream-3Light';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'S-CoreDream-3Light', sans-serif;
+}
+
+.navbar2 {
+    margin-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1); /* 흐릿한 회색 줄 유지 */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* 흐릿한 회색 줄 유지 */
+    height: fit-content;
+}
+
+.icon_before_text {
+    margin-right: 5px;
 }

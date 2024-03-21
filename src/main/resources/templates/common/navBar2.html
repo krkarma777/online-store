@@ -1,0 +1,62 @@
+<div class="container topBar navbar2" th:fragment="content" th:with="isAuthenticated=${#authorization.expression('isAuthenticated()')}">
+    <div class="navbar">
+        <!-- 상품 카테고리 링크 -->
+        <div class="nav-search">
+            <a class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="/img/navbar/category.png" class="nav_img"/>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                <!-- 부모 카테고리: 패션의류/잡화 -->
+                <li class="dropdown-submenu">
+                    <div class="dropdown dropdown-hover">
+                        <a class="dropdown-item dropdown-toggle" href="#" id="fashionClothingAccessories">패션의류/잡화</a>
+                        <!-- 자식 카테고리 메뉴 -->
+                        <ul class="dropdown-menu" aria-labelledby="fashionClothingAccessories">
+                            <li><a class="dropdown-item dropdown-toggle" href="#" id="menFashion" data-bs-toggle="dropdown" aria-expanded="false">남성 패션</a>
+                                <ul class="dropdown-menu" aria-labelledby="menFashion">
+                                    <li><a class="dropdown-item" href="#">의류</a></li>
+                                    <li><a class="dropdown-item" href="#">속옷/잠옷</a></li>
+                                    <li><a class="dropdown-item" href="#">신발</a></li>
+                                    <li><a class="dropdown-item" href="#">가방/잡화</a></li>
+                                </ul>
+                            </li>
+                            <li><a class="dropdown-item" href="#">여성 패션</a></li>
+                            <li><a class="dropdown-item" href="#">남여 공용 의류</a></li>
+                            <li><a class="dropdown-item" href="#">유아동패션</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li><a class="dropdown-item" href="#">뷰티</a></li>
+                <li><a class="dropdown-item" href="#">출산/유아등</a></li>
+                <li><a class="dropdown-item" href="#">식품</a></li>
+                <li><a class="dropdown-item" href="#">주방용품</a></li>
+                <li><a class="dropdown-item" href="#">생활용품</a></li>
+                <li><a class="dropdown-item" href="#">홈인테리어</a></li>
+                <li><a class="dropdown-item" href="#">가전디지털</a></li>
+                <li><a class="dropdown-item" href="#">스포츠/레저</a></li>
+                <li><a class="dropdown-item" href="#">자동차용품</a></li>
+                <li><a class="dropdown-item" href="#">도서/음반/DVD</a></li>
+                <li><a class="dropdown-item" href="#">완구/취미</a></li>
+                <li><a class="dropdown-item" href="#">문구/오피스</a></li>
+                <li><a class="dropdown-item" href="#">반려동물용품</a></li>
+                <li><a class="dropdown-item" href="#">헬스/건강식품</a></li>
+            </ul>
+
+        </div>
+
+        <div class="center-align" >
+            <a class="nav-item nav-link nav-category" href="/order/list"><img src="/img/navbar/best.png" class="nav_img icon_before_text"/>베스트</a>
+            <a class="nav-item nav-link nav-category" href="/order/list"><img src="/img/navbar/promotion.png" class="nav_img icon_before_text"/>기획전</a>
+            <a class="nav-item nav-link nav-category" href="/order/list"><img src="/img/navbar/coupon.png" class="nav_img icon_before_text"/>이벤트/쿠폰</a>
+            <a class="nav-item nav-link nav-category" href="/order/list"><img src="/img/navbar/hotdeal.png" class="nav_img icon_before_text"/>핫딜</a>
+            <a class="nav-item nav-link nav-category" href="/order/list"><img src="/img/navbar/new.png" class="nav_img icon_before_text"/>실시간인기상품</a>
+        </div>
+
+        <div class="user-actions">
+             <a class="nav-item nav-link" href="/login" th:if="${!isAuthenticated}">로그인</a>
+             <a class="nav-item nav-link" href="/register" th:if="${!isAuthenticated}">회원가입</a>
+        </div>
+    </div>
+
+
+</div>
