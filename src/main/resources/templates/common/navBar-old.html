@@ -1,0 +1,93 @@
+<div class="container topBar" th:fragment="content">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" th:with="isAuthenticated=${#authorization.expression('isAuthenticated()')}">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/"><img class="logo" src="/img/logo.png" alt="로고 이미지"></a>
+        <!-- 카테고리 드롭다운 버튼 -->
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            카테고리
+        </button>
+        <!-- 카테고리 드롭다운 메뉴 -->
+        <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+            <!-- 부모 카테고리: 패션의류/잡화 -->
+            <li class="dropdown-submenu">
+                <div class="dropdown dropdown-hover">
+                <a class="dropdown-item dropdown-toggle" href="#" id="fashionClothingAccessories">패션의류/잡화</a>
+                <!-- 자식 카테고리 메뉴 -->
+                <ul class="dropdown-menu" aria-labelledby="fashionClothingAccessories">
+                    <li><a class="dropdown-item dropdown-toggle" href="#" id="menFashion" data-bs-toggle="dropdown" aria-expanded="false">남성 패션</a>
+                        <ul class="dropdown-menu" aria-labelledby="menFashion">
+                            <li><a class="dropdown-item" href="#">의류</a></li>
+                            <li><a class="dropdown-item" href="#">속옷/잠옷</a></li>
+                            <li><a class="dropdown-item" href="#">신발</a></li>
+                            <li><a class="dropdown-item" href="#">가방/잡화</a></li>
+                        </ul>
+                    </li>
+                    <li><a class="dropdown-item" href="#">여성 패션</a></li>
+                    <li><a class="dropdown-item" href="#">남여 공용 의류</a></li>
+                    <li><a class="dropdown-item" href="#">유아동패션</a></li>
+                </ul>
+                </div>
+            </li>
+            <li><a class="dropdown-item" href="#">뷰티</a></li>
+            <li><a class="dropdown-item" href="#">출산/유아등</a></li>
+            <li><a class="dropdown-item" href="#">식품</a></li>
+            <li><a class="dropdown-item" href="#">주방용품</a></li>
+            <li><a class="dropdown-item" href="#">생활용품</a></li>
+            <li><a class="dropdown-item" href="#">홈인테리어</a></li>
+            <li><a class="dropdown-item" href="#">가전디지털</a></li>
+            <li><a class="dropdown-item" href="#">스포츠/레저</a></li>
+            <li><a class="dropdown-item" href="#">자동차용품</a></li>
+            <li><a class="dropdown-item" href="#">도서/음반/DVD</a></li>
+            <li><a class="dropdown-item" href="#">완구/취미</a></li>
+            <li><a class="dropdown-item" href="#">문구/오피스</a></li>
+            <li><a class="dropdown-item" href="#">반려동물용품</a></li>
+            <li><a class="dropdown-item" href="#">헬스/건강식품</a></li>
+        </ul>
+        <!-- 모바일 화면에서 표시될 토글 버튼 -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <form class="d-flex w-100" action="/product/search" method="get">
+                    <input class="form-control me-2 searchInput" name="q" type="search" placeholder="검색" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">검색</button>
+                </form>
+            </ul>
+            <ul class="navbar-nav">
+
+                <li class="nav-item" th:if="${!isAuthenticated}">
+                    <a class="nav-link" href="/login">로그인</a>
+                </li>
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''자영업자'')')}">
+                    <a class="nav-link" href="/order/list">마이페이지</a>
+                </li>
+<!--                <li class="nav-item" th:if="${#authorization.expression('hasRole(''자영업자'')')}">-->
+<!--                    <a class="nav-link" href="/order/list">주문내역</a>-->
+<!--                </li>-->
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''자영업자'')')}">
+                    <a class="nav-link" href="/cart">장바구니</a>
+                </li>
+
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''판매자'')')}">
+                    <a class="nav-link" href="/seller">판매자페이지</a>
+                </li>
+
+                <li class="nav-item" th:if="${#authorization.expression('hasRole(''관리자'')')}">
+                    <a class="nav-link" href="/admin">관리자 페이지</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/register" th:if="${!isAuthenticated}">회원가입</a>
+                </li>
+
+                <li class="nav-item" th:if="${isAuthenticated}">
+                    <a class="nav-link" href="/logout">로그아웃</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+</div>
