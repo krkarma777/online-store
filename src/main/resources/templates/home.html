@@ -8,7 +8,6 @@
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
         body {
-            font-family: 'Nunito', sans-serif;
             margin-top: 20px;
         }
 
@@ -87,6 +86,7 @@
         }
 
         .promotions {
+            margin-top: 50px;
             background-color: #e8f8e9; /* 프로모션 및 이벤트 섹션 배경색 */
         }
 
@@ -139,13 +139,112 @@
         .products li {
             margin-bottom: 30px; /* 원하는 간격으로 조정 */
         }
+        /* 기존 스타일 유지 */
+        .carousel-container {
+            position: relative;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        .carousel-image {
+            display: none;
+            max-width: 100%; /* 이미지의 최대 너비를 슬롯에 맞춤 */
+            max-height: 100%; /* 이미지의 최대 높이를 슬롯에 맞춤 */
+            transition: opacity 0.5s;
+            object-fit: cover;
+        }
+
+        .carousel-image.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .carousel-shadow-area {
+            position: absolute;
+            top: 5%;
+            bottom: 8%; /* 하단 정렬을 위한 설정 */
+            right: 20%; /* 우측 여백 설정 */
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            width: 5%; /* 부모 대비 너비 비율 */
+            height: 90%; /* 부모 대비 높이 비율, 필요에 따라 조정 */
+            gap: 0;
+            transition: all 0.3s ease; /* 부드러운 전환 효과 */
+        }
+
+
+        .shadow-slot {
+            border: 1px solid lightgray; /* 각 슬롯의 기본 테두리 색상 */
+            background-color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center; /* 텍스트 중앙 정렬 */
+            transition: border-color 0.3s; /* 테두리 색상 변경 애니메이션 */
+            margin: 0; /* 외부 여백 제거 */
+            padding: 0; /* 내부 여백 제거 */
+            height: 100%; /* 높이 설정, 필요에 따라 조정 */
+        }
+
+        .shadow-slot:hover {
+            border-color: darkgreen; /* 마우스 오버 시 테두리 색상 */
+        }
+
+        /* 중간 크기의 화면에서 적용할 스타일 */
+        @media (max-width: 1600px) {
+            .carousel-shadow-area {
+                position: absolute;
+                grid-template-rows: repeat(6, 1fr);
+                width: 15%; /* 화면 크기에 따라 너비 조정 */
+                margin: auto;
+            }
+            .carousel-img {
+                max-height: 80%;
+            }
+            .shadow-slot {
+                width: 60%;
+                height: 80%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .carousel-shadow-area {
+                position: relative;
+                width: 100%;
+                bottom: auto;
+                right: auto;
+                grid-template-columns: repeat(3, 1fr); /* 모바일에서는 가로로 3개의 아이템을 보여줍니다 */
+                grid-template-rows: none;
+                gap: 5px;
+            }
+        }
+
+
     </style>
 </head>
 <body>
 
 <div th:replace="~{common/navBar :: content}"></div>
-
+<div th:replace="~{common/navBar2 :: content}"></div>
+<div>
+    <div class="carousel-container">
+        <img src="/img/main-carousel/1.jpg" class="carousel-image active" alt="Image 1">
+        <img src="/img/main-carousel/2.jpg" class="carousel-image" alt="Image 2">
+        <img src="/img/main-carousel/3.jpg" class="carousel-image" alt="Image 3">
+        <img src="/img/main-carousel/4.jpg" class="carousel-image" alt="Image 4">
+        <img src="/img/main-carousel/5.jpg" class="carousel-image" alt="Image 5">
+        <img src="/img/main-carousel/6.jpg" class="carousel-image" alt="Image 6">
+        <div class="carousel-shadow-area">
+            <div class="shadow-slot" data-index="0"><img class="carousel-img" src="/img/main-carousel/item1.jpg" alt="img"></div>
+            <div class="shadow-slot" data-index="1"><img class="carousel-img" src="/img/main-carousel/item2.jpg" alt="img"></div>
+            <div class="shadow-slot" data-index="2"><img class="carousel-img" src="/img/main-carousel/item3.jpg" alt="img"></div>
+            <div class="shadow-slot" data-index="3"><img class="carousel-img" src="/img/main-carousel/item4.jpg" alt="img"></div>
+            <div class="shadow-slot" data-index="4"><img class="carousel-img" src="/img/main-carousel/item5.jpg" alt="img"></div>
+            <div class="shadow-slot" data-index="5"><img class="carousel-img" src="/img/main-carousel/item6.jpg" alt="img"></div>
+        </div>
+    </div>
+</div>
 <div class="container mt-4">
+
     <!-- 프로모션 및 이벤트 안내 -->
     <section class="promotions mb-4">
         <h2 class="section-header">프로모션 및 이벤트</h2>
@@ -184,7 +283,6 @@
                         <a th:href="'product/'+${popularProduct.productID}">
                         <h5 class="card-title" th:text="${popularProduct.productName}">상품명</h5>
                         <p class="card-text" th:text="${#numbers.formatDecimal(popularProduct.price, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
-                        <a class="btn btn-primary" th:href="'product/'+${popularProduct.productID}">상세보기</a>
                         </a>
                     </div>
                 </div>
@@ -209,7 +307,6 @@
                             <a th:href="'product/'+${product.productID}">
                             <h5 class="card-title" th:text="${product.productName}">상품 이름</h5>
                             <p th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></p>
-                            <a class="btn btn-primary" th:href="'product/'+${product.productID}">상세보기</a>
                             </a>
                         </div>
                     </div>
@@ -223,5 +320,77 @@
 <div th:replace="~{common/footer2 :: footer2}"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+
+        console.log(
+            '%c\n' +
+            '                                                                        ,,\n' +
+            '                                                                       /  ,\n' +
+            '                                                                      /   /\n' +
+            '                                                                     /   /\n' +
+            '                                                                    /   /\n' +
+            '    ___________________________                                    /   /\n' +
+            '    ⎢                         ⎥                                   /   /\n' +
+            '    ⎢   오유준 포트폴리오     ⎥                                  /   /\n' +
+            '    ⎢____    _________________⎥                                 /   /\n' +
+            '          \\/    ,      ,,                                      /   /\n' +
+            '               /'+'%c@'+'%c\\____/'+'%c@'+'%c \\                                ____/   /\n' +
+            '              /           \\                         _____/        /__\n' +
+            '        /" \\ / •    •      \\                     __/             /  '+'%c@@'+'%c"\\\n' +
+            '        \\    '+'%c@@'+'%c  ㅅ  '+'%c@@'+'%c     /___             ___/                /    _/\n' +
+            '       /" \\   \\                 \\__________/                    |__/ "\\\n' +
+            '       \\   \\                                                   /      /\n' +
+            '        \\    \\  __                                                  _/\n' +
+            '         \\                                                       __/\n' +
+            '           \\_                                             ______/\n' +
+            '              \\ ___                                    __/\n' +
+            '                    \\__                             __/\n' +
+            '                        \\_____                _____/\n' +
+            '                              \\______________/\n' +
+            '\n',
+
+            'font-weight: bold;',
+            'font-weight: bold; color: #ff7777',
+            'font-weight: bold;',
+            'font-weight: bold; color: #ff7777',
+            'font-weight: bold;',
+            'font-weight: bold; color: #ff7777',
+            'font-weight: bold;',
+            'font-weight: bold; color: #ff7777',
+            'font-weight: bold;',
+            'font-weight: bold; color: #ff7777',
+            'font-weight: bold;'
+        );
+        console.log('>> %chttps://github.com/krkarma777', 'font-family:monospace; font-weight: bold');
+
+
+        let currentImageIndex = 0;
+        const images = $(".carousel-image");
+        const shadowSlots = $(".shadow-slot"); // 쉐도우 슬롯 선택자 추가
+        const totalImages = images.length;
+
+        function changeImage(index) {
+            images.removeClass('active').eq(index).addClass('active');
+            shadowSlots.css('border', '1px solid lightgray').eq(index).css('border', '2px solid darkgreen'); // 모든 슬롯의 테두리를 기본으로 설정하고, 활성 슬롯의 테두리를 초록색으로 설정
+        }
+
+        function nextImage() {
+            currentImageIndex = (currentImageIndex + 1) % totalImages;
+            changeImage(currentImageIndex);
+        }
+        // 페이지 로드 시 첫 번째 이미지와 관련된 쉐도우 슬롯에 초록색 테두리 적용
+        changeImage(currentImageIndex);
+
+        setInterval(nextImage, 2000);
+
+        $('.shadow-slot').on('mouseenter', function() {
+            const index = $(this).data('index');
+            currentImageIndex = index; // 현재 이미지 인덱스 업데이트
+            changeImage(index);
+        });
+    });
+</script>
 </body>
 </html>
