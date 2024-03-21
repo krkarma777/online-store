@@ -10,8 +10,61 @@
 
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-        body {
-            background-color: #f5f5f5;
+        .container {
+            padding-bottom: 100px;
+        }
+        .card {
+            background-color: #e9f4ea; /* 카드 배경색을 연한 초록색 계열로 설정 */
+            border: 1px solid #4CAF50; /* 카드 테두리 색상을 진한 초록색으로 설정 */
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1); /* 카드에 그림자 효과 추가 */
+            border-radius: 10px; /* 카드 모서리를 둥글게 */
+        }
+        .card-header, .btn-primary, .input-group-text, .address-btn {
+            background-image: linear-gradient(145deg, #20c997, #4CAF50); /* 그라디언트 배경 적용 */
+            color: white; /* 텍스트 색상을 흰색으로 */
+        }
+        .form-signin input[type="text"], .form-signin input[type="email"], .form-signin input[type="password"], .form-control {
+            border-radius: 0.25rem; /* 입력 필드 모서리 둥글게 */
+            border: 1px solid #ced4da; /* 입력 필드 테두리 색상 설정 */
+        }
+        .btn-outline-secondary {
+            border-color: #4CAF50; /* 버튼 테두리 색상을 초록색으로 설정 */
+            color: white; /* 버튼 텍스트 색상을 초록색으로 설정 */
+        }
+        .btn-outline-secondary:hover {
+            background-color: #4CAF50; /* 버튼 배경색을 초록색으로 설정 */
+            color: white; /* 버튼 텍스트 색상을 흰색으로 설정 */
+        }
+        .form-floating > label {
+            color: #6c757d; /* 라벨 색상 설정 */
+            background-color: transparent; /* 라벨 배경색 투명으로 */
+        }
+        .invalid-feedback {
+            color: #ff3860; /* 유효하지 않은 입력값 피드백 색상 설정 */
+        }
+        .btn-primary {
+            display: block; /* 버튼을 블록 요소로 설정 */
+            width: 100%; /* 버튼의 너비를 100%로 설정 */
+            margin-top: 20px; /* 상단 여백 추가 */
+        }
+        .btn-primary {
+            display: block;
+            margin: 0 auto;
+        }
+
+
+        .btn-primary {
+            border: none;
+        }
+
+
+
+        .invalid-feedback {
+            color: #e57373;
+        }
+
+        .form-floating > label {
+            background-color: transparent;
         }
         .form-signin {
             width: 100%;
