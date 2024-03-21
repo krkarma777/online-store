@@ -6,10 +6,9 @@
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/common.css">
+
   <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-    }
     .login-container {
       max-width: 400px;
       margin: 5% auto;
@@ -23,44 +22,33 @@
       font-size: 1.5rem;
       color: #333;
     }
-    /* 로그인 및 소셜 로그인 버튼 스타일 */
-    .login-form button, .social-login-button {
+    .login-form button {
       width: 100%;
       height: 48px;
       border-radius: 0.25rem;
       margin-bottom: 10px;
       font-size: 1rem;
       border: none;
-      transition: background-color 0.2s;
+      transition: background-color 0.2s, transform 0.15s ease;
+      background-image: linear-gradient(to right, #38ef7d, #11998e); /* 초록색 계열 그라디언트 */
+      color: white;
     }
-    /*.social-login-button.kakao {*/
-    /*  background-color: #FEE500;*/
-    /*  color: #391B1B;*/
-    /*}*/
-    /*.social-login-button.naver {*/
-    /*  background-color: #2DB400;*/
-    /*  color: white;*/
-    /*}*/
-    /*.social-login-button.google {*/
-    /*  background-color: #DB4437;*/
-    /*  color: white;*/
-    /*}*/
-    .login-form button:hover, .social-login-button:hover {
+    .login-form button:hover {
       opacity: 0.8;
+      transform: translateY(-1px);
+      box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
     }
-    /* 수정된 소셜 로고 스타일 */
     .social-logo {
-      width: 60px; /* 로고의 너비를 지정 */
-      height: auto; /* 높이를 자동으로 조절하여 비율을 유지 */
-      display: inline; /* 이미지를 블록 요소로 만들어 줄바꿈 */
-      margin: 0 auto 10px; /* 상하 마진 없음, 좌우 마진 자동, 하단에는 10px 마진 추가 */
+      width: 60px;
+      height: auto;
+      display: inline;
+      margin: 0 auto 10px;
     }
-    /* 추가된 스타일 */
     .social-login-buttons a {
-      display: inline-block; /* 버튼을 인라인 블록으로 표시 */
-      margin-right: 10px; /* 버튼 사이의 간격 */
+      display: inline-block;
+      margin-right: 10px;
       text-decoration: none;
-      color: inherit; /* 링크 색상을 상속받아 변경되지 않도록 함 */
+      color: inherit;
     }
     .login-form {
       margin-bottom: 1rem;
@@ -70,19 +58,15 @@
       margin-bottom: 1rem;
       border: 1px solid #ced4da;
       border-radius: 0.25rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .login-form input:focus {
+      border-color: #38ef7d; /* 초록색 계열의 테두리 색상 */
+      box-shadow: 0 0 0 0.2rem rgba(56, 239, 125, 0.25); /* 부드러운 초록색 그림자 */
     }
     .login-form button {
-      width: 100%;
-      height: 48px;
-      border-radius: 0.25rem;
       background-color: #007bff;
       color: white;
-      font-size: 1rem;
-      border: none;
-      transition: background-color 0.2s;
-    }
-    .login-form button:hover {
-      background-color: #0056b3;
     }
     .login-form-link {
       text-align: center;
@@ -132,23 +116,27 @@
         <div th:if="${param.error}">
           <p class="error-message">이메일 또는 비밀번호를 다시 확인하세요. 씨드에 등록되지 않은 아이디거나, 아이디 또는 비밀번호를 잘못 입력하셨습니다.</p>
         </div>
+        <button type="submit" class="btn btn-primary">로그인</button>
         <!-- 로그인 폼 내부에 체크박스 추가 -->
-        <div class="form-check" style="margin-top: 10px;">
+        <div class="center-align">
+        <div class="form-check" style="display: inline-block; margin-top: 10px; padding-right: 20px">
           <input style="height: 18px; position: relative; bottom: 6px;" type="checkbox" class="form-check-input" id="saveId" name="saveId">
           <label class="form-check-label" for="saveId">아이디 저장</label>
         </div>
-        <button type="submit" class="btn btn-primary">로그인</button>
-        <div class="social-login">
-        <a href="/oauth2/authorization/kakao" class="social-login-button kakao"><img src="/img/kakaoIco.png" class="social-logo"></a>
-        <a href="/oauth2/authorization/naver" class="social-login-button naver"><img src="/img/naverIco.png" class="social-logo"></a>
-       </div>
-        <hr>
-        <a href="/register" class="login-form-link">회원가입</a>
-        <div class="login-form-footer">
-          ©Test. All rights reserved.
-
+        <div class="form-check" style="display: inline-block; margin-top: 10px;">
+          <input style="height: 18px; position: relative; bottom: 6px;" type="checkbox" class="form-check-input" id="keepLoggedInBtn" name="keepLoggedInBtn">
+          <label class="form-check-label" for="keepLoggedInBtn">로그인 상태 유지</label>
         </div>
-
+        </div>
+        <div class="social-login">
+          <a href="/oauth2/authorization/kakao" class="social-login-button kakao"><img class="social-logo" src="/img/kakaoIco.png" alt="Kakao login"></a>
+          <a href="/oauth2/authorization/naver" class="social-login-button naver"><img class="social-logo" src="/img/naverIco.png" alt="Naver login"></a>
+        </div>
+        <hr>
+        <a href="/register" class="login-form-link" style="color: black; text-decoration: none">회원가입</a>
+        <div class="login-form-footer">
+          ©SEED. All rights reserved.
+        </div>
       </form>
     </div>
   </div>
