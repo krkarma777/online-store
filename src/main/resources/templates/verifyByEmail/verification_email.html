@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>이메일 인증</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            margin: 0 auto;
-            width: 60%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+
         h2 {
-            color: #333;
+            color: #006400; /* 짙은 초록색 */
         }
-        p {
-            color: #666;
-        }
-        .btn {
+        .btn, .submit-btn {
             display: inline-block;
-            background-color: #007bff;
+            background-color: #4CAF50; /* 진한 민트색 */
             color: #fff;
             padding: 10px 20px;
             text-decoration: none;
-            margin-top: 20px;
-            border-radius: 5px;
+            margin: 20px 20px;
+            cursor: pointer;
+            border: none; /* 테두리 제거 */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 버튼 그림자 추가 */
         }
         .email-form {
             margin-top: 20px;
@@ -34,33 +30,52 @@
             margin: 10px 0;
             width: calc(100% - 22px);
             box-sizing: border-box;
+            border-radius: 5px; /* 입력 필드 둥근 모서리 추가 */
+            border: 1px solid #ced4da; /* 입력 필드 테두리 색상 조정 */
         }
-        .submit-btn {
-            background-color: #28a745;
-            border: none;
-            padding: 10px 20px;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
+
+        .center {
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .email-input {
+            width: 400px;
+        }
+
+        .box {
+            padding: 40px;
+            margin-top: 50px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+            max-width: 600px; /* 너비 조정 */
+        }
+
+        .email-form p {
+            color: #495057; /* 설명 텍스트 색상 조정 */
         }
     </style>
 </head>
 <body>
-<div class="container">
+<div th:replace="~{common/navBar :: content}"></div>
+<div th:replace="~{common/navBar2 :: content}"></div>
+<div class="container shadow center box">
     <h2>이메일 인증을 위한 메일입니다.</h2>
     <p>안녕하세요, <span th:text="${user.username}">사용자</span>님!</p>
-    <p>회원가입을 완료하려면 아래의 링크를 클릭해 주세요:</p>
+    <p>회원가입을 완료하려면 아래의 링크를 클릭해 주세요.</p>
     <form th:action="@{/verify/send}" method="post">
         <input type="hidden" name="email" th:value="${user.email}">
         <input type="hidden" name="username" th:value="${user.username}">
-    <button class="btn">이메일 인증하기</button>
+    <button class="submit-btn">이메일 인증하기</button>
     </form>
     <p>이 링크는 24시간 동안 유효합니다.</p>
+    <hr>
 
     <div class="email-form">
-        <p>이메일 주소를 변경하시려면 아래에 새 이메일 주소를 입력하고, '이메일 인증하기' 버튼을 클릭해 주세요.</p>
+        <p>이메일 주소를 변경하시려면 아래에 새 이메일 주소를 입력하고, <br>'이메일 인증하기' 버튼을 클릭해 주세요.</p>
         <form th:action="@{/verify/send}" method="post">
-            <input type="email" name="email" required placeholder="새 이메일 주소 입력" class="email-input">
+            <input type="email" name="email" id="email-input" required placeholder="새 이메일 주소 입력" class="email-input">
             <input type="hidden" name="username" th:value="${user.username}">
             <button type="submit" class="submit-btn">이메일 인증하기</button>
         </form>
