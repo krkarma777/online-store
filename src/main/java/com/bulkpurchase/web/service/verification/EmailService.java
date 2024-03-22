@@ -3,21 +3,17 @@ package com.bulkpurchase.web.service.verification;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.entity.user.VerificationToken;
 import com.bulkpurchase.domain.enums.UserStatus;
-import com.bulkpurchase.domain.repository.VerificationTokenRepository;
 import com.bulkpurchase.domain.service.VerificationTokenService;
 import com.bulkpurchase.domain.service.user.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -40,15 +36,15 @@ public class EmailService {
         String mailContent =
                 "<html>" +
                         "<body style='font-family: Arial, sans-serif; color: #333;'>" +
-                        "   <div style='max-width: 600px; margin: 20px auto; border: 1px solid #ddd; padding: 20px;'>" +
-                        "       <h2 style='color: #007bff; text-align: center;'>Seed 회원 인증</h2>" +
-                        "       <p style='font-size: 16px;'>" +
+                        "   <div style='max-width: 600px; margin: 20px auto; border: 1px solid #ddd; padding: 20px; background-color: #f0f8f7;'>" +
+                        "       <h2 style='color: #2e8b57; text-align: center;'>Seed 회원 인증</h2>" +
+                        "       <p style='font-size: 16px; text-align: center;'>" +
                         "           안녕하세요, <strong>" + user.getRealName() + "</strong>님! Seed에 오신 것을 환영합니다.<br>" +
                         "           계정 활성화를 위해 아래의 버튼을 클릭해 주세요." +
                         "       </p>" +
                         "       <div style='text-align: center; margin: 40px 0;'>" +
                         "           <a href='http://localhost:9090/verify/result?token=" + token + "'" +
-                        "              style='display: inline-block; background-color: #007bff; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>" +
+                        "              style='display: inline-block; background-color: #2e8b57; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px;'>" +
                         "               계정 활성화" +
                         "           </a>" +
                         "       </div>" +
@@ -106,11 +102,19 @@ public class EmailService {
     }
 
     public VerificationToken createVerificationToken(User user) {
-        VerificationToken myToken = new VerificationToken();
-        myToken.setUser(user);
+        VerificationToken myToken = null;
         String token = UUID.randomUUID().toString();
-        myToken.setToken(token);
-        myToken.setExpiryDate(LocalDateTime.now().plusHours(24)); // 24시간 후 만료
+        Optional<VerificationToken> tokenOpt = verificationTokenService.findByUserUserID(user.getUserID());
+        if (tokenOpt.isEmpty()) {
+            myToken = new VerificationToken();
+            myToken.setUser(user);
+            myToken.setToken(token);
+            myToken.setExpiryDate(LocalDateTime.now().plusHours(24)); // 24시간 후 만료
+        } else {
+            myToken = tokenOpt.get();
+            myToken.setToken(token);
+            myToken.setExpiryDate(LocalDateTime.now().plusHours(24)); // 24시간 후 만료
+        }
         return verificationTokenService.save(myToken);
     }
 
