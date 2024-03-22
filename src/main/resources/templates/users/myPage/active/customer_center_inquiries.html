@@ -9,16 +9,21 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
+        /* 기본 배경과 텍스트 색상 */
+        body {
+            color: #004d40; /* 어두운 초록색 텍스트 */
+        }
         /* 문의 목록 커스텀 스타일 */
         .inquiry-list-header {
-            border-bottom: 2px solid #007bff;
+            border-bottom: 2px solid #2e8b57; /* 변경된 초록색 */
             margin-bottom: 15px;
             padding-bottom: 5px;
+            color: #006400; /* 진한 초록색 */
         }
 
         .list-group-item-action:hover {
-            background-color: #f8f9fa;
-            border-left: 4px solid #007bff;
+            background-color: #e0f2f1; /* 연한 초록색 배경 */
+            border-left: 4px solid #2e8b57; /* 변경된 초록색 */
             transform: scale(1.02);
             transition: all 0.3s ease-in-out;
         }
@@ -27,6 +32,10 @@
             display: block;
             margin-top: 5px;
             color: #6c757d;
+        }
+
+        .shadow {
+            box-shadow: 0 4px 8px 0 rgba(0, 128, 0, 0.2); /* 그림자를 초록색 계열로 조정 */
         }
     </style>
 </head>
@@ -39,7 +48,7 @@
 
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow p-4">
-            <h2 class="mb-4 center-align">고객센터 문의</h2>
+            <h2 class="mb-4 center-align" style="color: #006400;">고객센터 문의</h2> <!-- 제목 색상도 변경 -->
 
             <!-- 문의 목록 -->
             <div>
@@ -57,6 +66,7 @@
             <!-- 메인 컨텐츠 끝 -->
         </div>
     </div>
+</div>
 
 <div th:replace="~{common/footer :: footer}"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

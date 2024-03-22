@@ -9,14 +9,54 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-        .coupon-section {
-            background: white;
-            margin-top: 200px;
+        .coupon-section, .coupon-list-section {
+            margin-top: 20px;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .redeem h2 {
+
+        /* 쿠폰 코드 입력 섹션의 스타일 개선 */
+        .redeem {
+            position: relative;
+        }
+
+        /* '쿠폰 받기' 버튼을 오른쪽에 배치 */
+        .redeem button[type="submit"] {
+            position: absolute;
+            right: 0;
+            top: 0;
+            margin-top: 31px; /* Label과 input의 높이에 맞춰 조정 */
+        }
+
+        /* 쿠폰 필터 버튼들과 테이블 사이의 간격 조정 */
+        .coupon-list-section .coupon-filter {
+            margin-bottom: 30px; /* 더 많은 간격 추가 */
+            text-align: center;
+        }
+
+        /* 테이블 스타일 조정 */
+        .table-responsive {
+            overflow-x: auto; /* 좌우 스크롤 가능하도록 설정 */
+        }
+
+        /* 쿠폰 필터 버튼 스타일 개선 */
+        .coupon-filter button {
+            margin: 5px; /* 버튼 사이의 간격 조정 */
+            transition: transform 0.3s ease; /* 클릭 시 약간의 애니메이션 효과 추가 */
+        }
+
+        .coupon-filter button:hover {
+            transform: translateY(-2px); /* 마우스 오버 시 버튼이 약간 위로 움직이도록 */
+        }
+
+        /* 테이블 헤더 스타일 변경 */
+        .table thead th {
+            background-color: #2e7d32; /* 헤더 배경색 변경 */
+            color: #fff; /* 헤더 글씨색 변경 */
+        }
+        .redeem h2, .coupon-list h2 {
+            color: #2e7d32; /* Dark green text */
             margin-bottom: 20px;
             text-align: center;
         }
@@ -27,47 +67,53 @@
         }
         .redeem label {
             font-weight: bold;
+            color: #4caf50; /* Green text */
         }
         .redeem input[type="text"] {
             border-radius: 5px;
             border: 1px solid #ced4da;
             padding: 10px;
+            background-color: #e8f5e9; /* Lighter green background */
         }
-        .redeem button[type="submit"] {
-            background-color: #007bff;
+        .redeem button[type="submit"], .coupon-filter button {
+            background-color: #4caf50; /* Bootstrap green for buttons */
             color: white;
             padding: 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.2s;
+            margin-bottom: 100px;
         }
-        .redeem button[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        .coupon-section, .coupon-list-section {
-            background: white;
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .redeem h2, .coupon-list h2 {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .coupon-filter {
-            margin-bottom: 20px;
-            text-align: center;
+        .redeem button[type="submit"]:hover, .coupon-filter button:hover {
+            background-color: #388e3c; /* Darker green on hover */
         }
         .coupon-filter button {
             margin: 0 10px;
         }
         .no-coupons {
+            color: #388e3c; /* Dark green text for "no coupons" message */
             text-align: center;
             margin-top: 20px;
         }
-        /* 새로운 스타일 */
+        .table-hover tbody tr:hover {
+            background-color: #e8f5e9; /* Light green for table row hover */
+        }
+        .table-dark {
+            background-color: #4caf50; /* Green background for table header */
+            color: white;
+        }
+        /* Modal styles */
+        .modal-content {
+            border: 2px solid #4caf50; /* Green border for modal */
+        }
+        .modal-header {
+            background-color: #4caf50; /* Green background for modal header */
+            color: white;
+        }
+        .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
         .modal-dialog {
             display: flex;
             align-items: center;
@@ -86,25 +132,24 @@
 
         <div class="col-md-9">
             <div class="coupon-section">
-                <h2>쿠폰 코드 입력</h2>
+                <h2 class="text-center ">쿠폰 코드 입력</h2>
                 <form class="redeem" th:action="@{/coupons/redeem}" method="post" id="couponForm">
                     <div class="mb-3">
                         <label for="code" class="form-label">쿠폰 코드:</label>
                         <input type="text" class="form-control" id="code" name="code" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">쿠폰 받기</button>
+                    <button type="submit" class="btn btn-primary ">쿠폰 받기</button>
                 </form>
             </div>
             <div class="coupon-list-section">
-                <h2 class="mb-3 text-center">내 쿠폰 목록</h2>
-                <div class="coupon-filter">
+                <div class="coupon-filter center-align">
                     <button type="button" class="btn btn-outline-primary" id="all-coupons">전체</button>
                     <button type="button" class="btn btn-outline-success" id="active-coupons">사용 가능</button>
                     <button type="button" class="btn btn-outline-secondary" id="used-coupons">사용 완료 / 기간 만료</button>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
-                        <thead class="table-dark">
+                        <thead class="table">
                         <tr>
                             <th scope="col">쿠폰 이름</th>
                             <th scope="col">할인율</th>

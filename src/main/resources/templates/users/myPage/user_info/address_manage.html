@@ -9,8 +9,8 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
-        .btn-custom-primary {
-            background-color: #007bff;
+        .btn-custom-primary, .btn-primary {
+            background-color: #28a745; /* 버튼 색상 변경 */
             color: white;
             border: none;
             padding: 10px 20px;
@@ -19,8 +19,12 @@
             transition: all 0.3s ease;
         }
 
-        .btn-custom-primary:hover {
-            background-color: #0056b3;
+        .btn-custom-primary:hover, .btn-primary:hover {
+            background-color: #218838; /* 버튼 호버 색상 변경 */
+        }
+
+        .btn-secondary {
+            background-color: #6c757d; /* "닫기" 버튼 색상 조정 */
         }
 
         .table-custom {
@@ -30,13 +34,14 @@
         }
 
         .table-custom thead th {
-            background-color: #f8f9fa;
+            background-color: #e8f5e9; /* 테이블 헤더 배경색 변경 */
             border: none;
+            color: #2e7d32; /* 테이블 헤더 글자색 변경 */
         }
 
         .table-custom tbody tr {
-            background-color: #fff;
-            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.1);
+            background-color: #f0f4f7; /* 테이블 바디 행 배경색 변경 */
+            box-shadow: 0 8px 16px 0 rgba(0, 128, 0, 0.2); /* 테이블 바디 행 그림자 색상 변경 */
             border-radius: 5px;
         }
 
@@ -57,7 +62,12 @@
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
         }
+
+        .shadow {
+            box-shadow: 0 4px 8px rgba(0, 128, 0, 0.1); /* 컨테이너 그림자 색상 변경 */
+        }
     </style>
+
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>

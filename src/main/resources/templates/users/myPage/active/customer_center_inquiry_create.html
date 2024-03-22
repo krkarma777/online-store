@@ -12,24 +12,27 @@
         .form-group {
             margin-bottom: 15px;
         }
-
         label {
             margin-bottom: 5px;
             font-weight: bold;
+            color: #006400; /* 진한 초록색으로 라벨 색 변경 */
         }
-
         .btn-primary {
+            background-color: #228B22; /* 버튼 배경색을 진한 초록색으로 변경 */
+            border-color: #006400; /* 버튼 테두리를 더 진한 초록색으로 변경 */
             width: 100%;
             padding: 10px;
             font-size: 16px;
         }
-
         #inquiryForm input, #inquiryForm textarea, #inquiryForm select {
             border-radius: 5px;
+            border: 1px solid #006400; /* 입력 필드 테두리를 진한 초록색으로 변경 */
         }
-
         #inquiryForm textarea {
             resize: vertical;
+        }
+        .shadow {
+            box-shadow: 0 4px 8px 0 rgba(0, 128, 0, 0.2); /* 그림자를 초록색 계열로 조정 */
         }
     </style>
 </head>
@@ -42,7 +45,7 @@
 
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow">
-            <h2 class="mb-4 center-align">고객센터 문의</h2>
+            <h2 class="mb-4 center-align" style="color: #228B22;">고객센터 문의</h2> <!-- 제목 색상 변경 -->
             <!-- 문의 생성 폼 -->
             <div class="mt-5">
                 <form th:action="@{/inquiry}" id="inquiryForm" method="post">
@@ -58,7 +61,7 @@
                     </div>
                     <div class="form-group">
                         <label for="inquiryContent">문의 내용</label>
-                        <textarea class="form-control" id="inquiryContent" name="inquiryContent" rows="12"></textarea>
+                        <textarea class="form-control" id="inquiryContent" name="inquiryContent" rows="16"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">문의하기</button>
                 </form>
@@ -67,6 +70,7 @@
         <!-- 메인 컨텐츠 끝 -->
     </div>
 </div>
+
 
 <div th:replace="~{common/footer :: footer}"></div>
 <script>

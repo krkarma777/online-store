@@ -24,21 +24,22 @@
         }
 
         .product-item {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 128, 0, 0.2); /* 초록색 계열 그림자 */
             transition: transform 0.3s ease-in-out;
             border-radius: 5px;
-            background-color: #f9f9f9;
+            background-color: #f0f5f0; /* 연한 초록색 배경 */
         }
 
         .product-item:hover {
             transform: scale(1.03);
+            background-color: #e6efe6; /* 마우스 호버시 배경색 */
         }
 
         .select-actions {
-            background-color: #e1f5fe;
+            background-color: #d4edda; /* 선택 액션 영역 배경색 */
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #b3e5fc;
+            border: 1px solid #c3e6cb; /* 경계선 색상 */
             margin-bottom: 20px; /* Adjust based on layout */
         }
 
@@ -53,7 +54,35 @@
         .margin-left {
             margin-left: 20px;
         }
+
+        /* 부트스트랩 버튼 색상을 초록색 계열로 변경 */
+        .btn-outline-primary {
+            color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-outline-primary:hover {
+            color: #fff;
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-primary {
+            background-color: #28a745; /* 주 버튼 색상 변경 */
+            border-color: #28a745; /* 경계선 색상 변경 */
+        }
+
+        .btn-danger {
+            background-color: #dc3545; /* 삭제 버튼 색상 */
+            border-color: #dc3545; /* 삭제 버튼 경계선 색상 */
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333; /* 삭제 버튼 호버 색상 */
+            border-color: #bd2130; /* 삭제 버튼 호버 경계선 색상 */
+        }
     </style>
+
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>

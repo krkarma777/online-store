@@ -14,19 +14,19 @@
         .username-masked {
             font-size: 1.2rem;
             font-weight: bold;
+            color: #004d40; /* 사용자 이름 마스크 색상 변경 */
         }
         .image-slider-container {
             margin-bottom: 20px;
         }
         .review-content {
-            background-color: #f8f9fa;
-            border-left: 5px solid #0d6efd;
+            background-color: #e8f5e9; /* 리뷰 내용 배경색 변경 */
+            border-left: 5px solid #66bb6a; /* 좌측 선 색상 변경 */
             padding: 20px;
             margin: 20px 0;
             border-radius: 5px;
             font-size: 1rem;
             line-height: 1.6;
-            color: #495057;
         }
         .like-dislike-buttons {
             display: flex;
@@ -36,17 +36,43 @@
             justify-content: center;
         }
         .card {
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
             transition: 0.3s;
-            margin-bottom: 20px; /* Increased bottom margin for spacing */
+            margin-bottom: 20px;
         }
         .card:hover {
-            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+            box-shadow: 0 8px 16px 0 rgba(76, 175, 80, 0.2); /* 카드 호버 시 그림자 색상 변경 */
         }
-        .pagination {
-            justify-content: center;
+        .pagination .page-link {
+            color: #4caf50; /* 페이지네이션 링크 색상 변경 */
+            background-color: #f0fff0; /* 페이지네이션 배경색 변경 */
+            border-color: #e7ffe6; /* 페이지네이션 경계선 색상 변경 */
+        }
+        .pagination .page-link:hover {
+            background-color: #e8f5e9; /* 페이지네이션 호버 배경색 변경 */
+            border-color: #c8e6c9; /* 페이지네이션 호버 경계선 색상 변경 */
+        }
+        .btn-primary {
+            background-color: #4caf50; /* 주 버튼 색상 변경 */
+            border-color: #4caf50; /* 주 버튼 경계선 색상 변경 */
+        }
+        .btn-danger {
+            background-color: #ef5350; /* 삭제 버튼 색상 변경 */
+            border-color: #ef5350; /* 삭제 버튼 경계선 색상 변경 */
+        }
+        .btn-outline-success {
+            color: #4caf50; /* 좋아요 버튼 텍스트 색상 변경 */
+            border-color: #4caf50; /* 좋아요 버튼 경계선 색상 변경 */
+        }
+        .btn-outline-danger {
+            color: #ef5350; /* 싫어요 버튼 텍스트 색상 변경 */
+            border-color: #ef5350; /* 싫어요 버튼 경계선 색상 변경 */
+        }
+        .btn-secondary {
+            background-color: #78909c; /* 모달 닫기 버튼 색상 변경 */
+            border-color: #78909c; /* 모달 닫기 버튼 경계선 색상 변경 */
         }
     </style>
+
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
@@ -56,7 +82,7 @@
         <div th:replace="~{common/mypage-sidebar :: sidebar}"></div>
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow">
-            <h2 class="mb-4">내 리뷰 목록</h2>
+            <h2 class="mb-4 te">내 리뷰 목록</h2>
             <!-- 리뷰들을 동적으로 추가할 부분 -->
             <div id="reviewsContainer"></div>
             <!-- 페이지네이션도 Ajax로 처리할 경우 아래 부분도 동적으로 처리 -->

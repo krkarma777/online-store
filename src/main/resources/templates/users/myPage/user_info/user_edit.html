@@ -13,8 +13,9 @@
             width: 20%;
             text-align: right;
             margin-right: 10px;
+            color: #285227; /* 라벨 텍스트 색상 */
         }
-        .fc{
+        .fc {
             display: inline-block;
             width: 75%;
         }
@@ -22,11 +23,14 @@
             width: auto;
             padding: 0.375rem 0.75rem;
         }
+        .address-btn:hover {
+            background-color: #45a049; /* 호버 상태의 버튼 배경색 */
+        }
         .form-section {
             margin-bottom: 20px;
         }
         .section-title {
-            background-color: #87CEEB;
+            background-color: #4CAF50; /* 섹션 타이틀 배경색 */
             color: white;
             padding: 10px;
             border-top-left-radius: 10px;
@@ -38,7 +42,7 @@
         }
         .section-container {
             display: flex;
-            background-color: #87CEEB;
+            background-color: #4CAF50; /* 섹션 컨테이너 배경색 */
             border-radius: 10px;
             margin-bottom: 20px;
         }
@@ -50,7 +54,19 @@
             width: 100%;
             flex: 4;
         }
+        .btn-primary {
+            background-color: #4CAF50; /* 기본 버튼 배경색 */
+            border-color: #4CAF50; /* 기본 버튼 경계선 색상 */
+        }
+        .btn-primary:hover {
+            background-color: #45a049; /* 기본 버튼 호버 상태의 배경색 */
+            border-color: #45a049; /* 기본 버튼 호버 상태의 경계선 색상 */
+        }
+        .shadow {
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2); /* 그림자 색상 변경 */
+        }
     </style>
+
 </head>
 <body>
 <div th:replace="~{common/navBar :: content}"></div>
