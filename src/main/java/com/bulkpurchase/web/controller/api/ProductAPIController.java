@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,13 +34,15 @@ public class ProductAPIController {
                                     Principal principal) {
 
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("createProductDTO", createProductDTO, "message", "잘못된 정보를 기입하셨습니다."));
+            Map<String, String> errors = bindingResult.getFieldErrors().stream()
+                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "입력 값에 오류가 있습니다.", "errors", errors));
         }
 
         User user = userAuthValidator.getCurrentUser(principal);
         Product product = new Product(createProductDTO, user);
         Long productID = productService.save(product).getProductID();
 
-        return ResponseEntity.ok(Map.of("message", "상품 등록에 성공하셨습니다.", "productID", productID));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "상품 등록에 성공하셨습니다.", "productID", productID));
     }
 }
