@@ -1,6 +1,7 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.product.ProductRequestDTO;
+import com.bulkpurchase.domain.entity.product.Category;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductService;
@@ -21,8 +22,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -170,5 +170,35 @@ class ProductAPIControllerTest {
         dto.setStock(10);
         dto.setCategoryID(1L);
         return dto;
+    }
+
+    @Test
+    @WithMockUser(username = "testUser", roles = "판매자")
+    void whenReadOneExistingProduct_thenReturnsProductInfo() throws Exception {
+        Long existingProductId = 1L;
+        Product existingProduct = new Product();
+        existingProduct.setProductID(existingProductId);
+        existingProduct.setProductName("Existing Product");
+        Category category = new Category();
+        category.setCategoryID(1L);
+        category.setName("test category");
+        existingProduct.setCategory(category);
+
+        given(productService.findById(existingProductId)).willReturn(Optional.of(existingProduct));
+
+        mockMvc.perform(get("/api/product/{productID}", existingProductId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.product.productName").value(existingProduct.getProductName()));
+    }
+
+    @Test
+    @WithMockUser(username = "testUser", roles = "판매자")
+    void whenReadOneNonExistingProduct_thenReturnsNotFoundStatus() throws Exception {
+        Long nonExistingProductId = 999L;
+        given(productService.findById(nonExistingProductId)).willReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/product/{productID}", nonExistingProductId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("존재하지 않는 상품입니다."));
     }
 }
