@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CreateProductDTO {
+public class ProductRequestDTO {
     @NotEmpty
     private String productName;
 

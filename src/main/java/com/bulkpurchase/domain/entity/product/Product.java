@@ -1,7 +1,7 @@
 package com.bulkpurchase.domain.entity.product;
 
 
-import com.bulkpurchase.domain.dto.product.CreateProductDTO;
+import com.bulkpurchase.domain.dto.product.ProductRequestDTO;
 import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.ProductStatus;
@@ -79,17 +79,26 @@ public class Product {
         return this.status == ProductStatus.ACTIVE ? ProductStatus.INACTIVE : ProductStatus.ACTIVE;
     }
 
-    public Product(CreateProductDTO createProductDTO, User user) {
-        this.productName = createProductDTO.getProductName();
-        this.description = createProductDTO.getDescription();
-        this.price = createProductDTO.getPrice();
-        this.stock = createProductDTO.getStock();
+    public Product(ProductRequestDTO productRequestDTO, User user) {
+        this.productName = productRequestDTO.getProductName();
+        this.description = productRequestDTO.getDescription();
+        this.price = productRequestDTO.getPrice();
+        this.stock = productRequestDTO.getStock();
         this.user = user;
-        this.imageUrls = createProductDTO.getImageUrls();
-        this.category = new Category(createProductDTO.getCategoryID());
+        this.imageUrls = productRequestDTO.getImageUrls();
+        this.category = new Category(productRequestDTO.getCategoryID());
     }
 
     public Product() {
+    }
+
+    public void update(ProductRequestDTO productRequestDTO) {
+        this.productName = productRequestDTO.getProductName();
+        this.description = productRequestDTO.getDescription();
+        this.price = productRequestDTO.getPrice();
+        this.stock = productRequestDTO.getStock();
+        this.imageUrls = productRequestDTO.getImageUrls();
+        this.category = new Category(productRequestDTO.getCategoryID());
     }
 }
 

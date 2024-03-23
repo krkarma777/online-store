@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.api;
 
-import com.bulkpurchase.domain.dto.product.CreateProductDTO;
+import com.bulkpurchase.domain.dto.product.ProductRequestDTO;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductService;
@@ -52,12 +52,12 @@ class ProductAPIControllerTest {
     @WithMockUser(username = "qweqwe", roles = "판매자")
     void whenCreateProductWithValidInput_thenReturnsStatusOk() throws Exception {
         // Given
-        CreateProductDTO createProductDTO = new CreateProductDTO();
-        createProductDTO.setProductName("Test Product");
-        createProductDTO.setDescription("Test Description");
-        createProductDTO.setPrice(5000.0);
-        createProductDTO.setStock(10);
-        createProductDTO.setCategoryID(1L);
+        ProductRequestDTO productRequestDTO = new ProductRequestDTO();
+        productRequestDTO.setProductName("Test Product");
+        productRequestDTO.setDescription("Test Description");
+        productRequestDTO.setPrice(5000.0);
+        productRequestDTO.setStock(10);
+        productRequestDTO.setCategoryID(1L);
 
         User user = new User();
         user.setUsername("testUser");
@@ -66,7 +66,7 @@ class ProductAPIControllerTest {
         Principal mockPrincipal = () -> "qweqwe";
 
         // Product 객체에 productID 설정
-        Product mockedProduct = new Product(createProductDTO, user);
+        Product mockedProduct = new Product(productRequestDTO, user);
         mockedProduct.setProductID(1L); // 여기서 ID를 설정합니다.
 
         given(userAuthValidator.getCurrentUser(any(Principal.class))).willReturn(user);
@@ -76,7 +76,7 @@ class ProductAPIControllerTest {
         // When & Then
         mockMvc.perform(post("/api/product")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createProductDTO))
+                        .content(objectMapper.writeValueAsString(productRequestDTO))
                         .principal(mockPrincipal)) // 목 Principal 객체 사용
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("상품 등록에 성공하셨습니다."))
@@ -88,12 +88,12 @@ class ProductAPIControllerTest {
     @WithMockUser(username = "qweqwe", roles = "판매자")
     void whenCreateProductWithInvalidInput_thenReturnsBadRequest() throws Exception {
         // Given
-        CreateProductDTO createProductDTO = new CreateProductDTO();
+        ProductRequestDTO productRequestDTO = new ProductRequestDTO();
 
         // When & Then
         mockMvc.perform(post("/api/product")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createProductDTO)))
+                        .content(objectMapper.writeValueAsString(productRequestDTO)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("잘못된 정보를 기입하셨습니다."));
     }
