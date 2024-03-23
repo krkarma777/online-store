@@ -1,6 +1,7 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.product.ProductRequestDTO;
+import com.bulkpurchase.domain.dto.product.ProductResponseDTO;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductService;
@@ -70,5 +71,16 @@ public class ProductAPIController {
         productService.save(product);
 
         return ResponseEntity.ok(Map.of("message", "상품 수정에 성공하셨습니다."));
+    }
+
+    @GetMapping("/{productID}")
+    public ResponseEntity<?> readOne(@PathVariable("productID") Long productID) {
+        Optional<Product> productOpt = productService.findById(productID);
+        if (productOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "존재하지 않는 상품입니다."));
+        }
+
+        ProductResponseDTO productResponseDTO = new ProductResponseDTO(productOpt.get());
+        return  ResponseEntity.ok(Map.of("product", productResponseDTO));
     }
 }
