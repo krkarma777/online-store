@@ -44,7 +44,7 @@ public class ProductAddController {
         }
 
         product.setUser(userAuthValidator.getCurrentUser(principal));
-        Product savedProduct = productService.saveProduct(product);
+        Product savedProduct = productService.save(product);
 
         redirectAttributes.addAttribute("productId", savedProduct.getProductID()).addAttribute("status", true);
         return "redirect:/product/{productId}";
