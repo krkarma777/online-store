@@ -19,7 +19,7 @@ public class ProductStatusService {
                 .filter(product -> userAuthValidator.isProductOwner(principal, product))
                 .map(product -> {
                     product.setStatus(status);
-                    productService.saveProduct(product);
+                    productService.save(product);
                     return "redirect:/seller/products";
                 })
                 .orElse("error/403");

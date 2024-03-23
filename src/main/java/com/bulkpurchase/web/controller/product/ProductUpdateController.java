@@ -52,7 +52,7 @@ public class ProductUpdateController {
             model.addAttribute("allSalesRegions", SalesRegion.values());
             return "product/update";
         }
-        Product savedProduct = productService.saveProduct(product);
+        Product savedProduct = productService.save(product);
 
         return "redirect:/product/" + savedProduct.getProductID(); // 수정된 상품의 ID로 리다이렉트
     }
