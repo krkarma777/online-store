@@ -26,6 +26,10 @@ public class Category {
     @OrderBy("name ASC") // 이름으로 자식 카테고리들을 오름차순 정렬
     private Set<Category> children = new HashSet<>();
 
+    public Category(Long categoryID) {
+        this.categoryID = categoryID;
+    }
+
     // 자식 카테고리 추가 메서드
     public void addChildCategory(Category child) {
         children.add(child);
@@ -76,6 +80,4 @@ public class Category {
     public void setChildren(Set<Category> children) {
         this.children = children;
     }
-
-
 }

@@ -1,11 +1,11 @@
 package com.bulkpurchase.domain.entity.product;
 
 
+import com.bulkpurchase.domain.dto.product.CreateProductDTO;
 import com.bulkpurchase.domain.entity.user.FavoriteProduct;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.enums.SalesRegion;
-import com.bulkpurchase.domain.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 
-import java.sql.Clob;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -78,6 +77,19 @@ public class Product {
 
     public ProductStatus getOppositeStatus() {
         return this.status == ProductStatus.ACTIVE ? ProductStatus.INACTIVE : ProductStatus.ACTIVE;
+    }
+
+    public Product(CreateProductDTO createProductDTO, User user) {
+        this.productName = createProductDTO.getProductName();
+        this.description = createProductDTO.getDescription();
+        this.price = createProductDTO.getPrice();
+        this.stock = createProductDTO.getStock();
+        this.user = user;
+        this.imageUrls = createProductDTO.getImageUrls();
+        this.category = new Category(createProductDTO.getCategoryID());
+    }
+
+    public Product() {
     }
 }
 

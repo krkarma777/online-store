@@ -25,4 +25,6 @@ public class CreateProductDTO {
     private Integer stock;
 
     private List<String> imageUrls;
+
+    private Long categoryID;
 }
