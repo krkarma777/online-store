@@ -61,8 +61,9 @@ public class ProductAPIController {
 
         User user = userAuthValidator.getCurrentUser(principal);
         Product product = productOpt.get();
-        if (!product.getUser().equals(user)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "상품을 수정할 권한이 업습니다."));
+        if (!product.getUser().getUserID()
+                .equals(user.getUserID())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "상품을 수정할 권한이 없습니다."));
         }
 
         product.update(productRequestDTO);
