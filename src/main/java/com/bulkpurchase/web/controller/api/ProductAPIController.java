@@ -47,7 +47,12 @@ public class ProductAPIController {
     @PatchMapping("/{productID}")
     public ResponseEntity<?> update(@RequestBody @Validated ProductRequestDTO productRequestDTO,
                                     @PathVariable("productID") Long productID,
-                                    Principal principal) {
+                                    Principal principal, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = bindingResult.getFieldErrors().stream()
+                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "입력 값에 오류가 있습니다.", "errors", errors));
+        }
 
         Optional<Product> productOpt = productService.findById(productID);
         if (productOpt.isEmpty()) {
