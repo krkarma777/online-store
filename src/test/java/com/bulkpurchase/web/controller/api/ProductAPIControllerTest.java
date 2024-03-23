@@ -78,7 +78,7 @@ class ProductAPIControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productRequestDTO))
                         .principal(mockPrincipal)) // 목 Principal 객체 사용
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.message").value("상품 등록에 성공하셨습니다."))
                 .andExpect(jsonPath("$.productID").value(1));
     }
@@ -86,15 +86,17 @@ class ProductAPIControllerTest {
 
     @Test
     @WithMockUser(username = "qweqwe", roles = "판매자")
-    void whenCreateProductWithInvalidInput_thenReturnsBadRequest() throws Exception {
+    void whenCreateProductWithInvalidInput_thenReturnsBadRequestWithErrors() throws Exception {
         // Given
         ProductRequestDTO productRequestDTO = new ProductRequestDTO();
+        // 입력값을 빈 상태로 둠
 
         // When & Then
         mockMvc.perform(post("/api/product")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productRequestDTO)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("잘못된 정보를 기입하셨습니다."));
+                .andExpect(jsonPath("$.message").value("입력 값에 오류가 있습니다.")) // 메시지 변경
+                .andExpect(jsonPath("$.errors").exists()); // 오류 디테일 확인
     }
 }
