@@ -4,6 +4,7 @@ import com.bulkpurchase.domain.dto.product.ProductRequestDTO;
 import com.bulkpurchase.domain.entity.product.Category;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
+import com.bulkpurchase.domain.enums.UserRole;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import com.bulkpurchase.web.service.product.ProductStatusService;
@@ -14,13 +15,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Optional;
 
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -31,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 class ProductAPIControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -279,4 +286,55 @@ class ProductAPIControllerTest {
                 .andExpect(jsonPath("$.message").value("상품을 수정할 권한이 없습니다."));
     }
 
+    @Test
+    @WithMockUser(username = "sellerUser", roles = "판매자")
+    void findListBySeller_WithValidSellerId_ReturnsProductList() throws Exception {
+        // Given
+        Long sellerId = 1L;
+        User sellerUser = new User();
+        sellerUser.setUserID(sellerId);
+        sellerUser.setUsername("sellerUser");
+        sellerUser.setRole(UserRole.ROLE_판매자);
+
+        Category mockCategory = new Category(1L);
+
+        Product p1 = new Product();
+        p1.setCategory(mockCategory);
+        Product p2 = new Product();
+        p2.setCategory(mockCategory);
+
+        Page<Product> mockedPage = new PageImpl<>(Arrays.asList(p1, p2));
+
+        given(userAuthValidator.getCurrentUserByUserID(sellerId)).willReturn(sellerUser);
+        given(productService.findByUser(eq(sellerUser), any(Pageable.class))).willReturn(mockedPage);
+
+        // When & Then
+        mockMvc.perform(get("/api/product/seller/{sellerID}", sellerId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("page", "1")) // page 값을 파라미터로 전달
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.products", hasSize(2))) // products 배열의 크기가 2인지 확인
+                .andExpect(jsonPath("$.totalPages").value(1));
+    }
+
+    @Test
+    @WithMockUser(username = "nonSellerUser", roles = "자영업자")
+    void findListBySeller_WithNonSellerRole_ReturnsBadRequest() throws Exception {
+        // Given
+        Long sellerId = 1L;
+        Integer page = 1;
+        User nonSellerUser = new User();
+        nonSellerUser.setUserID(sellerId);
+        nonSellerUser.setUsername("nonSellerUser");
+        nonSellerUser.setRole(UserRole.ROLE_자영업자);
+
+        given(userAuthValidator.getCurrentUserByUserID(sellerId)).willReturn(nonSellerUser);
+
+        // When & Then
+        mockMvc.perform(get("/api/product/seller/{sellerID}", sellerId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(page)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."));
+    }
 }
