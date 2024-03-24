@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -118,7 +119,9 @@ public class ReviewAPIController {
         Sort sort = Sort.by(Sort.Direction.DESC, "reviewID");
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
         Page<ReviewDetailDTO> reviewDetailDTOS = reviewService.findByUser(user, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(reviewDetailDTOS);
+        int totalPages = reviewDetailDTOS.getTotalPages();
+        List<ReviewDetailDTO> reviewList = reviewDetailDTOS.getContent();
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("reviewList", reviewList, "totalPages", totalPages));
     }
 
     private User getUser(Principal principal) {
