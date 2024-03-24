@@ -70,7 +70,25 @@ public class ProductAPIController {
         product.update(productRequestDTO);
         productService.save(product);
 
-        return ResponseEntity.ok(Map.of("message", "상품 수정에 성공하셨습니다."));
+        return ResponseEntity.ok(Map.of("message", "상품 수정에 성공하셨습니다.", "productID", productID));
+    }
+
+    @GetMapping("/authorizedCheck/{productID}")
+    public ResponseEntity<?> authorizedCheck(@PathVariable("productID") Long productID , Principal principal) {
+        Optional<Product> productOpt = productService.findById(productID);
+
+        if (productOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "존재하지 않는 상품입니다."));
+        }
+
+        User user = userAuthValidator.getCurrentUser(principal);
+
+        if (productOpt.get().getUser() != user) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "상품을 수정할 권한이 없습니다."));
+        }
+
+        ProductResponseDTO productResponseDTO = new ProductResponseDTO(productOpt.get());
+        return  ResponseEntity.ok(Map.of("product", productResponseDTO));
     }
 
     @GetMapping("/{productID}")
