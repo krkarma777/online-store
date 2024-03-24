@@ -219,7 +219,7 @@ class ReviewAPIControllerTest {
         Page<ReviewDetailDTO> mockPage = new PageImpl<>(Collections.emptyList());
 
         given(userAuthValidator.getCurrentUserByUserID(any(Long.class))).willReturn(mockUser);
-        given(reviewService.findByUser(eq(mockUser), any(PageRequest.class))).willReturn(mockPage);
+        given(reviewService.findAllReviewDetailsWithFeedbackCountsBySeller(eq(1L), any(PageRequest.class))).willReturn(mockPage);
 
         mockMvc.perform(get("/api/review/seller/{sellerID}", 1L)
                         .param("page", "1")
@@ -232,6 +232,7 @@ class ReviewAPIControllerTest {
     void findReviewsBySeller_UnauthorizedRequest_ReturnsUnauthorized() throws Exception {
         User mockUser = new User();
         mockUser.setRole(UserRole.ROLE_자영업자);
+        mockUser.setUserID(1L);
 
         given(userAuthValidator.getCurrentUserByUserID(any(Long.class))).willReturn(mockUser);
 
