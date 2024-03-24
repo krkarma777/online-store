@@ -21,6 +21,7 @@ import java.security.Principal;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -200,5 +201,56 @@ class ProductAPIControllerTest {
         mockMvc.perform(get("/api/product/{productID}", nonExistingProductId))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("존재하지 않는 상품입니다."));
+    }
+
+    @Test
+    @WithMockUser(username = "testUser", roles = "판매자")
+    void authorizedCheck_ProductNotFound() throws Exception {
+        given(productService.findById(anyLong())).willReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/product/authorizedCheck/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("존재하지 않는 상품입니다."));
+    }
+
+    // 상품이 존재하며, 사용자가 수정 권한을 가지고 있는 경우
+    @Test
+    @WithMockUser(username = "user1", roles = "판매자")
+    void authorizedCheck_UserHasPermission() throws Exception {
+        Product mockProduct = new Product();
+        User mockUser = new User();
+        mockUser.setUsername("user1"); // 현재 인증된 사용자
+        mockProduct.setUser(mockUser); // 상품 소유자
+
+        Category mockCategory = new Category();
+        mockCategory.setCategoryID(1L);
+        mockProduct.setCategory(mockCategory);
+
+        given(productService.findById(1L)).willReturn(Optional.of(mockProduct));
+        given(userAuthValidator.getCurrentUser(any())).willReturn(mockUser); // 현재 인증된 사용자 반환
+
+        mockMvc.perform(get("/api/product/authorizedCheck/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.product").exists());
+    }
+
+    // 상품이 존재하지만, 사용자가 수정 권한을 가지고 있지 않은 경우
+    @Test
+    @WithMockUser(username = "user2", roles = "판매자")
+    void authorizedCheck_UserLacksPermission() throws Exception {
+        Product mockProduct = new Product();
+        User ownerUser = new User();
+        ownerUser.setUsername("user1"); // 상품 소유자
+        mockProduct.setUser(ownerUser);
+
+        User currentUser = new User();
+        currentUser.setUsername("user2"); // 테스트를 위한 다른 사용자
+
+        given(productService.findById(1L)).willReturn(Optional.of(mockProduct));
+        given(userAuthValidator.getCurrentUser(any())).willReturn(currentUser); // 현재 인증된 다른 사용자 반환
+
+        mockMvc.perform(get("/api/product/authorizedCheck/1"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("상품을 수정할 권한이 없습니다."));
     }
 }
