@@ -106,7 +106,7 @@ public class ProductAPIController {
     }
 
     @PatchMapping("/status/{productID}")
-    public ResponseEntity<?>status(@PathVariable(value = "productID") Long productID, Principal principal) {
+    public ResponseEntity<?> status(@PathVariable(value = "productID") Long productID, Principal principal) {
         boolean isSuccess = productStatusService.updateProductStatus(productID, principal);
         if (!isSuccess) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "상품을 수정할 권한이 없습니다."));
