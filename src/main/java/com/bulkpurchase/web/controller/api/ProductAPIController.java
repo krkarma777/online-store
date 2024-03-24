@@ -111,14 +111,13 @@ public class ProductAPIController {
     }
 
     @GetMapping("/seller/{sellerID}")
-    public ResponseEntity<?> findListBySeller(@RequestBody Integer page, @PathVariable("sellerID") Long sellerID) {
+    public ResponseEntity<?> findListBySeller(@RequestParam(value = "page", defaultValue = "1") Integer page, @PathVariable("sellerID") Long sellerID) {
         User user = userAuthValidator.getCurrentUserByUserID(sellerID);
 
         if (user.getRole() != UserRole.ROLE_판매자) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다."));
         }
 
-        page = (page == null) ? 1 : page;
         int pageSize = 10;
         Sort sort = Sort.by(Sort.Direction.fromString("DESC"), "productID");
         Pageable pageable = PageRequest.of(page - 1, pageSize, sort);
