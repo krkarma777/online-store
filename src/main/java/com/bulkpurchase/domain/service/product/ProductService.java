@@ -139,4 +139,7 @@ public class ProductService {
         return products;
     }
 
+    public Page<Product> findByUser(User user, Pageable pageable) {
+        return productRepository.findByUser(user, pageable);
+    }
 }
