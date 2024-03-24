@@ -53,7 +53,7 @@
                                     th:text="${orderDetail.product.productName}"></span></a></td>
                             <td th:text="${orderDetail.quantity}"></td>
                             <td th:text="${orderDetail.order.status.getDescription()}"></td>
-                            <td th:text="${#dates.format(orderDetail.order.orderDate, 'yyyy-MM-dd')}"></td>
+                            <td th:text="${#temporals.format(orderDetail.order.orderDate, 'yyyy-MM-dd')}"></td>
                             <td>
                                 <form th:action="@{/seller/orders/edit/{orderDetailID}(orderDetailID=${orderDetail.orderDetailID})}"
                                       method="post">
