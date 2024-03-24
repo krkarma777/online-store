@@ -66,8 +66,6 @@
             crossorigin="anonymous"></script>
     <script th:inline="javascript">
         $(document).ready(function () {
-            var uploadedImages = /*[[${product.imageUrls}]]*/ []; // Thymeleaf로부터 이미지 URL 리스트 초기화
-
 
             // 초기 이미지 리스트 로드
             function loadInitialImageList() {
@@ -161,58 +159,113 @@
 
 <div class="container mt-5">
     <h2>Edit Product</h2>
-    <form action="/product/update" th:object="${product}" method="post" enctype="multipart/form-data">
+    <form enctype="multipart/form-data">
         <input type="hidden" name="productID" th:field="*{productID}" th:value="*{productID}">
-        <input type="hidden" name="user" th:field="*{user}" th:value="*{user}">
-        <input type="hidden" name="salesRegions" th:field="*{salesRegions}" th:value="*{salesRegions}">
 
-        <div class="form-group">
-            <label for="productName" th:text="#{label.product.name}">Product Name</label>
-            <input type="text" th:field="*{productName}" th:errorclass="field-error" class="form-control" id="productName" placeholder="Enter product name">
-        </div>
-        <div class="field-error" th:errors="*{productName}">
-            상품명 오류
-        </div>
-
-        <div class="form-group">
-            <label for="price" th:text="#{label.product.price}">Price</label>
-            <input type="number" th:field="*{price}" th:errorclass="field-error" class="form-control" id="price" placeholder="Enter price">
-        </div>
-        <div class="field-error" th:errors="*{price}">
-            price 오류
-        </div>
-        <div class="form-group">
-            <label for="stock" th:text="#{label.product.stock}">Stock</label>
-            <input type="number" th:field="*{stock}" th:errorclass="field-error" class="form-control" id="stock" placeholder="Enter stock">
-        </div>
-        <div class="field-error" th:errors="*{stock}">
-            stock 오류
-        </div>
-        <div class="form-section">
-            <div class="form-section-header">상품 설명</div>
-            <textarea class="form-control" id="description" th:field="*{description}" rows="4" required></textarea>
-            <div class="field-error" th:errors="*{description}"></div>
-        </div>
-        <div class="field-error" th:errors="*{description}">
-            description 오류
-        </div>
-        <div class="form-section">
-            <div class="form-section-header">대표 이미지 업로드</div>
-            <label for="image" class="custom-file-upload">파일 선택</label>
-            <input type="file" id="image" multiple style="display: none;" />
-            <ul class="image-list" id="file-list"></ul>
-        </div>
+        <form method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+            <div class="form-section">
+                <div class="form-section-header">기본 정보</div>
+                <div class="mb-3">
+                    <label for="productName" class="form-label">상품명</label>
+                    <input type="text" class="form-control" id="productName" name="productName" required>
+                    <div class="field-error"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">가격</label>
+                    <input type="number" class="form-control" id="price" name="price" required>
+                    <div class="field-error"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="stock" class="form-label">재고</label>
+                    <input type="number" class="form-control" id="stock" name="stock" required>
+                    <div class="field-error"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">카테고리 선택</label>
+                    <select class="form-select" id="category" name="categoryID" required>
+                        <option value="">카테고리를 선택하세요</option>
+                        <option th:each="category : ${categories}" th:value="${category.categoryID}" th:text="${category.name}"></option>
+                    </select>
+                    <div class="field-error"></div>
+            </div>
+            <div class="form-section">
+                <div class="form-section-header">상품 설명</div>
+                <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                <div class="field-error"></div>
+            </div>
+            <div class="form-section">
+                <div class="form-section-header">대표 이미지 업로드</div>
+                <label for="image" class="custom-file-upload">파일 선택</label>
+                <input type="file" id="image" multiple style="display: none;" />
+                <ul class="image-list" id="file-list"></ul>
+            </div>
         <div class="text-center">
-            <button type="submit" class="btn btn-primary">상품 수정</button>
+            <button type="submit" id="submitBtn" class="btn btn-primary">상품 수정</button>
         </div>
     </form>
 </div>
 
-
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+<script th:inline="javascript">
     $(document).ready(function () {
+        /*<![CDATA[*/
+        const productID = [[${productID}]];
+
+        // 상품 정보를 가져오는 AJAX 요청
+        $.ajax({
+            url: '/api/product/authorizedCheck/' + productID,
+            type: 'GET',
+            success: function(response) {
+                const product = response.product;
+                // 폼 필드에 상품 정보 채우기
+                $('#productName').val(product.productName);
+                $('#price').val(product.price);
+                $('#stock').val(product.stock);
+                $('#category').val(product.categoryID);
+                editorInstance.setData(product.description);
+                uploadedImages = product.imageUrls;
+                updateImageList(); // 이미지 리스트 업데이트
+            },
+            error: function(xhr, status, error) {
+                const response = xhr.responseJSON;
+                alert(response.message);
+                location.href="/";
+            }
+        });
+
+        $("#submitBtn").click(function () {
+            const descriptionData = editorInstance.getData();
+
+            const productData = {
+                productName: $('#productName').val(),
+                description: descriptionData,
+                price: parseFloat($('#price').val()),
+                stock: parseInt($('#stock').val(), 10),
+                categoryID: $('#category').val(),
+                imageUrls: uploadedImages // 이미지 업로드 로직에서 업데이트된 배열
+            };
+
+            $.ajax({
+                url: '/api/product/'+ productID,
+                type: 'PATCH',
+                contentType: 'application/json',
+                data: JSON.stringify(productData),
+                success: function (response) {
+                    alert(response.message); // 성공 메시지 출력
+                    window.location.href = '/product/' + response.productID;
+                },
+                error: function (xhr, status, error) {
+                    const response = xhr.responseJSON;
+                    alert(response.message);
+                    if (response.errors) {
+                        clearErrors();
+                        displayErrors(response.errors);
+                    }
+                }
+            });
+        });
+
         var uploadedImages = []; // 업로드한 이미지를 저장할 배열
 
         class MyUploadAdapter {
@@ -248,10 +301,14 @@
         }
 
 // 에디터 설정에 플러그인 추가
+        var editorInstance;
+
         ClassicEditor
             .create(document.querySelector('#description'), {
-                extraPlugins: [MyCustomUploadAdapterPlugin],
-                // 다른 설정
+                extraPlugins: [MyCustomUploadAdapterPlugin], // 필요한 추가 플러그인 설정
+            })
+            .then(editor => {
+                editorInstance = editor; // 에디터 인스턴스 저장
             })
             .catch(error => {
                 console.error(error);
