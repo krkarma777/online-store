@@ -36,6 +36,11 @@ public class UserAuthValidator {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
     }
 
+    public User getCurrentUserByUserID(Long sellerID) {
+        return userService.findByUserid(sellerID)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+    }
+
     public boolean isProductOwner(Principal principal, Product product) {
         return userService.findByUsername(principal.getName())
                 .map(user -> product.getUser().equals(user))
@@ -47,5 +52,4 @@ public class UserAuthValidator {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "주문 정보에 접근할 권한이 없습니다.");
         }
     }
-
 }

@@ -35,7 +35,7 @@ public class ProductService {
         return productRepository.findPopularProducts();
     }
 
-    public Product saveProduct(Product product) {
+    public Product save(Product product) {
         return productRepository.save(product);
     }
 
@@ -139,4 +139,7 @@ public class ProductService {
         return products;
     }
 
+    public Page<Product> findByUser(User user, Pageable pageable) {
+        return productRepository.findByUser(user, pageable);
+    }
 }

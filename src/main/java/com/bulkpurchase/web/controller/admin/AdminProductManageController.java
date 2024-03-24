@@ -1,9 +1,7 @@
 package com.bulkpurchase.web.controller.admin;
 
 import com.bulkpurchase.domain.entity.product.Product;
-import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.ProductStatus;
-import com.bulkpurchase.domain.enums.UserStatus;
 import com.bulkpurchase.domain.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,7 +36,7 @@ public class AdminProductManageController {
 
         product.setStatus(status);
 
-        productService.saveProduct(product);
+        productService.save(product);
 
         return ResponseEntity.noContent().build();
     }

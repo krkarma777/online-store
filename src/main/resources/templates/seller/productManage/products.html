@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>상품 관리</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/common.css">
     <style>
         .table th {
@@ -46,47 +48,121 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="product : ${products}">
-                        <td th:text="${product.productID}"></td>
-                        <td th:text="${product.category != null ? product.category.name : '없음'}"></td>
-                        <td><a th:href="'/product/'+${product.productID}"
-                               style="text-decoration: none; color: black;"><span class="product-name"
-                                                                                  th:text="${product.productName}"></span></a>
-                        </td>
-                        <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '원'"></td>
-                        <td th:text="${product.stock}"></td>
-                        <td>
-                            <a th:href="@{/product/update/{productID}(productID=${product.productID})}"
-                               class="btn btn-sm btn-outline-secondary btn-custom">수정</a>
-                            <a th:if="${product.status.name() == 'ACTIVE'}"
-                               th:href="@{/product/delete/{productID}(productID=${product.productID})}"
-                               class="btn btn-sm btn-outline-danger btn-custom"
-                               onclick="return confirm('판매 중지 하시겠습니까?')">판매 중지</a>
-                            <a th:if="${product.status.name() == 'INACTIVE'}"
-                               th:href="@{/product/reactivate/{productID}(productID=${product.productID})}"
-                               class="btn btn-sm btn-outline-success"
-                               onclick="return confirm('판매를 재개하시겠습니까?')">판매 재개</a>
-                        </td>
-                    </tr>
+                    <!-- 상품이 여기에 동적으로 삽입됩니다 -->
                     </tbody>
                 </table>
+                <div id="pagination" class="d-flex justify-content-center mt-4">
+                    <!-- 페이지네이션 버튼이 여기에 동적으로 삽입됩니다 -->
+                </div>
             </div>
         </div>
     </div>
     <!-- 메인 컨텐츠 끝 -->
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    $(".product-name").each(function () {
-        var text = $(this).text();
-        console.log(text);
-        if (text.length > 15) {
-            $(this).text(text.substring(0, 15) + "...");
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const sellerID = [[${sellerID}]];
+    let totalPage;
+
+    // 페이지가 준비되면 실행
+    $(document).ready(function () {
+        // 상품명이 길 경우 줄임표 처리
+        $(".product-name").each(function () {
+            var text = $(this).text();
+            if (text.length > 15) {
+                $(this).text(text.substring(0, 15) + "...");
+            }
+        });
+
+        // 상태 변경 버튼 클릭 이벤트
+        $(".status-change-btn").on("click", function () {
+            let productID = $(this).data("product-id");
+            axios.patch(`/api/product/status/${productID}`)
+                .then(function (response) {
+                    window.location.href = "/seller/products"; // 성공 시 페이지 리다이렉션
+                    alert(response.data.message);
+                })
+                .catch(function (error) {
+                    alert(error.response.data.message);
+                });
+        });
+
+        loadProducts(1);
+
+        function loadProducts(page) {
+            // 상품 목록을 가져오기 전에 기존 목록을 삭제
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = ''; // tbody의 내용을 비워 기존 목록을 삭제
+            // 상품 목록을 가져오는 fetch 요청을 axios로 변경
+            axios.get(`/api/product/seller/${sellerID}?page=${page}`)
+                .then(function (response) {
+                    const products = response.data.products;
+                    const tbody = document.querySelector('tbody');
+                    products.forEach(product => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                        <td>${product.productID}</td>
+                        <td>${product.categoryName}</td>
+                        <td><a href="/product/${product.productID}" style="text-decoration: none; color: black;" class="product-name">${product.productName}</a></td>
+                        <td>${product.price}원</td>
+                        <td>${product.stock}</td>
+                        <td>
+                                <a href="/product/update/${product.productID}" class="btn btn-sm btn-outline-secondary btn-custom">수정</a>
+                                <button class="btn btn-sm ${product.status === 'ACTIVE' ? 'btn-outline-danger' : 'btn-outline-success'} status-change-btn"
+                                    data-product-id="${product.productID}">
+                                    ${product.status === 'ACTIVE' ? '판매 중지' : '판매 재개'}
+                                </button>
+                        </td>
+                    `;
+                        tbody.appendChild(row);
+
+                    });
+                    createPagination(response.data.totalPages);
+                    shortenProductNames();
+                })
+                .catch(function (error) {
+                    console.error('Error loading the products:', error);
+                });
+        }
+
+        // 상품명 줄임표 처리를 위한 함수
+        function shortenProductNames() {
+            $(".product-name").each(function () {
+                var text = $(this).text();
+                if (text.length > 15) {
+                    $(this).text(text.substring(0, 15) + "...");
+                }
+            });
+        }
+
+        // 페이지 로딩 시에도 한 번 호출
+        $(document).ready(function () {
+            shortenProductNames();
+        });
+
+        // 페이지네이션 버튼 생성 함수
+        function createPagination(totalPages) {
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = ''; // 이전 페이지네이션 초기화
+
+            for (let page = 1; page <= totalPages; page++) {
+                const pageItem = document.createElement('button');
+                pageItem.innerText = page;
+                pageItem.className = 'btn btn-secondary mx-1';
+                pageItem.onclick = function() {
+                    loadProducts(page); // 해당 페이지의 상품을 로드하는 함수 호출
+                };
+
+                paginationContainer.appendChild(pageItem);
+            }
         }
     });
+    /*]]>*/
 </script>
+
 </body>
 </html>
