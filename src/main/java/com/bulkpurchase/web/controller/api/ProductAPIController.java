@@ -4,8 +4,10 @@ import com.bulkpurchase.domain.dto.product.ProductRequestDTO;
 import com.bulkpurchase.domain.dto.product.ProductResponseDTO;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
+import com.bulkpurchase.domain.enums.ProductStatus;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
+import com.bulkpurchase.web.service.product.ProductStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ public class ProductAPIController {
 
     private final UserAuthValidator userAuthValidator;
     private final ProductService productService;
+    private final ProductStatusService productStatusService;
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Validated ProductRequestDTO productRequestDTO,
@@ -100,5 +103,14 @@ public class ProductAPIController {
 
         ProductResponseDTO productResponseDTO = new ProductResponseDTO(productOpt.get());
         return  ResponseEntity.ok(Map.of("product", productResponseDTO));
+    }
+
+    @PatchMapping("/status/{productID}")
+    public ResponseEntity<?>status(@PathVariable(value = "productID") Long productID, Principal principal) {
+        boolean isSuccess = productStatusService.updateProductStatus(productID, principal);
+        if (!isSuccess) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "상품을 수정할 권한이 없습니다."));
+        }
+        return  ResponseEntity.ok(Map.of("message", "상품 상태가 변경되었습니다."));
     }
 }

@@ -14,14 +14,14 @@ public class ProductStatusService {
 
     private final ProductService productService;
     private final UserAuthValidator userAuthValidator;
-    public String updateProductStatus(Long productID, Principal principal, ProductStatus status) {
+    public boolean updateProductStatus(Long productID, Principal principal) {
         return productService.findById(productID)
                 .filter(product -> userAuthValidator.isProductOwner(principal, product))
                 .map(product -> {
-                    product.setStatus(status);
+                    product.setStatus(product.getOppositeStatus());
                     productService.save(product);
-                    return "redirect:/seller/products";
+                    return true;
                 })
-                .orElse("error/403");
+                .orElse(false);
     }
 }
