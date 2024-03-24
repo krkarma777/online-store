@@ -230,8 +230,8 @@ class ReviewAPIControllerTest {
     @Test
     @WithMockUser
     void findReviewsBySeller_UnauthorizedRequest_ReturnsUnauthorized() throws Exception {
-        User mockUser = new User(); // Setup mock user without a seller role
-        mockUser.setRole(UserRole.ROLE_자영업자); // 가정: 'ROLE_구매자'는 판매자가 아닌 사용자의 역할
+        User mockUser = new User();
+        mockUser.setRole(UserRole.ROLE_자영업자);
 
         given(userAuthValidator.getCurrentUserByUserID(any(Long.class))).willReturn(mockUser);
 
