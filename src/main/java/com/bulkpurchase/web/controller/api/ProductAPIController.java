@@ -110,12 +110,12 @@ public class ProductAPIController {
         return ResponseEntity.ok(Map.of("product", productResponseDTO));
     }
 
-    @GetMapping("/seller")
-    public ResponseEntity<?> findListBySeller(@RequestBody Integer page, Principal principal) {
-        User user = userAuthValidator.getCurrentUser(principal);
+    @GetMapping("/seller/{sellerID}")
+    public ResponseEntity<?> findListBySeller(@RequestBody Integer page, @PathVariable("sellerID") Long sellerID) {
+        User user = userAuthValidator.getCurrentUserByUserID(sellerID);
 
         if (user.getRole() != UserRole.ROLE_판매자) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "잘못된 요청입니다.", "redirectURL", "/"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다."));
         }
 
         page = (page == null) ? 1 : page;
