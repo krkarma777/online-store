@@ -6,6 +6,7 @@ import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
+import com.bulkpurchase.web.service.product.ProductStatusService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.security.Principal;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -42,6 +42,9 @@ class ProductAPIControllerTest {
 
     @MockBean
     private UserAuthValidator userAuthValidator;
+
+    @MockBean
+    private ProductStatusService productStatusService;
 
     @Test
     @WithMockUser(username = "qweqwe", roles = "판매자")
@@ -253,4 +256,27 @@ class ProductAPIControllerTest {
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.message").value("상품을 수정할 권한이 없습니다."));
     }
+
+    @Test
+    @WithMockUser(username = "authorizedUser", roles = "판매자")
+    void updateProductStatus_AuthorizedUser_Success() throws Exception {
+        Long productId = 1L;
+        given(productStatusService.updateProductStatus(eq(productId), any())).willReturn(true);
+
+        mockMvc.perform(patch("/api/product/status/{productID}", productId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("상품 상태가 변경되었습니다."));
+    }
+
+    @Test
+    @WithMockUser(username = "unauthorizedUser", roles = "자영업자")
+    void updateProductStatus_UnauthorizedUser_Failure() throws Exception {
+        Long productId = 1L;
+        given(productStatusService.updateProductStatus(eq(productId), any())).willReturn(false);
+
+        mockMvc.perform(patch("/api/product/status/{productID}", productId))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("상품을 수정할 권한이 없습니다."));
+    }
+
 }
