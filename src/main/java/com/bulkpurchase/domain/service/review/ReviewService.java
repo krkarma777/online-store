@@ -58,13 +58,14 @@ public class ReviewService {
         return reviewRepository.findAverageRatingByProductID(productID);
     }
 
-    public List<ReviewDetailDTO> findAllReviewDetailsWithFeedbackCountsBySeller(Long userID) {
-        List<Object[]> results = reviewRepository.findAllReviewDetailsWithFeedbackCountsByUserId(userID);
-        return results.stream().map(result -> new ReviewDetailDTO(
+    public Page<ReviewDetailDTO> findAllReviewDetailsWithFeedbackCountsBySeller(Long userID, Pageable page) {
+        List<Object[]> results = reviewRepository.findAllReviewDetailsWithFeedbackCountsByUserId(userID,page);
+        List<ReviewDetailDTO> dtos = results.stream().map(result -> new ReviewDetailDTO(
                 (Review) result[0],
                 (Long) result[1],
                 (Long) result[2]
         )).collect(Collectors.toList());
+        return new PageImpl<>(dtos, page, dtos.size());
     }
 
     public Page<ReviewDetailDTO> findByUser(User user, Pageable page) {

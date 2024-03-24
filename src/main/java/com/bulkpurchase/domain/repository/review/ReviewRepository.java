@@ -40,7 +40,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "(SELECT COUNT(f) FROM ReviewFeedback f WHERE f.review = r AND f.feedbackType = com.bulkpurchase.domain.enums.FeedbackType.DISLIKE) AS dislikeCount " +
             "FROM Review r WHERE r.product.user.userID = :userID " +
             "ORDER BY r.creationDate DESC")
-    List<Object[]> findAllReviewDetailsWithFeedbackCountsByUserId(@Param("userID") Long userID);
+    List<Object[]> findAllReviewDetailsWithFeedbackCountsByUserId(@Param("userID") Long userID, Pageable page);
 
     @Query("SELECT r, " +
             "(SELECT COUNT(f) FROM ReviewFeedback f WHERE f.review = r AND f.feedbackType = com.bulkpurchase.domain.enums.FeedbackType.LIKE) AS likeCount, " +

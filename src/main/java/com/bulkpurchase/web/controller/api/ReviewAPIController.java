@@ -118,9 +118,10 @@ public class ReviewAPIController {
 
         Sort sort = Sort.by(Sort.Direction.DESC, "reviewID");
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
-        Page<ReviewDetailDTO> reviewDetailDTOS = reviewService.findByUser(user, pageable);
+        Page<ReviewDetailDTO> reviewDetailDTOS = reviewService.findAllReviewDetailsWithFeedbackCountsBySeller(sellerID, pageable);
         int totalPages = reviewDetailDTOS.getTotalPages();
         List<ReviewDetailDTO> reviewList = reviewDetailDTOS.getContent();
+
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("reviewList", reviewList, "totalPages", totalPages));
     }
 
