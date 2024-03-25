@@ -6,6 +6,7 @@ import com.bulkpurchase.domain.entity.coupon.Coupon;
 import com.bulkpurchase.domain.entity.coupon.CouponApplicableProduct;
 import com.bulkpurchase.domain.entity.coupon.UserCoupon;
 import com.bulkpurchase.domain.entity.user.User;
+import com.bulkpurchase.domain.enums.UserRole;
 import com.bulkpurchase.domain.service.coupon.CouponApplicableProductService;
 import com.bulkpurchase.domain.service.coupon.CouponService;
 import com.bulkpurchase.domain.service.coupon.UserCouponService;
@@ -14,6 +15,9 @@ import com.bulkpurchase.domain.validator.coupon.CouponValidatorImpl;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import com.bulkpurchase.web.service.coupon.ApplyCouponService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -93,6 +97,21 @@ public class CouponAPIController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(dtoList);
+    }
+
+    @GetMapping("/seller/{sellerID}")
+    public ResponseEntity<?> findListBySeller(@PathVariable("sellerID") Long sellerID,
+                                              @RequestParam(value = "page",defaultValue = "1") Integer page) {
+        User user = userAuthValidator.getCurrentUserByUserID(sellerID);
+        if (user.getRole() != UserRole.ROLE_판매자) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "잘못된 요청입니다."));
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, "couponID");
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+        Page<Coupon> couponPage = couponService.findByCreatedBy(user, pageable);
+        int totalPages = couponPage.getTotalPages();
+        List<Coupon> coupons = couponPage.getContent();
+        return ResponseEntity.ok(Map.of("coupons", coupons, "totalPages", totalPages));
     }
 
 
