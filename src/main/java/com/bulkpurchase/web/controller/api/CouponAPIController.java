@@ -109,9 +109,8 @@ public class CouponAPIController {
         Sort sort = Sort.by(Sort.Direction.DESC, "couponID");
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
         Page<Coupon> couponPage = couponService.findByCreatedBy(user, pageable);
-        int totalPages = couponPage.getTotalPages();
-        List<Coupon> coupons = couponPage.getContent();
-        return ResponseEntity.ok(Map.of("coupons", coupons, "totalPages", totalPages));
+        List<CouponResponseDTO> coupons = couponPage.getContent().stream().map(CouponResponseDTO::new).toList();
+        return ResponseEntity.ok(Map.of("coupons", coupons, "totalPages", couponPage.getTotalPages()));
     }
 
 
