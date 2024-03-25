@@ -34,15 +34,6 @@ public class SellerCouponManageController {
     private final ProductService productService;
     private final UserAuthValidator userAuthValidator;
 
-    @GetMapping("/list")
-    public String couponList(Model model, Principal principal) {
-        User user = userAuthValidator.getCurrentUser(principal);
-        List<Coupon> couponList = couponService.findByUser(user);
-        model.addAttribute("couponList", couponList);
-        model.addAttribute("coupon", new Coupon());
-        return "seller/couponManage/couponList";
-    }
-
     @PostMapping("/generate")
     public String generateCoupon(@RequestParam("validFromDate") String validFromDate,
                                  @RequestParam("validFromTime") String validFromTime,
