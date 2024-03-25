@@ -89,12 +89,12 @@ public class CouponAPIController {
 
     @GetMapping("/list")
     public ResponseEntity<List<CouponResponseDTO>> listPage() {
-        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Sort sort = Sort.by(Sort.Direction.DESC, "couponID");
         List<Coupon> couponList = couponService.findAll(sort);
 
         List<CouponResponseDTO> dtoList = couponList.stream()
                 .map(CouponResponseDTO::new)
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(dtoList);
     }
