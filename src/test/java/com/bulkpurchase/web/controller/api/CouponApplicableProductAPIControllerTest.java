@@ -1,7 +1,10 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.coupon.CouponApplicableProductRequestDTO;
+import com.bulkpurchase.domain.dto.product.ProductForCouponDTO;
 import com.bulkpurchase.domain.entity.coupon.Coupon;
+import com.bulkpurchase.domain.entity.coupon.CouponApplicableProduct;
+import com.bulkpurchase.domain.entity.product.Category;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.service.coupon.CouponApplicableProductService;
@@ -26,11 +29,14 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -50,6 +56,9 @@ public class CouponApplicableProductAPIControllerTest {
     private UserAuthValidator userAuthValidator;
 
     @MockBean
+    private CouponApplicableProductService couponApplicableProductService;
+
+    @MockBean
     private ProductService productService;
 
     private User user;
@@ -63,6 +72,32 @@ public class CouponApplicableProductAPIControllerTest {
         coupon = new Coupon(1L, user);
         product1 = new Product(1L, user);
         product2 = new Product(2L, new User()); // 다른 사용자가 게시한 상품
+    }
+
+    @Test
+    public void findApplicableProductsForCoupon_ShouldReturnProductList() throws Exception {
+        ProductForCouponDTO dto1 = new ProductForCouponDTO(1L, "Product 1");
+        ProductForCouponDTO dto2 = new ProductForCouponDTO(2L, "Product 2");
+        List<CouponApplicableProduct> mockData = List.of(
+                new CouponApplicableProduct(coupon, dto1.getProductID()),
+                new CouponApplicableProduct(coupon, dto2.getProductID())
+        );
+
+        given(couponApplicableProductService.findByCouponCouponID(anyLong())).willReturn(mockData);
+        given(productService.findById(1L)).willReturn(Optional.of(new Product(dto1.getProductID(), dto1.getProductName(), new Category())));
+        given(productService.findById(2L)).willReturn(Optional.of(new Product(dto2.getProductID(), dto2.getProductName(), new Category())));
+
+        mockMvc.perform(get("/api/coupon-applicable-product/{couponID}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                // 응답 본문에 포함된 객체의 수 검증
+                .andExpect(jsonPath("$", hasSize(2)))
+                // 첫 번째 객체의 필드 값 검증
+                .andExpect(jsonPath("$[0].productID", is(dto1.getProductID().intValue())))
+                .andExpect(jsonPath("$[0].productName", is(dto1.getProductName())))
+                // 두 번째 객체의 필드 값 검증
+                .andExpect(jsonPath("$[1].productID", is(dto2.getProductID().intValue())))
+                .andExpect(jsonPath("$[1].productName", is(dto2.getProductName())));
     }
 
     @Test
