@@ -92,6 +92,11 @@ public class Product {
     public Product() {
     }
 
+    public Product(Long productID, User user) {
+        this.productID = productID;
+        this.user = user;
+    }
+
     public void update(ProductRequestDTO productRequestDTO) {
         this.productName = productRequestDTO.getProductName();
         this.description = productRequestDTO.getDescription();
