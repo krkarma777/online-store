@@ -135,40 +135,10 @@
                             </div>
 
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                                 <button type="submit" class="btn btn-primary">쿠폰 발행</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                             </div>
                         </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 적용되는 상품 관리 모달 -->
-            <div class="modal fade" id="manageApplicableProductsModal" tabindex="-1"
-                 aria-labelledby="manageApplicableProductsModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="manageApplicableProductsModalLabel">적용되는 상품 관리</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- 상품 검색 및 적용 상품 리스트 표시 영역 -->
-                            <!-- 상품 검색 입력 필드 -->
-                            <input type="text" id="searchProductForCoupon" class="form-control mb-2"
-                                   placeholder="상품명으로 검색">
-                            <!-- 상품 검색 버튼 -->
-                            <button type="button" class="btn btn-primary mb-2" onclick="searchProductForCoupon()">검색
-                            </button>
-                            <!-- 검색 결과 표시 영역 -->
-                            <div id="searchResultsForCoupon" class="mb-2"></div>
-                            <!-- 적용 상품 리스트 표시 -->
-                            <div id="applicableProductsList"></div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                            <button type="button" class="btn btn-primary" onclick="saveApplicableProducts()">저장</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -226,8 +196,8 @@
 
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                                 <button type="submit" class="btn btn-primary">저장</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                             </div>
                         </form>
                     </div>
@@ -277,7 +247,7 @@
                             <ul class="dropdown-menu">
                                 <li><a href="#" data-coupon-id="${coupon.couponID}" class="dropdown-item editModalBtn" data-bs-toggle="modal" data-bs-target="#editCouponModal">쿠폰 수정</a></li>
                                 <li><button data-coupon-id="${coupon.couponID}" class="dropdown-item deleteCoupon">쿠폰 삭제</button></li>
-                                <li><a href="#" class="dropdown-item">적용되는 상품 관리</a></li>
+                                <li><a href="/seller/coupon/select/${coupon.couponID}" id="manageApplicableProductsBtn" class="dropdown-item">적용되는 상품 관리</a></li>
                             </ul>
                         </div>
                     </td>
