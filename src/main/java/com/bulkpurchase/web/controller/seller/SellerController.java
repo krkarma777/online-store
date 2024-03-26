@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
@@ -29,5 +30,12 @@ public class SellerController {
         User user = userAuthValidator.getCurrentUser(principal);
         model.addAttribute("sellerID", user.getUserID());
         return "seller/couponManage/couponList";
+    }
+
+    @GetMapping("/coupon/select/{couponID}")
+    public String selectProductForCouponForm(@PathVariable("couponID") Long couponID, Model model) {
+        model.addAttribute("couponID", couponID);
+
+        return "seller/couponManage/couponSelectProduct";
     }
 }
