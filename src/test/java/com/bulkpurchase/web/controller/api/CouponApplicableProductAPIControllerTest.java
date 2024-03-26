@@ -67,12 +67,8 @@ public class CouponApplicableProductAPIControllerTest {
         User user = new User();
 
         Product product1 = new Product(1L, user);
-        Product product2 = new Product(1L, user);
-        Product product3 = new Product(1L, user);
-        productService.save(product1);
-        productService.save(product2);
-        productService.save(product3);
-
+        Product product2 = new Product(2L, user);
+        Product product3 = new Product(3L, user);
 
         Coupon coupon = new Coupon();
         coupon.setCouponID(1L);
