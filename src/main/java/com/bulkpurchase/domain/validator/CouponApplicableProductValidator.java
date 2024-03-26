@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -30,10 +31,16 @@ public class CouponApplicableProductValidator {
         }
     }
 
-    public void validateAndApplyProductsToCoupon(List<Long> productIDs, Coupon coupon) {
+    public void validateAndApplyProductsToCoupon(List<Long> productIDs, Coupon coupon, Principal principal) {
+        User user = userAuthValidator.getCurrentUser(principal);
         List<Product> products = productIDs.stream()
                 .map(this::validateAndGetProduct)
+                .filter(product -> product.getUser().equals(user)) // 상품이 현재 사용자에 의해 게시되었는지 확인
                 .toList();
+
+        if (products.size() != productIDs.size()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "하나 이상의 상품이 사용자에 의해 게시되지 않았습니다.");
+        }
 
         couponApplicableProductService.deleteByCoupon(coupon);
         products.forEach(product -> couponApplicableProductService.save(new CouponApplicableProduct(coupon, product.getProductID())));

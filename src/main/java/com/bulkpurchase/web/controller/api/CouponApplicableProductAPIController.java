@@ -58,7 +58,7 @@ public class CouponApplicableProductAPIController {
 
         List<Long> productIDs = requestDTO.getProductIDs();
         if (productIDs != null && !productIDs.isEmpty()) {
-            validator.validateAndApplyProductsToCoupon(productIDs, coupon);
+            validator.validateAndApplyProductsToCoupon(productIDs, coupon, principal);
         } else {
             couponApplicableProductService.deleteByCoupon(coupon);
         }
