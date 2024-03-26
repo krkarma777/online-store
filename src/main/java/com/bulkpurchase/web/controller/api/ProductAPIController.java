@@ -131,6 +131,27 @@ public class ProductAPIController {
         return ResponseEntity.ok(Map.of("products", products, "totalPages", totalPages));
     }
 
+    @GetMapping("/searchForCoupon")
+    public ResponseEntity<?> findByQuery(@RequestParam("query") String query,
+                                         @RequestParam("page") Integer page,
+                                         Principal principal) {
+        User user = userAuthValidator.getCurrentUser(principal);
+
+        if (!user.getRole().equals(UserRole.ROLE_판매자)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "잘못된 요청입니다."));
+        }
+
+        int pageSize = 10;
+        Sort sort = Sort.by(Sort.Direction.fromString("DESC"), "productID");
+        Pageable pageable = PageRequest.of(page - 1, pageSize, sort);
+
+        Page<Product> pageOrigin = productService.findPageByProductNameContaining(pageable, query);
+        int totalPages = pageOrigin.getTotalPages();
+        List<Product> products = pageOrigin.getContent();
+
+        return ResponseEntity.ok(Map.of("totalPages", totalPages, "products", products));
+    }
+
     @PatchMapping("/status/{productID}")
     public ResponseEntity<?> status(@PathVariable(value = "productID") Long productID, Principal principal) {
         boolean isSuccess = productStatusService.updateProductStatus(productID, principal);
