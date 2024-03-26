@@ -1,19 +1,19 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.coupon.*;
-import com.bulkpurchase.domain.dto.product.ProductForCouponDTO;
 import com.bulkpurchase.domain.entity.coupon.Coupon;
-import com.bulkpurchase.domain.entity.coupon.CouponApplicableProduct;
 import com.bulkpurchase.domain.entity.coupon.UserCoupon;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.service.coupon.CouponApplicableProductService;
+import com.bulkpurchase.domain.enums.UserRole;
 import com.bulkpurchase.domain.service.coupon.CouponService;
 import com.bulkpurchase.domain.service.coupon.UserCouponService;
-import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.validator.coupon.CouponValidatorImpl;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import com.bulkpurchase.web.service.coupon.ApplyCouponService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,8 +33,6 @@ public class CouponAPIController {
     private final CouponService couponService;
     private final UserAuthValidator userAuthValidator;
     private final UserCouponService userCouponService;
-    private final CouponApplicableProductService couponApplicableProductService;
-    private final ProductService productService;
     private final ApplyCouponService applyCouponService;
     private final CouponValidatorImpl couponValidator;
 
@@ -69,7 +66,11 @@ public class CouponAPIController {
         if (couponOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "쿠폰이 존재하지 않습니다."));
         }
-        couponService.delete(couponOpt.get());
+        Coupon coupon = couponOpt.get();
+        if (!coupon.getCreatedBy().equals(user)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "쿠폰을 삭제할 권한이 없습니다."));
+        }
+        couponService.delete(coupon);
         return ResponseEntity.ok(Map.of("message", "쿠폰이 정상적으로 삭제되었습니다."));
     }
 
@@ -85,14 +86,28 @@ public class CouponAPIController {
 
     @GetMapping("/list")
     public ResponseEntity<List<CouponResponseDTO>> listPage() {
-        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Sort sort = Sort.by(Sort.Direction.DESC, "couponID");
         List<Coupon> couponList = couponService.findAll(sort);
 
         List<CouponResponseDTO> dtoList = couponList.stream()
                 .map(CouponResponseDTO::new)
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(dtoList);
+    }
+
+    @GetMapping("/seller/{sellerID}")
+    public ResponseEntity<?> findListBySeller(@PathVariable("sellerID") Long sellerID,
+                                              @RequestParam(value = "page",defaultValue = "1") Integer page) {
+        User user = userAuthValidator.getCurrentUserByUserID(sellerID);
+        if (user.getRole() != UserRole.ROLE_판매자) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "잘못된 요청입니다."));
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, "couponID");
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+        Page<Coupon> couponPage = couponService.findByCreatedBy(user, pageable);
+        List<CouponResponseDTO> coupons = couponPage.getContent().stream().map(CouponResponseDTO::new).toList();
+        return ResponseEntity.ok(Map.of("coupons", coupons, "totalPages", couponPage.getTotalPages(), "currentPage", page));
     }
 
 
@@ -117,20 +132,6 @@ public class CouponAPIController {
         return response;
     }
 
-    @GetMapping("/{couponID}/products")
-    public ResponseEntity<?> findApplicableProductsForCoupon(@PathVariable("couponID") Long couponID) {
-        List<CouponApplicableProduct> couponApplicableProducts = couponApplicableProductService.findByCouponCouponID(couponID);
-
-        List<ProductForCouponDTO> productForCouponDTOList = couponApplicableProducts.stream()
-                .map(CouponApplicableProduct::getProductId)
-                .map(productService::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(ProductForCouponDTO::new)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(productForCouponDTOList);
-    }
 
     @GetMapping("/user")
     public ResponseEntity<?> userCoupons(Principal principal) {

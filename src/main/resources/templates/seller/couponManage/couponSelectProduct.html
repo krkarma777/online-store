@@ -65,6 +65,7 @@
             display: flex;
             gap: 10px;
         }
+
         .page-title {
             font-size: 30px;
             font-weight: 600;
@@ -113,118 +114,175 @@
         <div th:replace="~{common/seller-page-sidebar :: sidebar}"></div>
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow">
-    <div class="page-title">쿠폰 적용 상품 설정</div>
-    <form id="couponForm" action="/seller/coupon/select" method="post">
-        <input type="hidden" name="couponID" th:value="${couponID}">
-        <div class="section">
-            <div class="section-title">쿠폰 코드 정보</div>
-            <div class="form-group">
-                <label for="couponCode">쿠폰 코드</label>
-                <input type="text" id="couponCode" class="form-control" th:value="${coupon.code}" readonly/>
-            </div>
+            <div class="page-title">쿠폰 적용 상품 설정</div>
+            <form id="couponForm">
+                <div class="section">
+                    <div class="section-title">쿠폰 코드 정보</div>
+                    <input type="hidden" id="couponID" th:value="${couponID}">
+                    <div class="form-group">
+                        <label for="couponCode">쿠폰 이름</label>
+                        <input type="text" id="couponName" class="form-control" readonly/>
+                    </div>
+                    <div class="form-group">
+                        <label for="couponCode">쿠폰 코드</label>
+                        <input type="text" id="couponCode" class="form-control" readonly/>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-title">선택된 상품</div>
+                    <div id="selectedProductsList"></div>
+                </div>
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#productSearchModal">상품 검색
+                    </button>
+                    <button type="submit" class="btn btn-success">저장</button>
+                </div>
+            </form>
         </div>
-        <div class="section">
-            <div class="section-title">선택된 상품</div>
-            <div id="selectedProductsList"></div>
-        </div>
-        <div class="action-buttons">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productSearchModal">상품 검색</button>
-            <button type="submit" class="btn btn-success">저장</button>
-        </div>
-    </form>
-</div>
 
 
-<div class="modal fade" id="productSearchModal" tabindex="-1" role="dialog" aria-labelledby="productSearchModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="productSearchModalLabel">상품 검색</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input type="text" id="searchQuery" class="form-control mb-3" placeholder="상품명으로 검색">
-                <button type="button" class="btn btn-primary" onclick="searchProduct()">검색</button>
+        <div class="modal fade" id="productSearchModal" tabindex="-1" role="dialog"
+             aria-labelledby="productSearchModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productSearchModalLabel">상품 검색</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="searchQuery" class="form-control mb-3" placeholder="상품명으로 검색">
+                        <button type="button" class="btn btn-primary" onclick="searchProduct()">검색</button>
 
-                <div id="searchResults" class="mt-3"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                        <div id="searchResults" class="mt-3"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-</div>
-<!-- 메인 컨텐츠 끝 -->
-</div>
 
 <script th:inline="javascript">
-
+    const couponID = [[${couponID}]];
     /*<![CDATA[*/
-    var appliedProducts = [[${productDTOs}]];
-    $(document).ready(function() {
-        // 적용된 상품들을 UI에 추가합니다.
-        appliedProducts.forEach(function(product) {
-            addSelectedProduct(product.productID, product.productName);
+
+    $(document).ready(function () {
+        addInitialApplicableProduct();
+        addCouponInfo();
+
+        $(document).on('submit', '#couponForm', function (e) {
+            e.preventDefault();
+            let productIDs = $('input[name="productIDs"]').map(function() { return $(this).val(); }).get();
+            let data = {
+                couponID: couponID,
+                productIDs: productIDs
+            }
+            console.log(data);
+            $.ajax({
+                url: '/api/coupon-applicable-product',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    alert(response.message);
+                    location.href = "/seller/coupon/list";
+                },
+                error: function(xhr, status, error) {
+                    const errorMessage = JSON.parse(xhr.responseText).message;
+                    alert(errorMessage);
+                }
+            });
         });
+
+        function addCouponInfo() {
+            $.ajax({
+                url: '/api/coupon/' + couponID,
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response)
+                    $("#couponCode").val(response.code)
+                    $("#couponID").val(response.couponID)
+                    $("#couponName").val(response.name)
+                },
+                error: function (xhr, status, error) {
+                    const errorMessage = JSON.parse(xhr.responseText).message;
+                    alert(errorMessage);
+                }
+            });
+        }
     });
 
-    /*]]>*/
-    function searchProduct() {
-        var searchQuery = $('#searchQuery').val(); // 사용자가 입력한 검색 쿼리를 가져옵니다.
+    function addInitialApplicableProduct() {
 
-        // AJAX 요청을 보냅니다.
         $.ajax({
-            url: '/searchProduct', // 검색 처리를 위한 서버의 URL
+            url: '/api/coupon-applicable-product/' + couponID,
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                response.forEach(function (product) {
+                    addSelectedProduct(product.productID, product.productName);
+                });
+            },
+            error: function (xhr, status, error) {
+                const errorMessage = JSON.parse(xhr.responseText).message;
+                alert(errorMessage);
+            }
+        });
+    }
+
+
+    function searchProduct() {
+        var searchQuery = $('#searchQuery').val();
+
+        $.ajax({
+            url: '/searchProduct',
             type: 'GET',
             data: {
-                query: searchQuery // 검색 쿼리를 쿼리 문자열로 전달합니다.
+                query: searchQuery
             },
-            dataType: 'json', // 응답으로 JSON을 기대합니다.
-            success: function(response) {
-                // 검색 성공 시, response 내에 있는 productList를 사용하여 결과를 표시합니다.
-                var resultsHtml = '';
-                response.forEach(function(product) {
-                    // 각 상품에 대해 HTML 요소를 생성합니다. 여기서는 예제로 상품 이름만 표시합니다.
-                    // 실제로는 필요에 따라 상품 ID, 가격 등의 정보를 추가할 수 있습니다.
+            dataType: 'json',
+            success: function (response) {
+                let resultsHtml = '';
+                response.forEach(function (product) {
                     resultsHtml += '<div class="search-result" data-id="' + product.productID + '">' + product.productName + ' <button type="button" onclick="addSelectedProduct(' + product.productID + ', \'' + product.productName + '\')">추가</button></div>';
                 });
                 $('#searchResults').html(resultsHtml);
             },
-            error: function(xhr, status, error) {
-                // 에러 처리
-                console.error("Error: " + status + " " + error);
+            error: function (xhr, status, error) {
+                const errorMessage = JSON.parse(xhr.responseText).message;
+                alert(errorMessage);
             }
         });
     }
 
     function addSelectedProduct(productId, productName) {
-        // 현재 선택된 모든 상품의 ID를 배열로 가져옵니다.
-        var existingProductIds = $('#couponForm input[name="productIDs"]').map(function() {
+        var existingProductIds = $('#couponForm input[name="productIDs"]').map(function () {
             return $(this).val();
         }).get();
 
-        // 현재 추가하려는 상품의 ID가 이미 존재하는지 체크합니다.
         if (existingProductIds.indexOf(String(productId)) !== -1) {
-            // 이미 존재하는 경우, 추가하지 않고 경고 메시지를 출력하거나 사용자에게 알림
             alert("이미 추가된 상품입니다.");
-            return; // 함수 실행 종료
+            return;
         }
 
-        // UI에 선택된 상품 표시
         $('#selectedProductsList').append('<div>' + productName + ' <button type="button" onclick="removeSelectedProduct(' + productId + ', this)">x</button></div>');
 
-        // 폼에 hidden input 추가
         $('#couponForm').append('<input type="hidden" name="productIDs" value="' + productId + '">');
     }
 
-    // 선택된 상품을 목록에서 제거하는 함수
     function removeSelectedProduct(productId, element) {
         $(element).parent().remove(); // UI에서 제거
         $('input[name="productIDs"][value="' + productId + '"]').remove(); // 폼에서 해당 상품의 hidden input 제거
     }
+
+    /*]]>*/
+
 </script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

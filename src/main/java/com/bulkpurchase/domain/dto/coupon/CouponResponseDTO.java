@@ -1,11 +1,10 @@
 package com.bulkpurchase.domain.dto.coupon;
 
 import com.bulkpurchase.domain.entity.coupon.Coupon;
-import com.bulkpurchase.domain.enums.CouponType;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -13,10 +12,10 @@ public class CouponResponseDTO {
 
     private Long couponID;
     private String code;
-    private CouponType type;
+    private String type;
     private Double discount;
-    private LocalDateTime validFrom;
-    private LocalDateTime validUntil;
+    private String validFrom;
+    private String validUntil;
     private Double minimumOrderAmount;
     private Integer quantity;
     private String name;
@@ -24,12 +23,13 @@ public class CouponResponseDTO {
     private Double maxDiscountAmount;
 
     public CouponResponseDTO(Coupon coupon) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
         this.couponID = coupon.getCouponID();
         this.code = coupon.getCode();
-        this.type = coupon.getType();
+        this.type = coupon.getType().getDescription();
         this.discount = coupon.getDiscount();
-        this.validFrom = coupon.getValidFrom();
-        this.validUntil = coupon.getValidUntil();
+        this.validFrom = coupon.getValidFrom().format(formatter);
+        this.validUntil = coupon.getValidUntil().format(formatter);
         this.minimumOrderAmount = coupon.getMinimumOrderAmount();
         this.quantity = coupon.getQuantity();
         this.name = coupon.getName();

@@ -7,6 +7,7 @@ import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.review.Review;
 import com.bulkpurchase.domain.entity.user.User;
+import com.bulkpurchase.domain.enums.UserRole;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.review.ReviewService;
@@ -21,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -103,6 +105,24 @@ public class ReviewAPIController {
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
         Page<ReviewDetailDTO> reviewDetailDTOS = reviewService.findByUser(user, pageable);
         return ResponseEntity.ok(reviewDetailDTOS);
+    }
+
+    @GetMapping("/seller/{sellerID}")
+    public ResponseEntity<?> findReviewsBySeller(@PathVariable("sellerID") Long sellerID,
+                                          @RequestParam(value = "page", defaultValue = "1") Integer page) {
+        User user = userAuthValidator.getCurrentUserByUserID(sellerID);
+
+        if (user.getRole() != UserRole.ROLE_판매자) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "잘못된 요청입니다."));
+        }
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "reviewID");
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+        Page<ReviewDetailDTO> reviewDetailDTOS = reviewService.findAllReviewDetailsWithFeedbackCountsBySeller(sellerID, pageable);
+        int totalPages = reviewDetailDTOS.getTotalPages();
+        List<ReviewDetailDTO> reviewList = reviewDetailDTOS.getContent();
+
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("reviewList", reviewList, "totalPages", totalPages));
     }
 
     private User getUser(Principal principal) {

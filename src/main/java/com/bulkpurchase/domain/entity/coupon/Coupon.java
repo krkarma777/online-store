@@ -70,6 +70,11 @@ public class Coupon {
     public Coupon() {
     }
 
+    public Coupon(Long couponID, User createdBy) {
+        this.couponID = couponID;
+        this.createdBy = createdBy;
+    }
+
     public Coupon(CouponCreateRequestDTO couponCreateRequestDTO) {
         this.type = couponCreateRequestDTO.getType();
         this.discount = couponCreateRequestDTO.getDiscount();

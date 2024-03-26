@@ -20,6 +20,11 @@ public class ProductForCouponDTO {
     public ProductForCouponDTO() {
     }
 
+    public ProductForCouponDTO(Long productID, String productName) {
+        this.productID = productID;
+        this.productName = productName;
+    }
+
     @Override
     public String toString() {
         return "ProductForCouponDTO{" +

@@ -75,6 +75,12 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<FavoriteProduct> favoritedByUsers;
 
+    public Product(Long productID, String productName, Category category) {
+        this.productID = productID;
+        this.productName = productName;
+        this.category = category;
+    }
+
     public ProductStatus getOppositeStatus() {
         return this.status == ProductStatus.ACTIVE ? ProductStatus.INACTIVE : ProductStatus.ACTIVE;
     }
@@ -90,6 +96,11 @@ public class Product {
     }
 
     public Product() {
+    }
+
+    public Product(Long productID, User user) {
+        this.productID = productID;
+        this.user = user;
     }
 
     public void update(ProductRequestDTO productRequestDTO) {

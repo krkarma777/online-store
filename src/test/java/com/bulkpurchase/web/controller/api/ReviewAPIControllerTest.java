@@ -1,6 +1,6 @@
 package com.bulkpurchase.web.controller.api;
 
-import com.bulkpurchase.domain.dto.review.ReviewResponseDTO;
+import com.bulkpurchase.domain.dto.review.ReviewDetailDTO;
 import com.bulkpurchase.domain.dto.review.ReviewUpdateRequestDTO;
 import com.bulkpurchase.domain.dto.review.ReviewWriteRequestDTO;
 import com.bulkpurchase.domain.entity.order.Order;
@@ -8,6 +8,7 @@ import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.review.Review;
 import com.bulkpurchase.domain.entity.user.User;
+import com.bulkpurchase.domain.enums.UserRole;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.service.review.ReviewService;
@@ -19,14 +20,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -167,9 +171,10 @@ class ReviewAPIControllerTest {
         // Given
         long reviewId = 1L;
         Review review = createTestReview(reviewId);
-        ReviewResponseDTO expectedResponseDTO = new ReviewResponseDTO(review);
+        ReviewDetailDTO reviewDetailDTO = new ReviewDetailDTO(review, 0, 0);
 
         given(reviewService.findById(reviewId)).willReturn(Optional.of(review));
+        given(reviewService.reviewDetailsByReviewID(reviewId)).willReturn(Optional.of(reviewDetailDTO));
 
         // When & Then
         mockMvc.perform(get("/api/review/{reviewID}", reviewId)
@@ -204,5 +209,37 @@ class ReviewAPIControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().json("{\"message\":\"존재하지 않는 리뷰입니다.\"}"));
+    }
+
+    @Test
+    @WithMockUser
+    void findReviewsBySeller_ValidRequest_ReturnsOk() throws Exception {
+        User mockUser = new User(); // Setup mock user
+        mockUser.setRole(UserRole.ROLE_판매자);
+        Page<ReviewDetailDTO> mockPage = new PageImpl<>(Collections.emptyList());
+
+        given(userAuthValidator.getCurrentUserByUserID(any(Long.class))).willReturn(mockUser);
+        given(reviewService.findAllReviewDetailsWithFeedbackCountsBySeller(eq(1L), any(PageRequest.class))).willReturn(mockPage);
+
+        mockMvc.perform(get("/api/review/seller/{sellerID}", 1L)
+                        .param("page", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    void findReviewsBySeller_UnauthorizedRequest_ReturnsUnauthorized() throws Exception {
+        User mockUser = new User();
+        mockUser.setRole(UserRole.ROLE_자영업자);
+        mockUser.setUserID(1L);
+
+        given(userAuthValidator.getCurrentUserByUserID(any(Long.class))).willReturn(mockUser);
+
+        mockMvc.perform(get("/api/review/seller/{sellerID}", 1L)
+                        .param("page", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."));
     }
 }
