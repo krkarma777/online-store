@@ -73,7 +73,11 @@ public class CouponAPIController {
         if (couponOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "쿠폰이 존재하지 않습니다."));
         }
-        couponService.delete(couponOpt.get());
+        Coupon coupon = couponOpt.get();
+        if (!coupon.getCreatedBy().equals(user)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "쿠폰을 삭제할 권한이 없습니다."));
+        }
+        couponService.delete(coupon);
         return ResponseEntity.ok(Map.of("message", "쿠폰이 정상적으로 삭제되었습니다."));
     }
 

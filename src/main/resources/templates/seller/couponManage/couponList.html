@@ -276,7 +276,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a href="#" data-coupon-id="${coupon.couponID}" class="dropdown-item editModalBtn" data-bs-toggle="modal" data-bs-target="#editCouponModal">쿠폰 수정</a></li>
-                                <li><button class="dropdown-item deleteCoupon">쿠폰 삭제</button></li>
+                                <li><button data-coupon-id="${coupon.couponID}" class="dropdown-item deleteCoupon">쿠폰 삭제</button></li>
                                 <li><a href="#" class="dropdown-item">적용되는 상품 관리</a></li>
                             </ul>
                         </div>
@@ -409,7 +409,7 @@
         });
 
         // 쿠폰 삭제
-        $(".deleteCoupon").click(function () {
+        $(document).on('click', '.deleteCoupon', function () {
             const couponID = $(this).data("coupon-id");
             $.ajax({
                 type: "DELETE",
