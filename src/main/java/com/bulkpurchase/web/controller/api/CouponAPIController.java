@@ -1,16 +1,12 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.coupon.*;
-import com.bulkpurchase.domain.dto.product.ProductForCouponDTO;
 import com.bulkpurchase.domain.entity.coupon.Coupon;
-import com.bulkpurchase.domain.entity.coupon.CouponApplicableProduct;
 import com.bulkpurchase.domain.entity.coupon.UserCoupon;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.UserRole;
-import com.bulkpurchase.domain.service.coupon.CouponApplicableProductService;
 import com.bulkpurchase.domain.service.coupon.CouponService;
 import com.bulkpurchase.domain.service.coupon.UserCouponService;
-import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.validator.coupon.CouponValidatorImpl;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import com.bulkpurchase.web.service.coupon.ApplyCouponService;
@@ -28,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,8 +33,6 @@ public class CouponAPIController {
     private final CouponService couponService;
     private final UserAuthValidator userAuthValidator;
     private final UserCouponService userCouponService;
-    private final CouponApplicableProductService couponApplicableProductService;
-    private final ProductService productService;
     private final ApplyCouponService applyCouponService;
     private final CouponValidatorImpl couponValidator;
 
@@ -139,20 +132,6 @@ public class CouponAPIController {
         return response;
     }
 
-    @GetMapping("/{couponID}/products")
-    public ResponseEntity<?> findApplicableProductsForCoupon(@PathVariable("couponID") Long couponID) {
-        List<CouponApplicableProduct> couponApplicableProducts = couponApplicableProductService.findByCouponCouponID(couponID);
-
-        List<ProductForCouponDTO> productForCouponDTOList = couponApplicableProducts.stream()
-                .map(CouponApplicableProduct::getProductId)
-                .map(productService::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(ProductForCouponDTO::new)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(productForCouponDTOList);
-    }
 
     @GetMapping("/user")
     public ResponseEntity<?> userCoupons(Principal principal) {
