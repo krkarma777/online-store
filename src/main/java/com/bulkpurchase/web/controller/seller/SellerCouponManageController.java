@@ -17,11 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -33,44 +29,6 @@ public class SellerCouponManageController {
     private final CouponApplicableProductService couponApplicableProductService;
     private final ProductService productService;
     private final UserAuthValidator userAuthValidator;
-
-    @PostMapping("/generate")
-    public String generateCoupon(@RequestParam("validFromDate") String validFromDate,
-                                 @RequestParam("validFromTime") String validFromTime,
-                                 @RequestParam("validUntilDate") String validUntilDate,
-                                 @RequestParam("validUntilTime") String validUntilTime,
-                                 Coupon coupon, Principal principal) {
-        LocalDateTime validFrom = LocalDateTime.of(LocalDate.parse(validFromDate), LocalTime.parse(validFromTime));
-        LocalDateTime validUntil = LocalDateTime.of(LocalDate.parse(validUntilDate), LocalTime.parse(validUntilTime));
-
-        User user = userAuthValidator.getCurrentUser(principal);
-        coupon.setValidFrom(validFrom);
-        coupon.setValidUntil(validUntil);
-        coupon.setCreatedBy(user);
-        coupon.setCode(UUID.randomUUID().toString());
-
-        couponService.save(coupon);
-        return "redirect:/seller/couponManage/list";
-    }
-
-    @PostMapping("/edit")
-    public String couponEdit(@RequestParam("couponID") Long couponID,
-                             @RequestParam("validUntilDate") String validUntilDate,
-                             @RequestParam("validUntilTime") String validUntilTime,
-                             @RequestParam("minimumOrderAmount") Double minimumOrderAmount,
-                             @RequestParam("quantity") Integer quantity,
-                             @RequestParam("name") String name,
-                             @RequestParam("description") String description,
-                             @RequestParam("maxDiscountAmount") Double maxDiscountAmount) {
-        Coupon coupon = couponService.findById(couponID)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Coupon not found"));
-
-        LocalDateTime validUntil = LocalDateTime.of(LocalDate.parse(validUntilDate), LocalTime.parse(validUntilTime));
-        coupon.updateDetails(validUntil, minimumOrderAmount, quantity, name, description, maxDiscountAmount);
-
-        couponService.save(coupon);
-        return "redirect:/seller/couponManage/list";
-    }
 
     @GetMapping("/delete/{couponID}")
     public String couponDelete(@PathVariable("couponID") Long couponID, Principal principal) {

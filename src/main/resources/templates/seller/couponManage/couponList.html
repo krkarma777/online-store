@@ -275,7 +275,7 @@
                                     data-bs-toggle="dropdown" aria-expanded="false">작업
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a href="#" class="dropdown-item" data-bs-toggle="modal">쿠폰 수정</a></li>
+                                <li><a href="#" data-coupon-id="${coupon.couponID}" class="dropdown-item editModalBtn" data-bs-toggle="modal" data-bs-target="#editCouponModal">쿠폰 수정</a></li>
                                 <li><button class="dropdown-item deleteCoupon">쿠폰 삭제</button></li>
                                 <li><a href="#" class="dropdown-item">적용되는 상품 관리</a></li>
                             </ul>
@@ -323,7 +323,7 @@
                 .appendTo(paginationUl);
         }
 
-        $("#editModalBtn").on("click", function () {
+        $(document).on('click', '.editModalBtn', function () {
             let id = $(this).data("coupon-id");
 
             $.ajax({
@@ -343,15 +343,12 @@
                 }
             });
         });
+        function formatDateTime(dateString) {
+            var parts = dateString.split(" ");
+            var datePart = parts[0].replace(/\//g, '-');
+            var timePart = parts[1];
 
-        function formatDateTime(validUntilArray) {
-            var year = validUntilArray[0];
-            var month = validUntilArray[1].toString().padStart(2, '0');
-            var day = validUntilArray[2].toString().padStart(2, '0');
-            var hour = validUntilArray[3].toString().padStart(2, '0');
-            var minute = validUntilArray[4].toString().padStart(2, '0');
-
-            return `${year}-${month}-${day}T${hour}:${minute}`;
+            return datePart + "T" + timePart;
         }
 
         // 쿠폰 생성
