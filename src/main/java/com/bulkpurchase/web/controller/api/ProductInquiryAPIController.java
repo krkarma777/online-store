@@ -3,6 +3,7 @@ package com.bulkpurchase.web.controller.api;
 import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryCreateRequestDTO;
 import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryReplyRequestDTO;
 import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryUpdateRequestDTO;
+import com.bulkpurchase.domain.entity.Inquiry;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import com.bulkpurchase.domain.entity.user.User;
@@ -91,5 +92,22 @@ public class ProductInquiryAPIController {
         productInquiryService.save(productInquiry);
 
         return ResponseEntity.ok(Map.of("message", "답변이 성공적으로 등록되었습니다.", "inquiryID", productInquiry.getInquiryID()));
+    }
+
+    @DeleteMapping("/{InquiryID}")
+    public ResponseEntity<?> delete(@PathVariable("inquiryID") Long InquiryID, Principal principal) {
+        ProductInquiry productInquiry = productInquiryService.findById(InquiryID)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "문의가 존재하지 않습니다."));
+
+        User user = userAuthValidator.getCurrentUser(principal);
+        if (!user.equals(productInquiry.getUser())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "문의를 삭제할 권한이 없습니다.");
+        }
+
+        if (productInquiry.getReplyContent() != null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "답변이 완료된 문의는 삭제할 수 없습니다.");
+        }
+
+        return ResponseEntity.ok(Map.of("message", "글 삭제가 완료되었습니다."));
     }
 }
