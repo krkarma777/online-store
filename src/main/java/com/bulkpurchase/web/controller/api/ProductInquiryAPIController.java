@@ -36,8 +36,8 @@ public class ProductInquiryAPIController {
         Product product = productService.findById(requestDTO.getProductID())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "상품이 존재하지 않습니다."));
 
-        productInquiryService.save(new ProductInquiry(requestDTO, product, user));
+        Long inquiryID = productInquiryService.save(new ProductInquiry(requestDTO, product, user)).getInquiryID();
 
-        return ResponseEntity.ok(Map.of("message", "문의가 정상적으로 등록되었습니다."));
+        return ResponseEntity.ok(Map.of("message", "문의가 정상적으로 등록되었습니다.", "inquiryID", inquiryID));
     }
 }

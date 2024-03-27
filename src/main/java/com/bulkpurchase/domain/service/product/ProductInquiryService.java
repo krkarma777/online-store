@@ -26,8 +26,8 @@ public class ProductInquiryService {
         return productInquiryRepository.findByProductUser(user);
     }
 
-    public void save(ProductInquiry productInquiry) {
-        productInquiryRepository.save(productInquiry);
+    public ProductInquiry save(ProductInquiry productInquiry) {
+        return productInquiryRepository.save(productInquiry);
     }
 
     public Optional<ProductInquiry> findById(Long inquiryID) {
