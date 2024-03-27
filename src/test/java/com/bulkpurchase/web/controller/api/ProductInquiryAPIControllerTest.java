@@ -1,6 +1,7 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryCreateRequestDTO;
+import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryReplyRequestDTO;
 import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryUpdateRequestDTO;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.product.ProductInquiry;
@@ -58,6 +59,8 @@ class ProductInquiryAPIControllerTest {
     private Product product;
     private ProductInquiry productInquiry;
 
+    private ProductInquiryReplyRequestDTO replyRequestDTO;
+
     @BeforeEach
     void setUp() {
         user = new User();
@@ -74,7 +77,14 @@ class ProductInquiryAPIControllerTest {
         updateRequestDTO = new ProductInquiryUpdateRequestDTO();
         updateRequestDTO.setInquiryID(1L);
         updateRequestDTO.setInquiryContent("updated inquiry content");
+
+        replyRequestDTO = new ProductInquiryReplyRequestDTO();
+        replyRequestDTO.setInquiryID(1L);
+        replyRequestDTO.setReplyContent("This is a reply.");
     }
+
+    /* create test */
+
     @Test
     @WithMockUser
     public void testCreateSuccessfully() throws Exception {
@@ -102,6 +112,8 @@ class ProductInquiryAPIControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("상품이 존재하지 않습니다."));
     }
+
+    /* update test */
 
     @Test
     @WithMockUser
@@ -167,5 +179,69 @@ class ProductInquiryAPIControllerTest {
                         .content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("잘못된 요청입니다."));
+    }
+
+    /* reply test */
+
+    @Test
+    @WithMockUser
+    public void testReplySuccessfully() throws Exception {
+        product.setUser(user);
+        productInquiry.setProduct(product);
+
+        given(productInquiryService.findById(1L)).willReturn(Optional.of(productInquiry));
+        given(userAuthValidator.getCurrentUser(any(Principal.class))).willReturn(user);
+
+        mockMvc.perform(patch("/api/product-inquiry/reply")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(replyRequestDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("답변이 성공적으로 등록되었습니다."))
+                .andExpect(jsonPath("$.inquiryID").value(1L));
+    }
+
+    @Test
+    @WithMockUser
+    public void testReplyToNonexistentInquiry() throws Exception {
+        given(productInquiryService.findById(1L)).willReturn(Optional.empty());
+
+        mockMvc.perform(patch("/api/product-inquiry/reply")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(replyRequestDTO)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("문의가 존재하지 않습니다."));
+    }
+
+    @Test
+    @WithMockUser
+    public void testReplyByUnauthorizedUser() throws Exception {
+        product.setUser(user);
+        productInquiry.setProduct(product);
+
+        given(productInquiryService.findById(1L)).willReturn(Optional.of(productInquiry));
+        given(userAuthValidator.getCurrentUser(any(Principal.class))).willReturn(new User());
+
+        mockMvc.perform(patch("/api/product-inquiry/reply")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(replyRequestDTO)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("답변을 작성할 권한이 없습니다."));
+    }
+
+    @Test
+    @WithMockUser
+    public void testReplyToAlreadyRepliedInquiry() throws Exception {
+        product.setUser(user);
+        productInquiry.setProduct(product);
+        productInquiry.setReplyDate(new Date());
+
+        given(userAuthValidator.getCurrentUser(any(Principal.class))).willReturn(user);
+        given(productInquiryService.findById(1L)).willReturn(Optional.of(productInquiry));
+
+        mockMvc.perform(patch("/api/product-inquiry/reply")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(replyRequestDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("이미 답변이 완료된 문의입니다."));
     }
 }
