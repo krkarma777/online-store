@@ -27,8 +27,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -243,5 +242,61 @@ class ProductInquiryAPIControllerTest {
                         .content(objectMapper.writeValueAsString(replyRequestDTO)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("이미 답변이 완료된 문의입니다."));
+    }
+
+    /* delete test */
+
+    @Test
+    @WithMockUser
+    public void testDeleteInquirySuccessfully() throws Exception {
+        productInquiry.setUser(user);
+
+        given(productInquiryService.findById(1L)).willReturn(Optional.of(productInquiry));
+        given(userAuthValidator.getCurrentUser(any(Principal.class))).willReturn(user);
+
+        mockMvc.perform(delete("/api/product-inquiry/{inquiryID}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("글 삭제가 완료되었습니다."));
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteNonexistentInquiry() throws Exception {
+        given(productInquiryService.findById(1L)).willReturn(Optional.empty());
+
+        mockMvc.perform(delete("/api/product-inquiry/{inquiryID}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("문의가 존재하지 않습니다."));
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteInquiryUnauthorized() throws Exception {
+        User anotherUser = new User();
+        anotherUser.setUserID(2L);
+
+        given(productInquiryService.findById(1L)).willReturn(Optional.of(productInquiry));
+        given(userAuthValidator.getCurrentUser(any(Principal.class))).willReturn(anotherUser);
+
+        mockMvc.perform(delete("/api/product-inquiry/{inquiryID}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("문의를 삭제할 권한이 없습니다."));
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteInquiryWithReply() throws Exception {
+        productInquiry.setReplyContent("This is a reply.");
+
+        given(productInquiryService.findById(1L)).willReturn(Optional.of(productInquiry));
+        given(userAuthValidator.getCurrentUser(any(Principal.class))).willReturn(user);
+
+        mockMvc.perform(delete("/api/product-inquiry/{inquiryID}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("답변이 완료된 문의는 삭제할 수 없습니다."));
     }
 }
