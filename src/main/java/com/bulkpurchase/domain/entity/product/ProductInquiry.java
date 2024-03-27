@@ -1,6 +1,7 @@
 package com.bulkpurchase.domain.entity.product;
 
 import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryCreateRequestDTO;
+import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryUpdateRequestDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -49,5 +50,9 @@ public class ProductInquiry {
     }
 
     public ProductInquiry() {
+    }
+
+    public void update(ProductInquiryUpdateRequestDTO requestDTO) {
+        this.inquiryContent = requestDTO.getInquiryContent();
     }
 }
