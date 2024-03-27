@@ -94,7 +94,7 @@ public class ProductInquiryAPIController {
         return ResponseEntity.ok(Map.of("message", "답변이 성공적으로 등록되었습니다.", "inquiryID", productInquiry.getInquiryID()));
     }
 
-    @DeleteMapping("/{InquiryID}")
+    @DeleteMapping("/{inquiryID}")
     public ResponseEntity<?> delete(@PathVariable("inquiryID") Long InquiryID, Principal principal) {
         ProductInquiry productInquiry = productInquiryService.findById(InquiryID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "문의가 존재하지 않습니다."));
