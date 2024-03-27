@@ -1,24 +1,11 @@
 package com.bulkpurchase.domain.dto.product;
 
-import com.bulkpurchase.domain.entity.product.Category;
 import com.bulkpurchase.domain.entity.product.Product;
-import com.bulkpurchase.domain.entity.product.SaveCheck;
-import com.bulkpurchase.domain.entity.product.UpdateCheck;
-import com.bulkpurchase.domain.entity.user.FavoriteProduct;
-import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.ProductStatus;
-import com.bulkpurchase.domain.enums.SalesRegion;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Range;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter

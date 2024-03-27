@@ -1,6 +1,8 @@
 package com.bulkpurchase.domain.service.product;
 
 import com.bulkpurchase.domain.dto.product.ProductInquiryDTO;
+import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryResponseDTO;
+import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.repository.product.ProductInquiryRepository;
@@ -48,5 +50,15 @@ public class ProductInquiryService {
     public Page<ProductInquiryDTO> findAllDTO(Pageable pageable) {
         Page<ProductInquiry> inquiriesPage = productInquiryRepository.findAll(pageable);
         return inquiriesPage.map(ProductInquiryDTO::new);
+    }
+
+    public Page<ProductInquiryResponseDTO> findByProductUser(User user, Pageable pageable) {
+        Page<ProductInquiry> inquiriesPage = productInquiryRepository.findByProductUser(user, pageable);
+        return inquiriesPage.map(ProductInquiryResponseDTO::new);
+    }
+
+    public Page<ProductInquiryResponseDTO> findByProduct(Product product, Pageable pageable) {
+        Page<ProductInquiry> inquiriesPage = productInquiryRepository.findByProduct(product, pageable);
+        return inquiriesPage.map(ProductInquiryResponseDTO::new);
     }
 }

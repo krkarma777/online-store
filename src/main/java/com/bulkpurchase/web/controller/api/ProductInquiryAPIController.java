@@ -2,8 +2,8 @@ package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryCreateRequestDTO;
 import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryReplyRequestDTO;
+import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryResponseDTO;
 import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryUpdateRequestDTO;
-import com.bulkpurchase.domain.entity.Inquiry;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import com.bulkpurchase.domain.entity.user.User;
@@ -11,6 +11,10 @@ import com.bulkpurchase.domain.service.product.ProductInquiryService;
 import com.bulkpurchase.domain.service.product.ProductService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -70,7 +75,7 @@ public class ProductInquiryAPIController {
 
     @PatchMapping("/reply")
     public ResponseEntity<?> response(@RequestBody ProductInquiryReplyRequestDTO requestDTO,
-                                    Principal principal) {
+                                      Principal principal) {
         if (requestDTO.getReplyContent() == null || requestDTO.getInquiryID() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
         }
@@ -110,4 +115,39 @@ public class ProductInquiryAPIController {
 
         return ResponseEntity.ok(Map.of("message", "글 삭제가 완료되었습니다."));
     }
+
+    @GetMapping("/{inquiryID}")
+    public ResponseEntity<?> findOne(@PathVariable("inquiryID") Long InquiryID) {
+        ProductInquiry productInquiry = productInquiryService.findById(InquiryID)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "문의가 존재하지 않습니다."));
+
+        return ResponseEntity.ok(new ProductInquiryResponseDTO(productInquiry));
+    }
+    @GetMapping("/seller/{sellerID}")
+    public ResponseEntity<?> findListBySeller(@PathVariable("sellerID") Long sellerID, @RequestParam(value = "page", defaultValue = "1") Integer page) {
+
+        User user = userAuthValidator.getCurrentUserByUserID(sellerID);
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "inquiryID");
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+
+        Page<ProductInquiryResponseDTO> inquiries = productInquiryService.findByProductUser(user, pageable);
+        List<ProductInquiryResponseDTO> dtoList = inquiries.getContent();
+        int totalPages = inquiries.getTotalPages();
+        return ResponseEntity.ok(Map.of("inquiries", dtoList, "totalPages", totalPages));
+    }
+    @GetMapping("/seller/{productID}")
+    public ResponseEntity<?> findListByProduct(@PathVariable("productID") Long productID, @RequestParam(value = "page", defaultValue = "1") Integer page) {
+
+        Product product = productService.findById(productID)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 상품입니다."));
+        Sort sort = Sort.by(Sort.Direction.DESC, "inquiryID");
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+
+        Page<ProductInquiryResponseDTO> inquiries = productInquiryService.findByProduct(product, pageable);
+        List<ProductInquiryResponseDTO> dtoList = inquiries.getContent();
+        int totalPages = inquiries.getTotalPages();
+        return ResponseEntity.ok(Map.of("inquiries", dtoList, "totalPages", totalPages));
+    }
+
 }
