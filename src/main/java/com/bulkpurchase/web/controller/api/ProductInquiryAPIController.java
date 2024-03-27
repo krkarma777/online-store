@@ -1,6 +1,7 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryCreateRequestDTO;
+import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryReplyRequestDTO;
 import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryUpdateRequestDTO;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.product.ProductInquiry;
@@ -64,5 +65,31 @@ public class ProductInquiryAPIController {
         productInquiryService.save(productInquiry);
 
         return ResponseEntity.ok(Map.of("message", "문의 수정이 완료되었습니다.", "inquiryID", productInquiry.getInquiryID()));
+    }
+
+    @PatchMapping("/reply")
+    public ResponseEntity<?> response(@RequestBody ProductInquiryReplyRequestDTO requestDTO,
+                                    Principal principal) {
+        if (requestDTO.getReplyContent() == null || requestDTO.getInquiryID() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
+        }
+
+        ProductInquiry productInquiry = productInquiryService.findById(requestDTO.getInquiryID())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "문의가 존재하지 않습니다."));
+
+        User user = userAuthValidator.getCurrentUser(principal);
+
+        if (!productInquiry.getProduct().getUser().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "답변을 작성할 권한이 없습니다.");
+        }
+
+        if (productInquiry.getReplyDate() != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 답변이 완료된 문의입니다.");
+        }
+
+        productInquiry.reply(requestDTO);
+        productInquiryService.save(productInquiry);
+
+        return ResponseEntity.ok(Map.of("message", "답변이 성공적으로 등록되었습니다.", "inquiryID", productInquiry.getInquiryID()));
     }
 }
