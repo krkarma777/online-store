@@ -41,8 +41,16 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken' ,name:'jjwt-jackson', version: '0.12.5'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'com.querydsl:querydsl-jpa'
+    implementation 'com.querydsl:querydsl-apt'
+
+    annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jpa'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+sourceSets {
+    main.java.srcDirs += [file("$buildDir/generated/sources/annotationProcessor/java/main")]
 }
