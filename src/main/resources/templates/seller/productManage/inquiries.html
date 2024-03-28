@@ -134,8 +134,15 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
     $(document).ready(function () {
+        const sellerID = [[${sellerID}]];
+        let currentPage = 1;
+
+        loadInquiries();
+
         var selectedInquiryId; // 선택된 문의 ID를 저장할 변수
 
         // "답변하기" 버튼에 대한 이벤트 위임
@@ -163,27 +170,24 @@
             });
         });
 
-        let currentPage = 1;
-        const inquiriesPerPage = 10;
 
         function loadInquiries() {
             $.ajax({
-                url: '/inquiries/load-more',
+                url: '/api/product-inquiry/seller/'+ sellerID,
                 type: 'GET',
                 data: {
-                    page: currentPage,
-                    size: inquiriesPerPage
+                    page: currentPage
                 },
-                success: function (data) {
-                    if (data.length > 0) {
-                        data.forEach(function (inquiry) {
+                success: function (response) {
+                    if (response.inquiries.length > 0) {
+                        response.inquiries.forEach(function (inquiry) {
                             const inquiryHtml = `
                                                     <div class="list-group-item inquiry-item">
                                                         <div class="product-name" style="margin-bottom: 10px;">
-                                                            <a href="/product/${inquiry.productID}" style="text-decoration: none; color: #007bff;">상품명: ${inquiry.productName}</a>
+                                                            <a href="/product/${inquiry.product.productID}" style="text-decoration: none; color: #007bff;">상품명: ${inquiry.product.productName}</a>
                                                         </div>
                                                         <div class="inquiry-section" data-label="문의">
-                                                            <p class="mb-1">문의한 사용자: ${inquiry.realName}</p>
+                                                            <p class="mb-1">문의한 사용자: ${inquiry.user.realName}</p>
                                                             <p>${inquiry.inquiryContent}</p>
                                                             <small>문의 날짜: ${inquiry.inquiryDate}</small>
                                                         </div>
@@ -193,7 +197,7 @@
                                                             <small>답변 날짜: ${inquiry.replyDate}</small>
                                                         </div>` : `
                                                         <div class="reply-awaiting">답변 대기중...</div>
-                                                        <button class="btn btn-primary btn-reply" data-bs-toggle="modal" data-bs-target="#replyModal" data-inquiry-id="${inquiry.inquiryID}">답변하기</button>
+                                                        <button class="btn btn-primary btn-reply center-align" data-bs-toggle="modal" data-bs-target="#replyModal" data-inquiry-id="${inquiry.inquiryID}">답변하기</button>
                                                         `}
                                                     </div>`;
                             $('#inquiryList').append(inquiryHtml);
@@ -210,12 +214,12 @@
             });
         }
 
-        loadInquiries();
 
         $('#loadMore').click(function () {
             loadInquiries();
         });
     });
+    /*]]>*/
 </script>
 
 
