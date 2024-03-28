@@ -31,8 +31,7 @@ public class SellerInquiryManageController {
     @GetMapping("/seller/inquiries")
     public String inquiriesManage(Principal principal, Model model) {
         User user = userAuthValidator.getCurrentUser(principal);
-        List<ProductInquiry> inquiries = productInquiryService.findByProductUser(user);
-        model.addAttribute("inquiries", inquiries);
+        model.addAttribute("sellerID", user.getUserID());
         return "/seller/productManage/inquiries";
     }
 

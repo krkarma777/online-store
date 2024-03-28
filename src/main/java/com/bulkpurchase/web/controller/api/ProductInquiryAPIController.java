@@ -136,7 +136,7 @@ public class ProductInquiryAPIController {
         int totalPages = inquiries.getTotalPages();
         return ResponseEntity.ok(Map.of("inquiries", dtoList, "totalPages", totalPages));
     }
-    @GetMapping("/seller/{productID}")
+    @GetMapping("/product/{productID}")
     public ResponseEntity<?> findListByProduct(@PathVariable("productID") Long productID, @RequestParam(value = "page", defaultValue = "1") Integer page) {
 
         Product product = productService.findById(productID)
