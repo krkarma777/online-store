@@ -25,7 +25,9 @@ public class SalesVolumeAPIController {
     private final UserAuthValidator userAuthValidator;
 
     private final OrderService orderService;
+
     private final LocalDate endDate = LocalDate.now().plusDays(1);
+
     private final LocalDate startDate = endDate.minusDays(30);
 
 
