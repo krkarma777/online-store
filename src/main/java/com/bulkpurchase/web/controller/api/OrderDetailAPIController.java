@@ -23,15 +23,15 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/order-management")
-public class OrderManagementAPIController {
+@RequestMapping("/api/order-detail")
+public class OrderDetailAPIController {
 
     private final OrderDetailService orderDetailService;
     private final OrderStatusUpdateService orderStatusUpdateService;
     private final PaymentService paymentService;
     private final UserAuthValidator userAuthValidator;
 
-    @GetMapping
+    @GetMapping("/seller")
     public ResponseEntity<?> manageForm(Principal principal, @RequestParam(value = "page", defaultValue = "1") Integer page) {
         page = (page <= 1) ? 1 : page;
 
@@ -60,7 +60,7 @@ public class OrderManagementAPIController {
         return ResponseEntity.ok("/seller/orders");
     }
 
-    @GetMapping("/detail/{orderDetailID}")
+    @GetMapping("/{orderDetailID}")
     public ResponseEntity<?> orderDetailInfoForSeller(@PathVariable("orderDetailID") Long orderDetailID) {
         OrderDetail orderDetail = getOrderDetail(orderDetailID);
 
