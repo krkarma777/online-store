@@ -3,9 +3,9 @@ package com.bulkpurchase.web.controller.api;
 import com.bulkpurchase.domain.dto.order.OrderDetailResponseDTO;
 import com.bulkpurchase.domain.dto.order.OrderResponseDTO;
 import com.bulkpurchase.domain.dto.order.PaymentResponseDTO;
+import com.bulkpurchase.domain.dto.orderdetail.OrderDetailStatusUpdateRequestDTO;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.user.User;
-import com.bulkpurchase.domain.enums.OrderStatus;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.service.order.PaymentService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
@@ -49,13 +49,13 @@ public class OrderManagementAPIController {
         return ResponseEntity.ok(responseData);
     }
 
-    @PatchMapping("/{orderDetailID}")
-    public ResponseEntity<?> orderStatusChange(@PathVariable("orderDetailID") Long orderDetailID, Principal principal, @RequestParam("orderStatus") OrderStatus status) {
+    @PatchMapping
+    public ResponseEntity<?> orderStatusChange(@RequestBody OrderDetailStatusUpdateRequestDTO requestDTO, Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
-        OrderDetail orderDetail = getOrderDetail(orderDetailID);
+        OrderDetail orderDetail = getOrderDetail(requestDTO.getOrderDetailID());
 
         userAuthValidator.validateUserAccessOrderDetail(user, orderDetail);
-        orderStatusUpdateService.updateOrderStatus(orderDetail, status);
+        orderStatusUpdateService.updateOrderStatus(orderDetail, requestDTO.getOrderStatus());
 
         return ResponseEntity.ok("/seller/orders");
     }
