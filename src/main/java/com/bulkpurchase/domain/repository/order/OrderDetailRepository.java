@@ -5,6 +5,7 @@ import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.product.Product;
 import com.bulkpurchase.domain.entity.user.User;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +25,5 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
             "ORDER BY od.orderDetailID DESC")
     List<OrderDetailNameAndIdDTO> findOrderIDAndProductNameByUser(@Param("user") User user, Pageable pageable);
 
+    Page<OrderDetail> findByProductUser(User user, Pageable pageable);
 }
