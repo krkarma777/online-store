@@ -6,7 +6,8 @@ import com.bulkpurchase.domain.entity.product.ProductInquiry;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -22,9 +23,9 @@ public class ProductInquiryResponseDTO {
 
     private String replyContent;
 
-    private Date inquiryDate;
+    private String inquiryDate;
 
-    private Date replyDate;
+    private String replyDate;
 
     public ProductInquiryResponseDTO(ProductInquiry productInquiry) {
         this.inquiryID = productInquiry.getInquiryID();
@@ -32,8 +33,11 @@ public class ProductInquiryResponseDTO {
         this.user = new UserResponseDTO(productInquiry.getUser());
         this.inquiryContent = productInquiry.getInquiryContent();
         this.replyContent = productInquiry.getReplyContent();
-        this.inquiryDate = productInquiry.getInquiryDate();
-        this.replyDate = productInquiry.getReplyDate();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+
+        this.inquiryDate = Optional.ofNullable(productInquiry.getInquiryDate()).map(formatter::format).orElse(null);
+        this.replyDate = Optional.ofNullable(productInquiry.getReplyDate()).map(formatter::format).orElse(null);
     }
 
     public ProductInquiryResponseDTO() {
