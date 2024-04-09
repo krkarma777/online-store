@@ -1,10 +1,14 @@
 package com.bulkpurchase.web.controller.api;
 
 import com.bulkpurchase.domain.dto.orderdetail.OrderDetailManagementResponseDTO;
+import com.bulkpurchase.domain.dto.orderdetail.OrderDetailStatusUpdateRequestDTO;
+import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.user.User;
+import com.bulkpurchase.domain.enums.OrderStatus;
 import com.bulkpurchase.domain.enums.UserRole;
 import com.bulkpurchase.domain.service.order.OrderDetailService;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
+import com.bulkpurchase.web.service.order.OrderStatusUpdateService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,8 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,6 +51,9 @@ class OrderManagementAPIControllerTest {
 
     @MockBean
     private UserAuthValidator userAuthValidator;
+
+    @MockBean
+    private OrderStatusUpdateService orderStatusUpdateService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -73,5 +83,26 @@ class OrderManagementAPIControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderDetails").value(list))
                 .andExpect(jsonPath("$.totalPages").value(10));
+    }
+
+    @Test
+    @WithMockUser(username = "seller", roles = {"SELLER"})
+    void orderStatusChange_WhenRequestedBySeller_ShouldUpdateOrderStatus() throws Exception {
+        OrderDetailStatusUpdateRequestDTO requestDTO = new OrderDetailStatusUpdateRequestDTO();
+        requestDTO.setOrderDetailID(1L);
+        requestDTO.setOrderStatus(OrderStatus.PROCESSING);
+
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setOrderDetailID(1L);
+        orderDetail.setStatus(OrderStatus.PENDING);
+
+        given(orderDetailService.findByID(eq(1L))).willReturn(java.util.Optional.of(orderDetail));
+
+        mockMvc.perform(patch("/api/order-management")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isOk());
+
+        verify(orderStatusUpdateService).updateOrderStatus(eq(orderDetail), eq(OrderStatus.PROCESSING));
     }
 }
