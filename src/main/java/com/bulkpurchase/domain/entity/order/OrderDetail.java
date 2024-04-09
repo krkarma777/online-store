@@ -39,4 +39,18 @@ public class OrderDetail {
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
     private OrderStatus status = OrderStatus.PENDING;
+
+    public OrderDetail() {
+    }
+
+    public OrderDetail(Long orderDetailID, Order order, Product product, Integer quantity, Double price, String shippingCompany, String shippingNumber, OrderStatus status) {
+        this.orderDetailID = orderDetailID;
+        this.order = order;
+        this.product = product;
+        this.quantity = quantity;
+        this.price = price;
+        this.shippingCompany = shippingCompany;
+        this.shippingNumber = shippingNumber;
+        this.status = status;
+    }
 }
