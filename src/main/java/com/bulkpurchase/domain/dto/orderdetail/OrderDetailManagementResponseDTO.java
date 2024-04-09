@@ -40,4 +40,7 @@ public class OrderDetailManagementResponseDTO {
         this.shippingNumber = orderDetail.getShippingNumber();
         this.orderDate = timeFormat(orderDetail.getOrder().getOrderDate());
     }
+
+    public OrderDetailManagementResponseDTO() {
+    }
 }

@@ -33,16 +33,18 @@ public class OrderManagementAPIController {
 
     @GetMapping
     public ResponseEntity<?> manageForm(Principal principal, @RequestParam(value = "page", defaultValue = "1") Integer page) {
+        page = (page <= 1) ? 1 : page;
+
         User user = userAuthValidator.getCurrentUser(principal);
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "inquiryID");
+        Sort sort = Sort.by(Sort.Direction.DESC, "orderDetailID");
 
         PageRequest pageRequest = PageRequest.of(page - 1, 10, sort);
 
         // 조회된 데이터와 함께 총 페이지 수를 맵으로 구성하여 반환합니다.
         // 'orderDetails' 키에는 OrderDetail 객체들을 OrderDetailManagementResponseDTO 객체로 변환한 리스트를 할당합니다.
         // 'totalPages' 키에는 조회 결과의 총 페이지 수를 할당합니다.
-        Map<String, Object> responseData  = orderDetailService.findBySeller(user, pageRequest);
+        Map<String, Object> responseData = orderDetailService.findBySeller(user, pageRequest);
 
         return ResponseEntity.ok(responseData);
     }
