@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>주문 관리</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/common.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <style>
-
         h2 {
             color: #495057; /* 제목 색상 */
             margin-bottom: 30px; /* 제목 아래 여백 */
@@ -30,70 +30,132 @@
         <div th:replace="~{common/seller-page-sidebar :: sidebar}"></div>
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow">
-                <h2 class="center-align">주문 관리</h2>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                        <tr>
-                            <th>주문번호</th>
-                            <th>상품명</th>
-                            <th>수량</th>
-                            <th>주문 상태</th>
-                            <th>주문 날짜</th>
-                            <th>작업</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="orderDetail : ${orderDetailList}">
-                            <td><a th:href="'/seller/orders/detail/'+${orderDetail.orderDetailID}"
-                                   style="text-decoration: none; color: black;"><span
-                                    th:text="${orderDetail.order.orderID}"></span></a></td>
-                            <td><a th:href="'/product/'+${orderDetail.product.productID}"
-                                   style="text-decoration: none; color: black;"><span class="product-name"
-                                    th:text="${orderDetail.product.productName}"></span></a></td>
-                            <td th:text="${orderDetail.quantity}"></td>
-                            <td th:text="${orderDetail.order.status.getDescription()}"></td>
-                            <td th:text="${#temporals.format(orderDetail.order.orderDate, 'yyyy-MM-dd')}"></td>
-                            <td>
-                                <form th:action="@{/seller/orders/edit/{orderDetailID}(orderDetailID=${orderDetail.orderDetailID})}"
-                                      method="post">
-                                    <button th:if="${orderDetail.status.getDescription() == '처리 대기 중'}" type="submit"
-                                            name="orderStatus" value="PROCESSING"
-                                            class="btn btn-sm btn-info btn-status-update">처리 중
-                                    </button>
-                                    <button th:if="${orderDetail.status.getDescription() == '처리 중'}" type="submit"
-                                            name="orderStatus" value="SHIPPED"
-                                            class="btn btn-sm btn-warning btn-status-update">배송 중
-                                    </button>
-                                    <button th:if="${orderDetail.status.getDescription() == '배송 중'}" type="submit"
-                                            name="orderStatus" value="DELIVERED"
-                                            class="btn btn-sm btn-success btn-status-update">배송 완료
-                                    </button>
-                                    <button th:if="${orderDetail.status.getDescription() != '배송 완료' and orderDetail.status.getDescription() != '취소됨'}"
-                                            type="submit" name="orderStatus" value="CANCELLED"
-                                            class="btn btn-sm btn-danger btn-status-update">취소
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <h2 class="center-align">주문 관리</h2>
+            <div id="ordersTable" class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>주문번호</th>
+                        <th>상품명</th>
+                        <th>수량</th>
+                        <th>주문 상태</th>
+                        <th>주문 날짜</th>
+                        <th>작업</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 여기에 AJAX로 불러온 주문 데이터가 들어갈 것입니다. -->
+                    </tbody>
+                </table>
             </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <!-- 페이지네이션 버튼이 여기에 들어갈 것입니다. -->
+                </ul>
+            </nav>
         </div>
-        <!-- 메인 컨텐츠 끝 -->
     </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
 <script>
-    $(".product-name").each(function () {
-        var text = $(this).text();
-        console.log(text);
-        if (text.length > 15) {
-            $(this).text(text.substring(0, 15) + "...");
-        }
+    $(document).ready(function() {
+        loadOrderDetails(1); // 페이지 로드 시 첫 페이지의 주문 목록을 불러옵니다.
+
+        $(document).on('click', ".btn-status-update", function () {
+            let status = $(this).val();
+            let id = $(this).data("id")
+
+            let data = {
+                orderDetailID: id,
+                orderStatus: status
+            };
+            console.log(data);
+
+            $.ajax({
+                url: "/api/order-detail",
+                type: "PATCH",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function(response) {
+                    alert(response.message);
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    alert(error.responseJSON.message);
+                }
+            });
+        });
     });
+
+    function loadOrderDetails(page) {
+        $.ajax({
+            url: '/api/order-detail/seller?page=' + page,
+            type: 'GET',
+            success: function(response) {
+                var orders = response.orderDetails;
+                var totalPages = response.totalPages;
+                var tbody = $('#ordersTable tbody');
+                tbody.empty(); // 테이블의 현재 내용을 지웁니다.
+
+                updateOrdersTable(orders)
+
+                // 페이지네이션 업데이트
+                var pagination = $('.pagination');
+                pagination.empty(); // 현재 페이지네이션을 지웁니다.
+                for (var i = 1; i <= totalPages; i++) {
+                    var liClass = (page === i) ? 'page-item active' : 'page-item';
+                    var pageItem = '<li class="' + liClass + '"><a class="page-link" href="#" onclick="loadOrderDetails(' + i + ');return false;">' + i + '</a></li>';
+                    pagination.append(pageItem);
+                }
+            }
+        });
+    }
+
+    function updateOrdersTable(orders) {
+        var tbody = $('#ordersTable tbody');
+        tbody.empty(); // 기존 테이블 내용을 지웁니다.
+
+        $.each(orders, function(i, orderDetail) {
+            var row = `
+            <tr>
+                <td><a href="/seller/orders/detail/${orderDetail.orderDetailID}" style="text-decoration: none; color: black;">${orderDetail.orderDetailID}</a></td>
+                <td><a href="/product/${orderDetail.productID}" style="text-decoration: none; color: black;"><span class="product-name">${orderDetail.productName}</span></a></td>
+                <td>${orderDetail.quantity}</td>
+                <td>${orderDetail.orderDetailStatus}</td>
+                <td>${orderDetail.orderDate}</td>
+                <td>
+                    ${getButtonsBasedOnStatus(orderDetail.orderDetailStatus, orderDetail.orderDetailID)}
+                </td>
+            </tr>
+        `;
+            tbody.append(row);
+        });
+
+        // 상품명이 너무 긴 경우 줄여서 표시합니다.
+        $(".product-name").each(function() {
+            var text = $(this).text();
+            if (text.length > 15) {
+                $(this).text(text.substring(0, 15) + "...");
+            }
+        });
+    }
+
+    // 주문 상태에 따른 버튼 생성
+    function getButtonsBasedOnStatus(statusDescription, orderDetailID) {
+        var buttons = '';
+        if (statusDescription === '처리 대기 중') {
+            buttons += `<button type="submit" name="orderStatus" value="PROCESSING" class="btn btn-sm btn-info btn-status-update" data-id="${orderDetailID}">처리 중</button>`;
+        } else if (statusDescription === '처리 중') {
+            buttons += `<button type="submit" name="orderStatus" value="SHIPPED" class="btn btn-sm btn-warning btn-status-update" data-id="${orderDetailID}">배송 중</button>`;
+        } else if (statusDescription === '배송 중') {
+            buttons += `<button type="submit" name="orderStatus" value="DELIVERED" class="btn btn-sm btn-success btn-status-update" data-id="${orderDetailID}">배송 완료</button>`;
+        }
+
+        if (statusDescription !== '배송 완료' && statusDescription !== '취소됨') {
+            buttons += `<button type="submit" name="orderStatus" value="CANCELLED" class="btn btn-sm btn-danger btn-status-update"data-id="${orderDetailID}">취소</button>`;
+        }
+        return buttons;
+    }
+
 </script>
 </body>
 </html>
