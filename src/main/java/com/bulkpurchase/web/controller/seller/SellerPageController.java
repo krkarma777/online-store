@@ -40,11 +40,4 @@ public class SellerPageController {
 
         return "seller/sellerPage";
     }
-
-    @GetMapping("/seller/profile/edit")
-    public String sellerProfile(Principal principal, Model model) {
-        User user = userAuthValidator.getCurrentUser(principal);
-        model.addAttribute("user", user);
-        return "seller/seller-mypage/user_edit";
-    }
 }

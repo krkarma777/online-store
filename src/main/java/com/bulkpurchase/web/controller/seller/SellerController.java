@@ -39,8 +39,47 @@ public class SellerController {
         return "seller/couponManage/couponSelectProduct";
     }
 
-    @GetMapping("/seller/sales")
+    @GetMapping("/sales")
     public String salesView() {
         return "/seller/sales";
+    }
+
+    @GetMapping("/inquiries")
+    public String inquiriesManage(Principal principal, Model model) {
+        User user = userAuthValidator.getCurrentUser(principal);
+        model.addAttribute("sellerID", user.getUserID());
+        return "/seller/productManage/inquiries";
+    }
+
+    @GetMapping("/orders")
+    public String manageOrders() {
+        return "seller/orderManage/orders";
+    }
+
+    @GetMapping("/orders/detail/{orderDetailID}")
+    public String orderDetailInfoForSeller(@PathVariable("orderDetailID") Long orderDetailID, Model model) {
+        model.addAttribute("orderDetailID", orderDetailID);
+        return "seller/orderManage/orderDetailForSeller";
+    }
+
+    @GetMapping("/inquiries/{inquiryID}")
+    public String inquiry(Model model, @PathVariable("inquiryID") Long inquiryID) {
+        model.addAttribute("inquiryID", inquiryID);
+        return "seller/seller-mypage/customer_center_inquiry";
+    }
+    @GetMapping("/inquiries/list")
+    public String inquiries() {
+        return "seller/seller-mypage/customer_center_inquiries";
+    }
+    @GetMapping("/inquiries/new")
+    public String inquiryCreate() {
+        return "seller/seller-mypage/customer_center_inquiry_create";
+    }
+
+    @GetMapping("/seller/profile/edit")
+    public String sellerProfile(Principal principal, Model model) {
+        User user = userAuthValidator.getCurrentUser(principal);
+        model.addAttribute("user", user);
+        return "seller/seller-mypage/user_edit";
     }
 }
