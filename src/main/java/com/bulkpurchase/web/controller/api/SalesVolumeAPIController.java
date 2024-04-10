@@ -8,6 +8,7 @@ import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,6 +33,7 @@ public class SalesVolumeAPIController {
 
 
     // 최근 30일 판매 데이터
+    @GetMapping("/last-30-days")
     public ResponseEntity<?> findSalesDataForLast30Days(Principal principal) {
         Long userID = validateSellerRoleAndGetUserId(principal);
         List<SalesDataDTO> last30DaysSales = orderService.calculateSalesLast30DaysBySeller(userID, startDate, endDate);
@@ -41,6 +43,7 @@ public class SalesVolumeAPIController {
 
 
     // 지난 12개월 판매 데이터
+    @GetMapping("/last-year")
     public ResponseEntity<?> findSalesDataOverLastYear(Principal principal) {
         Long userID = validateSellerRoleAndGetUserId(principal);
 
@@ -50,6 +53,7 @@ public class SalesVolumeAPIController {
     }
 
     // 최근 3년 판매 데이터
+    @GetMapping("/last-three-years")
     public ResponseEntity<?> findSalesDataOverLastThreeYears(Principal principal) {
         Long userID = validateSellerRoleAndGetUserId(principal);
         return ResponseEntity.ok(orderService.calculateSalesLast3YearsBySeller(userID));
