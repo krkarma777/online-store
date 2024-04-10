@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -31,6 +32,13 @@ public class SalesVolumeAPIController {
 
     private final LocalDate startDate = endDate.minusDays(30);
 
+    // 금일 판매 데이터
+    @GetMapping
+    public ResponseEntity<?> findSalesDataForCurrentDay(Principal principal) {
+        Long userID = validateSellerRoleAndGetUserId(principal);
+        BigDecimal dailySales = orderService.calculateDailySalesBySeller(userID);
+        return ResponseEntity.ok(dailySales);
+    }
 
     // 최근 30일 판매 데이터
     @GetMapping("/last-30-days")
