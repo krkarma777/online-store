@@ -115,130 +115,97 @@
     <!-- 메인 컨텐츠 끝 -->
 </div>
 <script th:inline="javascript">
-    /*<![CDATA[*/
-    const last30DaysSales = /*[[${last30DaysSales}]]*/ [];
-    const last12MonthsSales = /*[[${last12MonthsSales}]]*/ [];
-    const last3YearsSales = /*[[${last3YearsSales}]]*/ [];
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchSalesData();
+    });
 
-    // 차트 데이터 형식 변환 로직 추가
-    const formatChartData = (salesData) => {
+    function fetchSalesData() {
+        const urls = [
+            '/api/sales-volume', // 금일 판매 데이터
+            '/api/sales-volume/last-30-days', // 최근 30일 판매 데이터
+            '/api/sales-volume/last-year', // 지난 12개월 판매 데이터
+            '/api/sales-volume/last-three-years' // 최근 3년 판매 데이터
+        ];
+
+        Promise.all(urls.map(url => fetch(url).then(response => response.json())))
+            .then(([dailySales, last30DaysSales, last12MonthsSales, last3YearsSales]) => {
+                // 여기에서 차트를 업데이트하면 됩니다. 예를 들어:
+                updateChart('last30DaysSalesChart', formatChartData(last30DaysSales), 'line', 'day', '최근 30일 판매액');
+                updateChart('last12MonthsSalesChart', formatChartData(last12MonthsSales), 'bar', 'month', '지난 12개월 판매액');
+                updateChart('last3YearsSalesChart', formatChartData(last3YearsSales.map(data => ({
+                    ...data,
+                    period: `${data.period}-01`
+                }))), 'bar', 'year', '최근 3년 판매액');
+            })
+            .catch(error => {
+                console.error('Error fetching sales data:', error);
+            });
+    }
+
+    function formatChartData(salesData) {
         return salesData.map(data => ({
-            x: moment(data.period, 'YYYY-MM-DD').toDate(), // 'period'를 날짜 객체로 변환
+            x: moment(data.period, 'YYYY-MM-DD').toDate(),
             y: data.totalSales
         }));
-    };
+    }
 
-    // 최근 30일 판매 데이터 차트
-    const last30DaysSalesChartContext = document.getElementById('last30DaysSalesChart').getContext('2d');
-    new Chart(last30DaysSalesChartContext, {
-        type: 'line', // 라인 차트 사용
-        data: {
-            datasets: [{
-                label: '최근 30일 판매액',
-                data: formatChartData(last30DaysSales),
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'time', // X 축 타입을 'time'으로 변경
-                    time: {
-                        unit: 'day' // 데이터 단위를 'day'로 설정
+    function updateChart(chartId, data, chartType, timeUnit, label) {
+        const context = document.getElementById(chartId).getContext('2d');
+        let borderColor = 'rgb(75, 192, 192)';
+        let backgroundColor = 'rgba(255, 99, 132, 0.2)';
+        let borderWidth = 1;
+
+        // 차트 유형에 따라 스타일 조정
+        if (chartType === 'line') {
+            backgroundColor = ''; // 라인 차트는 배경색 없음
+            borderWidth = ''; // 라인 차트는 borderWidth를 설정할 필요 없음
+            borderWidth = 2; // 선의 두께 설정
+        } else if (chartType === 'bar') {
+            if (label.includes('12개월')) {
+                borderColor = 'rgba(255, 99, 132, 1)';
+                backgroundColor = 'rgba(255, 99, 132, 0.2)';
+            } else if (label.includes('3년')) {
+                borderColor = 'rgba(54, 162, 235, 1)';
+                backgroundColor = 'rgba(54, 162, 235, 0.2)';
+            }
+        }
+
+        new Chart(context, {
+            type: chartType,
+            data: {
+                datasets: [{
+                    label: label,
+                    data: data,
+                    fill: false,
+                    borderColor: borderColor,
+                    backgroundColor: backgroundColor,
+                    borderWidth: borderWidth,
+                    tension: 0.1,
+                    showLine: true // 데이터 포인트들 사이에 선을 그림
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: timeUnit
+                        },
+                        title: {
+                            display: true,
+                            text: '기간'
+                        }
                     },
-                    title: {
-                        display: true,
-                        text: '기간'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: '판매액'
+                    y: {
+                        title: {
+                            display: true,
+                            text: '판매액'
+                        }
                     }
                 }
             }
-        }
-    });
-
-
-    // 지난 12개월 판매 데이터 차트
-    const last12MonthsSalesChartContext = document.getElementById('last12MonthsSalesChart').getContext('2d');
-    new Chart(last12MonthsSalesChartContext, {
-        type: 'bar', // 바 차트 사용
-        data: {
-            datasets: [{
-                label: '지난 12개월 판매액',
-                data: formatChartData(last12MonthsSales),
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'time', // X 축 타입을 'time'으로 변경
-                    time: {
-                        unit: 'month', // 데이터 단위를 'month'로 설정
-                        tooltipFormat: 'YYYY-MM' // 툴팁에 표시될 날짜 형식
-                    },
-                    title: {
-                        display: true,
-                        text: '기간'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: '판매액'
-                    }
-                }
-            }
-        }
-    });
-
-    // 최근 3년 판매 데이터 차트
-    const last3YearsSalesChartContext = document.getElementById('last3YearsSalesChart').getContext('2d');
-    new Chart(last3YearsSalesChartContext, {
-        type: 'bar', // 바 차트 사용
-        data: {
-            datasets: [{
-                label: '최근 3년 판매액',
-                data: formatChartData(last3YearsSales.map(data => ({
-                    ...data,
-                    period: `${data.period}-01` // 연간 데이터는 연도만 있으므로, 날짜 형식을 맞추기 위해 '-01'을 추가
-                }))),
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'year', // 데이터 단위를 'year'로 설정
-                        tooltipFormat: 'YYYY' // 툴팁에 표시될 날짜 형식
-                    },
-                    title: {
-                        display: true,
-                        text: '기간'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: '판매액'
-                    }
-                }
-            }
-        }
-    });
-    /*]]>*/
+        });
+    }
 </script>
 </body>
 </html>

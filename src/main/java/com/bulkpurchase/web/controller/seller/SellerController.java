@@ -38,4 +38,9 @@ public class SellerController {
 
         return "seller/couponManage/couponSelectProduct";
     }
+
+    @GetMapping("/seller/sales")
+    public String salesView() {
+        return "/seller/sales";
+    }
 }
