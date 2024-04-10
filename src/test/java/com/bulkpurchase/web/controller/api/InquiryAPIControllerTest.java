@@ -73,7 +73,7 @@ public class InquiryAPIControllerTest {
         InquiryReplyDTO replyDTO = new InquiryReplyDTO();
         replyDTO.setInquiryID(inquiry.getInquiryID());
         replyDTO.setResponseContent("This is a response to the inquiry");
-        mockMvc.perform(post("/api/inquiry/response-inquiry")
+        mockMvc.perform(post("/api/inquiry/response")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(replyDTO)))
                 .andExpect(status().isOk())
