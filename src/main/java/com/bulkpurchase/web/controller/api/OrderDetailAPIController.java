@@ -57,7 +57,7 @@ public class OrderDetailAPIController {
         userAuthValidator.validateUserAccessOrderDetail(user, orderDetail);
         orderStatusUpdateService.updateOrderStatus(orderDetail, requestDTO.getOrderStatus());
 
-        return ResponseEntity.ok("/seller/orders");
+        return ResponseEntity.ok(Map.of("message", "주문 처리 상태가 변경되었습니다. "));
     }
 
     @GetMapping("/{orderDetailID}")
