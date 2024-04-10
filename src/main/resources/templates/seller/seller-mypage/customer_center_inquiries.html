@@ -40,18 +40,41 @@
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow p-4">
             <h2 class="mb-4 center-align">고객센터 문의</h2>
-
-            <!-- 문의 목록 -->
             <div>
                 <h4 class="inquiry-list-header">문의 목록</h4>
-                <div class="list-group inquiries">
-                </div>
-            </div>
-            <!-- 메인 컨텐츠 끝 -->
+                <div id="inquiryList">문의가 없습니다.</div>
         </div>
     </div>
 </div>
 <div th:replace="~{common/footer :: footer}"></div>
+<script>
+    $(document).ready(function() {
+        fetchInquiries();
+    });
+
+    function fetchInquiries() {
+        $.ajax({
+            url: '/api/inquiry/list', // API 엔드포인트 URL 수정 필요
+            type: 'GET',
+            success: function(inquiries) {
+                if (inquiries.length > 0) {
+                    var inquiriesHtml = inquiries.map(function(inquiry) {
+                        return `
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <h5 class="mb-1">${inquiry.title}</h5>
+                            <small class="inquiry-date">${inquiry.inquiryDate}</small>
+                        </a>
+                    `;
+                    }).join('');
+                    $('#inquiryList').html(`<div class="list-group">${inquiriesHtml}</div>`);
+                }
+            },
+            error: function(error) {
+                console.log('문의 목록을 불러오는 데 실패했습니다.', error);
+            }
+        });
+    }
+</script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 <script>

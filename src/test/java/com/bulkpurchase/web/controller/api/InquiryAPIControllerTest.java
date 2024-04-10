@@ -73,8 +73,7 @@ public class InquiryAPIControllerTest {
         InquiryReplyDTO replyDTO = new InquiryReplyDTO();
         replyDTO.setInquiryID(inquiry.getInquiryID());
         replyDTO.setResponseContent("This is a response to the inquiry");
-        System.out.println("replyDTO = " + replyDTO);
-        mockMvc.perform(post("/api/inquiry/response-inquiry")
+        mockMvc.perform(post("/api/inquiry/response")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(replyDTO)))
                 .andExpect(status().isOk())
@@ -95,7 +94,7 @@ public class InquiryAPIControllerTest {
     public void whenViewItem_givenInquiryID_thenInquiryDetails() throws Exception {
         long inquiryID = inquiry.getInquiryID();
 
-        mockMvc.perform(get("/api/inquiry").param("inquiryID", Long.toString(inquiryID)))
+        mockMvc.perform(get("/api/inquiry/" + inquiryID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").exists())
                 .andExpect(jsonPath("$.inquiryContent").exists());
@@ -106,7 +105,7 @@ public class InquiryAPIControllerTest {
     public void whenViewItemWithNonExistingInquiryID_thenNotFound() throws Exception {
         long nonExistingInquiryID = 9999L; // 존재하지 않는 ID 가정
 
-        mockMvc.perform(get("/api/inquiry").param("inquiryID", Long.toString(nonExistingInquiryID)))
+        mockMvc.perform(get("/api/inquiry/" + nonExistingInquiryID))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("문의가 존재하지 않습니다."));
     }

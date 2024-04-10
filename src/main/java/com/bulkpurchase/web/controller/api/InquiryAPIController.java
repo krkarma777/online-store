@@ -50,38 +50,31 @@ public class InquiryAPIController {
     @PostMapping("/response")
     public ResponseEntity<?> inquiryReply(@RequestBody InquiryReplyDTO inquiryReplyDTO) {
         Optional<Inquiry> inquiryOpt = inquiryService.findById(inquiryReplyDTO.getInquiryID());
-        if (inquiryOpt.isPresent()) {
-            Inquiry inquiry = inquiryOpt.get();
-            inquiry.setReply(inquiryReplyDTO);
-            inquiryService.save(inquiry);
-            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "답변 완료되었습니다."));
-        } else {
+        if (inquiryOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "존재하지 않는 문의입니다."));
         }
+        Inquiry inquiry = inquiryOpt.get();
+        inquiry.setReply(inquiryReplyDTO);
+        inquiryService.save(inquiry);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "답변 완료되었습니다."));
     }
 
     @GetMapping("/list")
     public ResponseEntity<?> list(Principal principal) {
         User user = userAuthValidator.getCurrentUser(principal);
-        List<Inquiry> inquiries = inquiryService.findByUser(user);
-        List<InquiryDetailResponseDTO> dtoList = new ArrayList<>();
-        for (Inquiry inquiry : inquiries) {
-            InquiryDetailResponseDTO inquiryDetailResponseDTO = new InquiryDetailResponseDTO(inquiry);
-            dtoList.add(inquiryDetailResponseDTO);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(dtoList);
+        List<InquiryDetailResponseDTO> list = inquiryService.findByUser(user).stream().map(InquiryDetailResponseDTO::new).toList();
+        return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
-    @GetMapping
-    public ResponseEntity<?> item(Principal principal, @RequestParam("inquiryID") Long inquiryID) {
+    @GetMapping("/{inquiryID}")
+    public ResponseEntity<?> item(Principal principal, @PathVariable("inquiryID") Long inquiryID) {
         User user = userAuthValidator.getCurrentUser(principal);
         Optional<Inquiry> inquiryOpt = inquiryService.findByUserAndInquiryID(user, inquiryID);
-        if (inquiryOpt.isPresent()) {
-            Inquiry inquiry = inquiryOpt.get();
-            InquiryDetailResponseDTO inquiryDetailResponseDTO = new InquiryDetailResponseDTO(inquiry);
-            return ResponseEntity.ok(inquiryDetailResponseDTO);
-        } else {
+        if (inquiryOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "문의가 존재하지 않습니다."));
         }
+
+        InquiryDetailResponseDTO inquiryDetailResponseDTO = new InquiryDetailResponseDTO(inquiryOpt.get());
+        return ResponseEntity.ok(inquiryDetailResponseDTO);
     }
 }
