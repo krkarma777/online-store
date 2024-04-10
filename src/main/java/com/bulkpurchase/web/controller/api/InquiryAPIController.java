@@ -72,8 +72,8 @@ public class InquiryAPIController {
         return ResponseEntity.status(HttpStatus.OK).body(dtoList);
     }
 
-    @GetMapping
-    public ResponseEntity<?> item(Principal principal, @RequestParam("inquiryID") Long inquiryID) {
+    @GetMapping("/{inquiryID}")
+    public ResponseEntity<?> item(Principal principal, @PathVariable("inquiryID") Long inquiryID) {
         User user = userAuthValidator.getCurrentUser(principal);
         Optional<Inquiry> inquiryOpt = inquiryService.findByUserAndInquiryID(user, inquiryID);
         if (inquiryOpt.isPresent()) {
