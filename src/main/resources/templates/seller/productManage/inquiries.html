@@ -99,38 +99,38 @@
         <!-- 메인 컨텐츠 시작 -->
         <div class="col-md-9 shadow">
 
-                <h2 class="mb-4 center-align">문의사항 관리</h2>
-                <div id="inquiryList" class="list-group">
-                    <!-- 문의 사항 들어오는 곳 -->
-                </div>
+            <h2 class="mb-4 center-align">문의사항 관리</h2>
+            <div id="inquiryList" class="list-group">
+                <!-- 문의 사항 들어오는 곳 -->
             </div>
-            <div class="d-flex justify-content-center mt-3">
-                <button id="loadMore" class="btn btn-primary">더보기</button>
-            </div>
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+            <button id="loadMore" class="btn btn-primary">더보기</button>
+        </div>
 
 
-            <!-- 답변하기 모달 -->
-            <div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="replyModalLabel">답변하기</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
+        <!-- 답변하기 모달 -->
+        <div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="replyModalLabel">답변하기</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
                             <textarea id="replyContent" class="form-control modal-textarea" rows="3"
                                       placeholder="답변을 입력하세요."></textarea>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                            <button type="button" class="btn btn-primary" id="submitReply">답변 전송</button>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button type="button" class="btn btn-primary" id="submitReply">답변 전송</button>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- 메인 컨텐츠 끝 -->
     </div>
+    <!-- 메인 컨텐츠 끝 -->
+</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
@@ -155,8 +155,8 @@
 
             // AJAX 요청 설정
             $.ajax({
-                url: '/inquiries/reply', // 서버의 답변 처리 URL
-                type: 'POST',
+                url: '/api/product-inquiry/reply', // 서버의 답변 처리 URL
+                type: 'PATCH',
                 contentType: 'application/json',
                 data: JSON.stringify({inquiryID: selectedInquiryId, replyContent: replyContent}), // 서버로 전송할 데이터
                 success: function (response) {
@@ -213,15 +213,11 @@
                 }
             });
         }
-
-
         $('#loadMore').click(function () {
             loadInquiries();
         });
     });
     /*]]>*/
 </script>
-
-
 </body>
 </html>
