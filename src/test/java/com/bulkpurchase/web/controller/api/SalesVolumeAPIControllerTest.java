@@ -61,10 +61,29 @@ class SalesVolumeAPIControllerTest {
         user = new User();
         user.setUserID(1L);
         user.setRole(UserRole.ROLE_판매자);
-        System.out.println("user = " + user);
         when(userAuthValidator.getCurrentUser(any(Principal.class))).thenReturn(user);
     }
 
+    @Test
+    @WithMockUser
+    public void testFindSalesDataForCurrentDay() throws Exception {
+        Principal mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn("testUser");
+
+        BigDecimal dailySales = new BigDecimal("3000");
+
+        when(orderService.calculateDailySalesBySeller(eq(user.getUserID()))).thenReturn(dailySales);
+
+        mockMvc.perform(get("/api/sales-volume")
+                        .principal(mockPrincipal)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(dailySales)));
+
+        verify(orderService, times(1)).calculateDailySalesBySeller(eq(user.getUserID()));
+    }
+
+    // 금일 판매 데이터
     @Test
     @WithMockUser
     public void testFindSalesDataForLast30Days() throws Exception {
