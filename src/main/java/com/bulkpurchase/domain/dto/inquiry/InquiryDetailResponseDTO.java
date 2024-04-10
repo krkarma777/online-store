@@ -4,7 +4,7 @@ import com.bulkpurchase.domain.entity.Inquiry;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import static com.bulkpurchase.CustomTimeFormatter.timeFormat;
 
 @Getter
 @Setter
@@ -16,8 +16,8 @@ public class InquiryDetailResponseDTO {
     private String title;
     private String inquiryContent;
     private String responseContent;
-    private LocalDateTime inquiryDate;
-    private LocalDateTime responseDate;
+    private String inquiryDate;
+    private String responseDate;
 
     public InquiryDetailResponseDTO() {
     }
@@ -29,7 +29,7 @@ public class InquiryDetailResponseDTO {
         this.title = inquiry.getTitle();
         this.inquiryContent = inquiry.getInquiryContent();
         this.responseContent = inquiry.getResponseContent();
-        this.inquiryDate = inquiry.getInquiryDate();
-        this.responseDate = inquiry.getResponseDate();
+        this.inquiryDate = timeFormat(inquiry.getInquiryDate());
+        this.responseDate = timeFormat(inquiry.getResponseDate());
     }
 }

@@ -1,5 +1,8 @@
 package com.bulkpurchase.domain.entity.product;
 
+import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryCreateRequestDTO;
+import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryReplyRequestDTO;
+import com.bulkpurchase.domain.dto.productInquiry.ProductInquiryUpdateRequestDTO;
 import com.bulkpurchase.domain.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -40,4 +43,22 @@ public class ProductInquiry {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date replyDate;
+
+    public ProductInquiry(ProductInquiryCreateRequestDTO requestDTO, Product product, User user) {
+        this.product = product;
+        this.inquiryContent = requestDTO.getInquiryContent();
+        this.user = user;
+    }
+
+    public ProductInquiry() {
+    }
+
+    public void update(ProductInquiryUpdateRequestDTO requestDTO) {
+        this.inquiryContent = requestDTO.getInquiryContent();
+    }
+
+    public void reply(ProductInquiryReplyRequestDTO requestDTO) {
+        this.replyContent = requestDTO.getReplyContent();
+        this.replyDate = new Date();
+    }
 }
