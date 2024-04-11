@@ -3,6 +3,7 @@ package com.bulkpurchase.web.controller.api;
 import com.bulkpurchase.domain.dto.order.OrderDetailResponseDTO;
 import com.bulkpurchase.domain.dto.order.OrderResponseDTO;
 import com.bulkpurchase.domain.dto.order.PaymentResponseDTO;
+import com.bulkpurchase.domain.dto.orderdetail.OrderDetailNameAndIdDTO;
 import com.bulkpurchase.domain.dto.orderdetail.OrderDetailStatusUpdateRequestDTO;
 import com.bulkpurchase.domain.entity.order.OrderDetail;
 import com.bulkpurchase.domain.entity.user.User;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -74,6 +76,14 @@ public class OrderDetailAPIController {
                 "payment", paymentResponseDTO
         ));
     }
+
+    @GetMapping("/list")
+    public ResponseEntity<?> list(Principal principal) {
+        User user = userAuthValidator.getCurrentUser(principal);
+        List<OrderDetailNameAndIdDTO> orderDetailsByUser = orderDetailService.findTop5RecentOrderDetailsByUser(user);
+        return ResponseEntity.ok(orderDetailsByUser);
+    }
+
 
     private OrderDetail getOrderDetail(Long orderDetailID) {
         return orderDetailService.findByID(orderDetailID)
