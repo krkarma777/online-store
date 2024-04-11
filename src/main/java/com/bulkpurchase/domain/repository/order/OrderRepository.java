@@ -3,6 +3,7 @@ package com.bulkpurchase.domain.repository.order;
 import com.bulkpurchase.domain.entity.order.Order;
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.enums.OrderStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +18,7 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUser(User user);
 
-    List<Order> findByUserOrderByOrderIDDesc(User user, Pageable pageable);
+    Page<Order> findByUserOrderByOrderIDDesc(User user, Pageable pageable);
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status NOT IN :excludedStatuses")
     long countByStatusExcluding(@Param("excludedStatuses") Collection<OrderStatus> excludedStatuses);

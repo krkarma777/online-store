@@ -55,8 +55,8 @@ public class OrderAPIController {
         User user = userAuthValidator.getCurrentUser(principal);
         Sort sort = Sort.by(Sort.Direction.DESC, "orderID");
         Pageable pageable = PageRequest.of(page - 1, 5, sort);
-        List<OrderViewDTO> orderViewDTOS = orderService.getOrderViewModelsByUser(user, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(orderViewDTOS);
+        Map<String, Object> orderViewModelsByUser = orderService.getOrderViewModelsByUser(user, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(orderViewModelsByUser);
     }
 
     @GetMapping("/{orderID}")
