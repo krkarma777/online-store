@@ -121,15 +121,13 @@
 
     function fetchSalesData() {
         const urls = [
-            '/api/sales-volume', // 금일 판매 데이터
             '/api/sales-volume/last-30-days', // 최근 30일 판매 데이터
             '/api/sales-volume/last-year', // 지난 12개월 판매 데이터
             '/api/sales-volume/last-three-years' // 최근 3년 판매 데이터
         ];
 
         Promise.all(urls.map(url => fetch(url).then(response => response.json())))
-            .then(([dailySales, last30DaysSales, last12MonthsSales, last3YearsSales]) => {
-                // 여기에서 차트를 업데이트하면 됩니다. 예를 들어:
+            .then(([last30DaysSales, last12MonthsSales, last3YearsSales]) => {
                 updateChart('last30DaysSalesChart', formatChartData(last30DaysSales), 'line', 'day', '최근 30일 판매액');
                 updateChart('last12MonthsSalesChart', formatChartData(last12MonthsSales), 'bar', 'month', '지난 12개월 판매액');
                 updateChart('last3YearsSalesChart', formatChartData(last3YearsSales.map(data => ({
@@ -138,7 +136,7 @@
                 }))), 'bar', 'year', '최근 3년 판매액');
             })
             .catch(error => {
-                console.error('Error fetching sales data:', error);
+                console.error('Error fetching sales data from URL:', error.config.url, '; Error:', error);
             });
     }
 
