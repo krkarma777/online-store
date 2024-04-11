@@ -18,6 +18,11 @@ public class SellerController {
 
     private final UserAuthValidator userAuthValidator;
 
+    @GetMapping
+    public String sellerPageForm() {
+        return "seller/sellerPage";
+    }
+
     @GetMapping("/reviews")
     public String reviewManage(Principal principal, Model model) {
         Long sellerID = userAuthValidator.getCurrentUser(principal).getUserID();
