@@ -1,4 +1,4 @@
-package com.bulkpurchase.web.controller.seller;
+package com.bulkpurchase.web.controller;
 
 import com.bulkpurchase.domain.entity.user.User;
 import com.bulkpurchase.domain.validator.user.UserAuthValidator;
