@@ -12,6 +12,7 @@ import com.bulkpurchase.domain.repository.order.OrderDetailRepository;
 import com.bulkpurchase.domain.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,8 +114,8 @@ public class OrderService {
         return orderRepository.findById(orderID);
     }
 
-    public List<OrderViewDTO> getOrderViewModelsByUser(User user) {
-        return orderRepository.findByUserOrderByOrderIDDesc(user).stream()
+    public List<OrderViewDTO> getOrderViewModelsByUser(User user, Pageable pageable) {
+        return orderRepository.findByUserOrderByOrderIDDesc(user, pageable).stream()
                 .map(this::convertToOrderViewDTO)
                 .collect(Collectors.toList());
     }
@@ -128,7 +129,7 @@ public class OrderService {
     private OrderViewDTO convertToOrderViewDTO(Order order) {
         List<OrderDetailViewDTO> orderDetailViewDTOS = orderDetailRepository.findByOrder(order).stream()
                 .map(this::convertToOrderDetailViewDTO)
-                .collect(Collectors.toList());
+                .toList();
 
         return new OrderViewDTO(
                 order.getOrderID(),
