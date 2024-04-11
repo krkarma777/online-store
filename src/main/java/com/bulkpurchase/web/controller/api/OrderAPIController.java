@@ -11,6 +11,9 @@ import com.bulkpurchase.domain.validator.user.UserAuthValidator;
 import com.bulkpurchase.web.service.PurchaseService;
 import com.bulkpurchase.web.service.order.OrderProcessingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,10 +51,12 @@ public class OrderAPIController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> orderList(Principal principal) {
+    public ResponseEntity<?> orderList(Principal principal, @RequestParam(value = "page", defaultValue = "1") Integer page) {
         User user = userAuthValidator.getCurrentUser(principal);
-        List<OrderViewDTO> orderViewDTOS = orderService.getOrderViewModelsByUser(user);
-        return ResponseEntity.status(HttpStatus.OK).body(orderViewDTOS);
+        Sort sort = Sort.by(Sort.Direction.DESC, "orderID");
+        Pageable pageable = PageRequest.of(page - 1, 5, sort);
+        Map<String, Object> orderViewModelsByUser = orderService.getOrderViewModelsByUser(user, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(orderViewModelsByUser);
     }
 
     @GetMapping("/{orderID}")

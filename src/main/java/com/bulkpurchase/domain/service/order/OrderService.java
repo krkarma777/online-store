@@ -12,12 +12,15 @@ import com.bulkpurchase.domain.repository.order.OrderDetailRepository;
 import com.bulkpurchase.domain.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -113,10 +116,12 @@ public class OrderService {
         return orderRepository.findById(orderID);
     }
 
-    public List<OrderViewDTO> getOrderViewModelsByUser(User user) {
-        return orderRepository.findByUserOrderByOrderIDDesc(user).stream()
+    public Map<String, Object> getOrderViewModelsByUser(User user, Pageable pageable) {
+        Page<Order> orderPage = orderRepository.findByUserOrderByOrderIDDesc(user, pageable);
+        List<OrderViewDTO> orderViewDTOS = orderPage.stream()
                 .map(this::convertToOrderViewDTO)
-                .collect(Collectors.toList());
+                .toList();
+        return Map.of("list", orderViewDTOS, "totalPages", orderPage.getTotalPages());
     }
 
     public List<OrderViewDTO> getOrderViewModels() {
@@ -128,7 +133,7 @@ public class OrderService {
     private OrderViewDTO convertToOrderViewDTO(Order order) {
         List<OrderDetailViewDTO> orderDetailViewDTOS = orderDetailRepository.findByOrder(order).stream()
                 .map(this::convertToOrderDetailViewDTO)
-                .collect(Collectors.toList());
+                .toList();
 
         return new OrderViewDTO(
                 order.getOrderID(),
