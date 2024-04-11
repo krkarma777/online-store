@@ -37,6 +37,9 @@ public class SalesVolumeAPIController {
     public ResponseEntity<?> findSalesDataForCurrentDay(Principal principal) {
         Long userID = validateSellerRoleAndGetUserId(principal);
         BigDecimal dailySales = orderService.calculateDailySalesBySeller(userID);
+        if (dailySales == null) {
+            dailySales = BigDecimal.valueOf(0);
+        }
         return ResponseEntity.ok(dailySales);
     }
 
